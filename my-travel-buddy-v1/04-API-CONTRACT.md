@@ -10,16 +10,16 @@ Base path:
 
 | Method | Route | Access | Purpose |
 |---|---|---|---|
-| POST | `/api/auth/signup` | Public | Create account |
-| POST | `/api/auth/login` | Public | Log in |
-| GET | `/api/auth/session` | Public | Check session |
-| POST | `/api/auth/logout` | Public | Log out |
+| POST | `/auth/signup` | Public | Create account |
+| POST | `/auth/login` | Public | Log in |
+| GET | `/auth/session` | Public | Check session |
+| POST | `/auth/logout` | Public | Log out |
 
 ## AI
 
 | Method | Route | Access | Purpose |
 |---|---|---|---|
-| POST | `/api/ai/itinerary` | Public | Generate itinerary suggestions |
+| POST | `/ai/itinerary` | Public | Generate itinerary suggestions |
 
 The AI route never saves data.
 
@@ -27,18 +27,18 @@ The AI route never saves data.
 
 | Method | Route | Access | Purpose |
 |---|---|---|---|
-| GET | `/api/trips` | Protected | Get current user's trips |
-| GET | `/api/trips/:tripId` | Protected | Get one owned trip |
-| POST | `/api/trips` | Protected | Create trip |
-| PATCH | `/api/trips/:tripId` | Protected | Update trip |
-| DELETE | `/api/trips/:tripId` | Protected | Delete trip |
+| GET | `/trips` | Protected | Get current user's trips |
+| GET | `/trips/:tripId` | Protected | Get one owned trip |
+| POST | `/trips` | Protected | Create trip |
+| PATCH | `/trips/:tripId` | Protected | Update trip |
+| DELETE | `/trips/:tripId` | Protected | Delete trip |
 
 ## Activities
 
 | Method | Route | Access | Purpose |
 |---|---|---|---|
-| GET | `/api/trips/:tripId/activities` | Protected | Get trip activities |
-| GET | `/api/trips/:tripId/activities/:activityId` | Protected | Get one activity |
+| GET | `/trips/:tripId/activities` | Protected | Get trip activities |
+| GET | `/trips/:tripId/activities/:activityId` | Protected | Get one activity |
 | POST | `/api/trips/:tripId/activities` | Protected | Create activity |
 | PATCH | `/api/trips/:tripId/activities/:activityId` | Protected | Update activity |
 | DELETE | `/api/trips/:tripId/activities/:activityId` | Protected | Delete activity |
@@ -47,11 +47,11 @@ The AI route never saves data.
 
 | Method | Route | Access | Purpose |
 |---|---|---|---|
-| GET | `/api/trips/:tripId/checklist` | Protected | Get checklist items |
-| GET | `/api/trips/:tripId/checklist/:itemId` | Protected | Get one item |
-| POST | `/api/trips/:tripId/checklist` | Protected | Create item |
-| PATCH | `/api/trips/:tripId/checklist/:itemId` | Protected | Update item |
-| DELETE | `/api/trips/:tripId/checklist/:itemId` | Protected | Delete item |
+| GET | `/trips/:tripId/checklist` | Protected | Get checklist items |
+| GET | `/trips/:tripId/checklist/:itemId` | Protected | Get one item |
+| POST | `/trips/:tripId/checklist` | Protected | Create item |
+| PATCH | `/trips/:tripId/checklist/:itemId` | Protected | Update item |
+| DELETE | `/trips/:tripId/checklist/:itemId` | Protected | Delete item |
 
 ## Ownership Rule
 
