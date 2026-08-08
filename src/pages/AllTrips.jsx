@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import TripCalendar from "../components/Calendar";
 
 export default function Dashboard() {
 
@@ -37,7 +38,6 @@ export default function Dashboard() {
   }
   return (
     <section className='text-center'>
-      <h1 className='text-7xl'>My Travel Buddy</h1>
       {trips.map((trip,index)=> (
       <div key={index} className='mb-6'>
         <h2>
@@ -52,6 +52,8 @@ export default function Dashboard() {
         <p>
           End Date: {trip.date_Range[1].value}
         </p>
+          <TripCalendar tripId={trip.id} />
+        
       </div>
        ))}
     </section>

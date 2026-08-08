@@ -15,7 +15,7 @@ export default function Navbar() {
           to='/'
           className='mr-auto text-lg font-semibold text-(--text-h)'
         >
-          Capstone
+          My travel buddy
         </NavLink>
         {/* `end` makes "Home" active only on "/" exactly, not on every route. */}
         <NavLink to='/' end className={linkClass}>
