@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 import axios from 'axios';
 
-export default function Dashboard() {
+export default function Trips() {
 
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,24 +37,41 @@ export default function Dashboard() {
     return <div>Error: {error}</div>
   }
   return (
+  <>
+      <div>
+      <h2>
+          <Link to='/'>
+            + Plan New Trip
+          </Link>
+      </h2>
+    </div>
     <section className='text-center'>
       <h1 className='text-7xl'>My Travel Buddy</h1>
       {trips.map((trip,index)=> (
       <div key={index} className='mb-6'>
-        <h2>
-          {trip.destination} Trip 
-        </h2>
-        <h3>
-          Budget: ${trip.budget[0].value}-${trip.budget[1].value}
-        </h3>
-        <p>
-          Start Date: {trip.date_Range[0].value}
-        </p>
-        <p>
-          End Date: {trip.date_Range[1].value}
-        </p>
+        <Link to={`/trips/${trip.id}`}>
+          <h2>
+            {trip.destination} Trip 
+          </h2>
+          <h3>
+            Budget: ${trip.budget[0].value}-${trip.budget[1].value}
+          </h3>
+          <p>
+            Start Date: {trip.date_Range[0].value}
+          </p>
+          <p>
+            End Date: {trip.date_Range[1].value}
+          </p>
+        </Link>
+        <br/>
       </div>
        ))}
     </section>
+    <br/>
+    <h1>
+      Suggested Trips
+    </h1>
+
+  </>
   );
 }
