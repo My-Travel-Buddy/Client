@@ -15,6 +15,15 @@ export default function TripCalendar({ tripId }) {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("");
   const [showAddActivity, setShowAddActivity] = useState(false);
+  const [editActivity, setEditActivity] = useState(false);
+  const [editActivityForm, setEditActivityForm] = useState({
+    id: "",
+    title: "",
+    category: "",
+    dateTime: "",
+    estimatedCost: "",
+    notes: "",
+  });
   const [activityForm, setActivityForm] = useState({
     title: "",
     category: "",
@@ -98,9 +107,16 @@ export default function TripCalendar({ tripId }) {
 
     // When an empty date is clicked
     calendar.on("selectDateTime", (event) => {
-         console.log("EMPTY DATE CLICKED", event);
-         const date = event.start;
-        setShowAddActivity(true);
+      const date = event.start;
+
+      setActivityForm({
+        title: "",
+        category: "",
+        dateTime: date.toISOString().slice(0, 16),
+        estimatedCost: "",
+        notes: "",
+      });
+      setShowAddActivity(true);
     });
 
     return () => {
@@ -188,7 +204,63 @@ export default function TripCalendar({ tripId }) {
     }
     await getActivities();
   }
-  function handleEdit() {}
+
+  async function editActivities() {
+    const response = await fetch(
+      `http://localhost:8080/trips/${tripId}/activities/${editActivityForm.id}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editActivityForm),
+      },
+    );
+
+    if (!response.ok) {
+      alert("Failed to add update activity.");
+      console.log(await response.text());
+      return;
+    }
+    const updatedActivity = await response.json();
+
+    setEditActivity(false);
+    await getActivities();
+    setSelectedActivity(updatedActivity);
+  }
+  async function deleteActivities() {
+    const response = await fetch(
+      `http://localhost:8080/trips/${tripId}/activities/${selectedActivity.id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
+
+    if (!response.ok) {
+      alert("Failed to delete activity.");
+      console.log(await response.text());
+      return;
+    }
+    alert("You deleted this activity.");
+    setEditActivity(false);
+    setSelectedActivity(null);
+    await getActivities();
+  }
+
+  function handleEdit() {
+    setEditActivityForm({
+      id: selectedActivity.id,
+      title: selectedActivity.title,
+      category: selectedActivity.category,
+      dateTime: selectedActivity.dateTime,
+      estimatedCost: selectedActivity.estimatedCost,
+      notes: selectedActivity.notes,
+    });
+    setSelectedActivity(null);
+    setEditActivity(true);
+  }
 
   const handlePreviousMonth = () => {
     if (!calendarInstance.current) return;
@@ -306,7 +378,21 @@ export default function TripCalendar({ tripId }) {
               </div>
             )}
             <button
-              onClick={handleOpenAddActivity}
+              onClick={() => {
+                setActivityForm({
+                  title: "",
+                  category: "",
+                  dateTime: selectedActivity.dateTime
+                    ? new Date(selectedActivity.dateTime)
+                        .toISOString()
+                        .slice(0, 16)
+                    : "",
+                  estimatedCost: "",
+                  notes: "",
+                });
+                setSelectedActivity(null);
+                setShowAddActivity(true);
+              }}
               style={{
                 float: "right",
                 color: "black",
@@ -316,6 +402,21 @@ export default function TripCalendar({ tripId }) {
             >
               Add Activity
             </button>
+
+            <button
+              onClick={deleteActivities}
+              style={{
+                marginLeft: "55px",
+                color: "black",
+                fontSize: "15px",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "red")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "black")}
+            >
+              Delete
+            </button>
+
             <button
               onClick={handleEdit}
               style={{
@@ -326,6 +427,130 @@ export default function TripCalendar({ tripId }) {
               }}
             >
               Edit
+            </button>
+          </div>
+        </div>
+      )}
+      {editActivity && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 99999,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              color: "black",
+              padding: "30px",
+              borderRadius: "12px",
+              width: "400px",
+              maxWidth: "90%",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            {/* Close */}
+            <button
+              onClick={() => setEditActivity(false)}
+              style={{
+                float: "right",
+                background: "transparent",
+                border: "none",
+                color: "black",
+                fontSize: "24px",
+                cursor: "pointer",
+              }}
+            >
+              ×
+            </button>
+            <h2>Edit activity</h2>
+
+            <input
+              type="text"
+              placeholder="activity title"
+              value={editActivityForm.title}
+              onChange={(e) =>
+                setEditActivityForm({
+                  ...editActivityForm,
+                  title: e.target.value,
+                })
+              }
+            />
+            <select
+              value={editActivityForm.category}
+              onChange={(e) =>
+                setEditActivityForm({
+                  ...editActivityForm,
+                  category: e.target.value,
+                })
+              }
+            >
+              <option value="">select a category</option>
+              {category.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            <input
+              type="datetime-local"
+              value={editActivityForm.dateTime}
+              onChange={(e) =>
+                setEditActivityForm({
+                  ...editActivityForm,
+                  dateTime: e.target.value,
+                })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Estimated cost"
+              value={editActivityForm.estimatedCost}
+              onChange={(e) =>
+                setEditActivityForm({
+                  ...editActivityForm,
+                  estimatedCost: e.target.value,
+                })
+              }
+            />
+            <input
+              type="text"
+              placeholder="notes..."
+              value={editActivityForm.notes}
+              onChange={(e) =>
+                setEditActivityForm({
+                  ...editActivityForm,
+                  notes: e.target.value,
+                })
+              }
+            />
+
+            <button
+              onClick={editActivities}
+              style={{
+                float: "right",
+                color: "black",
+                fontSize: "15px",
+                cursor: "pointer",
+              }}
+            >
+              Confirm edits
+            </button>
+            <button
+              onClick={() => setEditActivity(false)}
+              style={{
+                float: "left",
+                color: "black",
+                fontSize: "15px",
+                cursor: "pointer",
+              }}
+            >
+              cancel
             </button>
           </div>
         </div>
