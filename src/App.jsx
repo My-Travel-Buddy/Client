@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import TasksPage from './pages/TasksPage';
-import TaskDetailPage from './pages/TaskDetailPage';
+import TripDetails from './pages/TripDetails';
 import NotFoundPage from './pages/NotFoundPage';
-import AllTrips from './pages/AllTrips';
+import Trips from './pages/Trips';
 
 // App maps every URL to a page. The Layout route wraps the others with the
 // shared navbar; each child route renders inside Layout's <Outlet />.
@@ -14,9 +14,9 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/trips" element={<AllTrips/>}/>
+        <Route path="/trips" element={<Trips/>}/>
         <Route path="/tasks" element={<TasksPage />} />
-        <Route path="/tasks/:id" element={<TaskDetailPage />} />
+        <Route path="/trips/:id" element={<TripDetails />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

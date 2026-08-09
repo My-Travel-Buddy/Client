@@ -21,8 +21,8 @@ export default function Navbar() {
         <NavLink to='/' end className={linkClass}>
           Home
         </NavLink>
-        <NavLink to='/tasks' className={linkClass}>
-          Tasks
+        <NavLink to='/trips' className={linkClass}>
+          Trips
         </NavLink>
       </nav>
     </header>
