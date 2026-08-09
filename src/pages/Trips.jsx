@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import axios from 'axios';
+import TripCalendar from "../components/Calendar";
 
 export default function Trips() {
 
@@ -46,7 +47,6 @@ export default function Trips() {
       </h2>
     </div>
     <section className='text-center'>
-      <h1 className='text-7xl'>My Travel Buddy</h1>
       {trips.map((trip,index)=> (
       <div key={index} className='mb-6'>
         <Link to={`/trips/${trip.id}`}>
@@ -62,6 +62,7 @@ export default function Trips() {
           <p>
             End Date: {trip.date_Range[1].value}
           </p>
+          <TripCalendar tripId={trip.id} />
         </Link>
         <br/>
       </div>
