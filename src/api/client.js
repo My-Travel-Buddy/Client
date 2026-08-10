@@ -5,23 +5,70 @@
 // Where the backend lives. In dev it's your local Express server; in production
 // set VITE_API_URL to your deployed backend URL. Vite only exposes vars that
 // start with VITE_, and reads them at build time.
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+// Shared request function
 export async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // send cookies (needed once you add login/auth)
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    credentials: "include",
+
     ...options,
   });
 
-  // fetch only throws on a network failure, so we check the HTTP status ourselves.
+  // fetch does not throw for 400 or 500 responses,
+  // so we check the status ourselves.
   if (!res.ok) {
-    // Our backend sends errors as { error: "..." }. Fall back if it didn't.
     const body = await res.json().catch(() => ({}));
+
     throw new Error(body.error || `Request failed (${res.status})`);
   }
 
-  // 204 No Content (e.g. after a DELETE) has no body to parse.
-  if (res.status === 204) return null;
+  // DELETE routes may return no JSON.
+  if (res.status === 204) {
+    return null;
+  }
+
   return res.json();
+}
+
+// AI
+export function generateItinerary(tripData) {
+  return request("/api/ai/itinerary", {
+    method: "POST",
+
+    body: JSON.stringify(tripData),
+  });
+}
+
+// Trips
+export function createTrip(tripData) {
+  return request("/trips/post", {
+    method: "POST",
+
+    body: JSON.stringify(tripData),
+  });
+}
+
+// Activities
+export function createActivity(tripId, activityData) {
+  return request(`/trips/${tripId}/activities`, {
+    method: "POST",
+
+    body: JSON.stringify(activityData),
+  });
+}
+// Checklist
+export function createChecklistItem(tripId, item) {
+  return request(`/trips/${tripId}/checklist/post`, {
+    method: "POST",
+
+    body: JSON.stringify({
+      item,
+    }),
+  });
 }
