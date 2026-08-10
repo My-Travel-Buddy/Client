@@ -25,3 +25,53 @@ export async function request(path, options = {}) {
   if (res.status === 204) return null;
   return res.json();
 }
+
+// --------------------------------------------------
+// AI
+// --------------------------------------------------
+
+// Ask Gemini to generate an itinerary.
+export function generateItinerary(tripData) {
+  return request("/api/ai/itinerary", {
+    method: "POST",
+    body: JSON.stringify(tripData),
+  });
+}
+
+// --------------------------------------------------
+// TRIPS
+// --------------------------------------------------
+
+// Save a new trip.
+export function createTrip(tripData) {
+  return request("/trips/post", {
+    method: "POST",
+    body: JSON.stringify(tripData),
+  });
+}
+
+// --------------------------------------------------
+// ACTIVITIES
+// --------------------------------------------------
+
+// Save an activity that belongs to a trip.
+export function createActivity(tripId, activityData) {
+  return request(`/trips/${tripId}/activities`, {
+    method: "POST",
+    body: JSON.stringify(activityData),
+  });
+}
+
+// -------------------------------------------------- 
+// CHECKLIST
+// --------------------------------------------------
+
+// Save a checklist item that belongs to a trip.
+export function createChecklistItem(tripId, item) {
+  return request(`/trips/${tripId}/checklist`, {
+    method: "POST",
+    body: JSON.stringify({
+      item,
+    }),
+  });
+}
