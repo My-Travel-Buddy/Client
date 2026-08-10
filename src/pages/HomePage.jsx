@@ -1,6 +1,7 @@
 // src/pages/HomePage.jsx
 
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 import {
   generateItinerary,
@@ -10,6 +11,8 @@ import {
 } from "../api/client";
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
   // Store the trip form values.
   const [formData, setFormData] = useState({
     destination: "",
@@ -44,23 +47,18 @@ export default function HomePage() {
     setMessage("");
 
     try {
-      // Build the trip information we send to the backend.
-      // formData is the React state object that stores the trip form values.
       const tripData = {
         destination: formData.destination,
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget,
-
-        // Turn "Food, Culture" into ["Food", " Culture"].
         interests: formData.interests.split(","),
       };
 
-      // client.js sends POST /api/ai/itinerary.
       const data = await generateItinerary(tripData);
 
-      // Store the generated itinerary so React can display it.
       setItinerary(data);
+      console.log(data)
     } catch (error) {
       setMessage(error.message);
     }
@@ -70,6 +68,9 @@ export default function HomePage() {
 
   // Save the generated trip.
   async function handleSaveTrip() {
+    // console.log to test the button
+    console.log("SAVE BUTTON CLICKED");
+
     if (!itinerary) {
       return;
     }
@@ -77,42 +78,47 @@ export default function HomePage() {
     try {
       setMessage("Saving trip...");
 
-      // Save the main Trip first.
+      // I convert that string into numbers before sending it:
+      const budgetRange = formData.budget
+        .split(",")
+        .map((value) => Number(value.trim()));
+
+      if (
+        budgetRange.length !== 2 ||
+        budgetRange.some((value) => Number.isNaN(value))
+      ) {
+        setMessage("Enter budget as minimum,maximum. Example: 0,1000");
+        return;
+      }
+        // Then I send that array to the backend:
       const savedTrip = await createTrip({
         destination: itinerary.destination,
-
-        date_Range: [
-          itinerary.startDate,
-          itinerary.endDate,
-        ],
-
-        budget: itinerary.budget,
+        date_Range: [itinerary.startDate, itinerary.endDate],
+        budget: budgetRange,
       });
 
-      // We need the TripId to connect activities
-      // and checklist items to this trip.
       const tripId = savedTrip.id;
 
       // Save every generated activity.
-      for (const activity of itinerary.activities) {
+      for (const activity of itinerary.activities || []) {
         await createActivity(tripId, {
           title: activity.title,
           category: activity.category,
-
-          // dateTime is used later by the calendar.
           dateTime: activity.dateTime,
-
           estimatedCost: activity.estimatedCost,
           notes: activity.notes,
         });
       }
 
       // Save every generated checklist item.
-      for (const item of itinerary.checklist) {
+      for (const item of itinerary.checklist || []) {
         await createChecklistItem(tripId, item);
       }
 
       setMessage("Trip saved successfully!");
+
+      // Open the saved trip.
+      navigate(`/trips/${tripId}`);
     } catch (error) {
       setMessage(error.message);
     }
@@ -120,26 +126,16 @@ export default function HomePage() {
 
   return (
     <section className="mx-auto max-w-2xl p-8">
-      {/* Page heading */}
-      <h1 className="mb-2 text-3xl font-bold">
-        Plan Your Trip
-      </h1>
+      <h1 className="mb-2 text-3xl font-bold">Plan Your Trip</h1>
 
       <p className="mb-6 text-gray-600">
-        Enter your trip details and let My Travel Buddy
-        create an itinerary for you.
+        Enter your trip details and let My Travel Buddy create an itinerary for
+        you.
       </p>
 
-      {/* Trip form */}
-      <form
-        onSubmit={handleGenerate}
-        className="space-y-4"
-      >
+      <form onSubmit={handleGenerate} className="space-y-4">
         <div>
-          <label
-            htmlFor="destination"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="destination" className="mb-1 block font-medium">
             Destination
           </label>
 
@@ -154,10 +150,7 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label
-            htmlFor="startDate"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="startDate" className="mb-1 block font-medium">
             Start Date
           </label>
 
@@ -172,10 +165,7 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label
-            htmlFor="endDate"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="endDate" className="mb-1 block font-medium">
             End Date
           </label>
 
@@ -190,17 +180,14 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label
-            htmlFor="budget"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="budget" className="mb-1 block font-medium">
             Budget
           </label>
 
           <input
             id="budget"
             name="budget"
-            placeholder="Moderate"
+            placeholder="0 - 1000000"
             value={formData.budget}
             onChange={handleChange}
             className="w-full rounded-md border border-gray-300 p-2"
@@ -208,10 +195,7 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label
-            htmlFor="interests"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="interests" className="mb-1 block font-medium">
             Interests
           </label>
 
@@ -225,99 +209,58 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Generate button */}
         <button
           type="submit"
           disabled={loading}
           className="rounded-md bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
         >
-          {loading
-            ? "Generating..."
-            : "Generate Itinerary"}
+          {loading ? "Generating..." : "Generate Itinerary"}
         </button>
       </form>
 
-      {/* Success or error message */}
-      {message && (
-        <p className="mt-4">
-          {message}
-        </p>
-      )}
+      {message && <p className="mt-4">{message}</p>}
 
-      {/* Show the itinerary only after Gemini returns one. */}
       {itinerary && (
         <section className="mt-8">
-          <h2 className="mb-2 text-2xl font-bold">
-            {itinerary.title}
-          </h2>
+          <h2 className="mb-2 text-2xl font-bold">{itinerary.title}</h2>
 
-          <p className="mb-4 text-gray-600">
-            {itinerary.summary}
-          </p>
+          <p className="mb-4 text-gray-600">{itinerary.summary}</p>
 
-          {/* Tell the user when only part of a long trip was generated. */}
           {itinerary.hasMoreDays && (
             <p className="mb-4">
-              Your trip is {itinerary.tripDays} days.
-              We generated the first{" "}
+              Your trip is {itinerary.tripDays} days. We generated the first{" "}
               {itinerary.generatedDays} days.
             </p>
           )}
 
-          {/* Generated activities */}
-          <h3 className="mb-3 text-xl font-semibold">
-            Activities
-          </h3>
+          <h3 className="mb-3 text-xl font-semibold">Activities</h3>
 
           <div className="space-y-4">
-            {itinerary.activities.map(
-              (activity, index) => (
-                <div
-                  key={index}
-                  className="rounded-md border border-gray-200 bg-white p-4"
-                >
-                  <h4 className="mb-2 font-semibold">
-                    Day {activity.day}:{" "}
-                    {activity.title}
-                  </h4>
+            {(itinerary.activities || []).map((activity, index) => (
+              <div
+                key={index}
+                className="rounded-md border border-gray-200 bg-white p-4"
+              >
+                <h4 className="mb-2 font-semibold">
+                  Day {activity.day}: {activity.title}
+                </h4>
 
-                  <p>
-                    Time: {activity.time}
-                  </p>
-
-                  <p>
-                    Category: {activity.category}
-                  </p>
-
-                  <p>
-                    Estimated Cost: $
-                    {activity.estimatedCost}
-                  </p>
-
-                  <p className="mt-2">
-                    {activity.notes}
-                  </p>
-                </div>
-              )
-            )}
+                <p>Time: {activity.time}</p>
+                <p>Category: {activity.category}</p>
+                <p>Estimated Cost: ${activity.estimatedCost}</p>
+                <p className="mt-2">{activity.notes}</p>
+              </div>
+            ))}
           </div>
 
-          {/* Generated checklist */}
-          <h3 className="mb-2 mt-6 text-xl font-semibold">
-            Checklist
-          </h3>
+          <h3 className="mb-2 mt-6 text-xl font-semibold">Checklist</h3>
 
           <ul className="list-disc pl-6">
-            {itinerary.checklist.map(
-              (item, index) => (
-                <li key={index}>
-                  {item}
-                </li>
-              )
-            )}
+            {(itinerary.checklist || []).map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
           </ul>
 
-          {/* Nothing is saved until the user clicks this button. */}
           <button
             type="button"
             onClick={handleSaveTrip}
