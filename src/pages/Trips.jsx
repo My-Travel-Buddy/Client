@@ -62,7 +62,6 @@ export default function Trips() {
           <p>
             End Date: {trip.date_Range[1].value}
           </p>
-          <TripCalendar tripId={trip.id} />
         </Link>
         <br/>
       </div>
