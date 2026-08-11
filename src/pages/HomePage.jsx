@@ -56,7 +56,8 @@ export default function HomePage() {
       };
 
       const data = await generateItinerary(tripData);
-
+      console.log("AI RESPONSE:", data);
+      
       setItinerary(data);
       console.log(data)
     } catch (error) {

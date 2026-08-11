@@ -1,62 +1,7 @@
-/* src/App.css — app-level rules that aren't part of the design system.
- *
- * The palette, typography and component classes live in index.css. What's here
- * are two behaviours that apply to the whole app regardless of theme.
- */
-
-/* ---------------------------------------------------------------------------
- * Respect "reduce motion"
- * -------------------------------------------------------------------------
- * Some people get motion sickness from animation, and the OS setting is how
- * they say so. Our spinners still need to convey "working", so they're allowed
- * to keep turning — just slowly — while everything else stops moving.
- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .animate-spin {
-    animation-duration: 1.5s !important;
-    animation-iteration-count: infinite !important;
-  }
+#root {
+  min-height: 100vh;
 }
 
-/* ---------------------------------------------------------------------------
- * Printing a trip
- * -------------------------------------------------------------------------
- * A traveller printing their itinerary wants the schedule, not the navigation,
- * the hero photo or the delete button. Cmd-P on a trip page gives a clean
- * one-page plan they can fold into a passport.
- */
-@media print {
-  header,
-  footer,
-  aside,
-  button,
-  .no-print {
-    display: none !important;
-  }
-
-  body {
-    background: #fff;
-  }
-
-  /* Cards become plain rows: shadows and rounded corners waste toner and add
-     nothing on paper. */
-  .card {
-    box-shadow: none !important;
-    border: 1px solid #e6ebf1;
-    border-radius: 0;
-  }
-
-  /* Don't split an activity across two sheets. */
-  li {
-    break-inside: avoid;
-  }
+main {
+  width: 100%;
 }
