@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { getVisaRequirements } from "../api/client";
 
 import {
   generateItinerary,
@@ -21,6 +22,14 @@ export default function HomePage() {
     budget: "",
     interests: "",
   });
+
+const [visaInfo, setVisaInfo] = useState(null);
+async function handleVisaCheck() {
+  const data = await getVisaRequirements("US", "CN");
+  setVisaInfo(data);
+}
+
+
 
   // Store the itinerary returned by Gemini.
   const [itinerary, setItinerary] = useState(null);
@@ -242,6 +251,8 @@ export default function HomePage() {
                 key={index}
                 className="rounded-md border border-gray-200 bg-white p-4"
               >
+                {console.log(activity)}
+                
                 <h4 className="mb-2 font-semibold">
                   Day {activity.day}: {activity.title}
                 </h4>

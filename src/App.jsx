@@ -7,6 +7,7 @@ import TasksPage from './pages/TasksPage';
 import TripDetails from './pages/TripDetails';
 import NotFoundPage from './pages/NotFoundPage';
 import Trips from './pages/Trips';
+import "./App.css";
 import ProtectedPage from './pages/ProtectedPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';

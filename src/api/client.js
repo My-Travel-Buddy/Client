@@ -39,6 +39,31 @@ export function generateItinerary(tripData) {
 }
 
 // --------------------------------------------------
+// getVisaRequirements
+// --------------------------------------------------
+export function getVisaRequirements(passportCode, destinationCode) {
+  return request("/trips/visa", {
+    method: "POST",
+    body: JSON.stringify({
+      passportCode,
+      destinationCode,
+    }),
+  });
+}
+
+// // this give me GET /trips/travel-requirements
+// export function getTravelRequirements(destination, passportCountry) {
+//   const params = new URLSearchParams({
+//      destination,
+//      passportCountry
+//      });
+//      return request(
+//       `/trips/travel-requirements?${params.toString()}`
+//      );
+// }
+
+
+// --------------------------------------------------
 // TRIPS
 // --------------------------------------------------
 
@@ -60,16 +85,6 @@ export function createActivity(tripId, activityData) {
     method: "POST",
     body: JSON.stringify(activityData),
   });
-}
-// this give me GET /trips/travel-requirements
-export function getTravelRequirements(destination, passportCountry) {
-  const params = new URLSearchParams({
-     destination,
-     passportCountry
-     });
-     return request(
-      `/trips/travel-requirements?${params.toString()}`
-     );
 }
 
 // --------------------------------------------------
