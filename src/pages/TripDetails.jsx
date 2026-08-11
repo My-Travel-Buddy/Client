@@ -53,7 +53,7 @@ export default function TripDetails() {
         {trip.date_Range[0].value} -to- {trip.date_Range[1].value}
       </p>
       <p>
-        Budget: ${trip.budget[0].value}-${trip.budget[1].value}
+        Budget: ${trip.budget}
       </p>
       <div>
         <button
