@@ -1,78 +1,98 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
-import axios from 'axios';
-import TripCalendar from "../components/Calendar";
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import { request } from "../api/client";
 
 export default function Trips() {
-
+  // Store the saved trips returned by the backend.
   const [trips, setTrips] = useState([]);
+
+  // Track whether the trips are still loading.
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
 
-  const BACKEND_API = import.meta.env.VITE_API_URL; 
+  // Store an error message if the request fails.
+  const [error, setError] = useState("");
 
-  console.log();
+  // Load all saved trips when this page first opens.
   useEffect(() => {
-    const getBackendData = async () => {
-      try{
-        const response = await axios.get(`${BACKEND_API}/trips`)
-        const data = response.data
+    async function getTrips() {
+      try {
+        // client.js sends GET /trips to the backend.
+        const data = await request("/trips");
 
-        setTrips(data)
+        // The backend returns an array of saved trips.
+        setTrips(data);
+      } catch (error) {
+        setError(error.message);
       }
-      catch(err){
-        setError(err.response?.data?.message || err.message || 'Failed to load trips');
-      }
-      finally{
-        setLoading(false)
-      }
+
+      setLoading(false);
     }
-    getBackendData()
-  },[])
 
-  if (loading){
-    return <div>Loading...</div>
+    getTrips();
+  }, []);
+
+  // Show a loading message while waiting for the backend.
+  if (loading) {
+    return <p>Loading trips...</p>;
   }
 
-  if (error){
-    return <div>Error: {error}</div>
+  // Show an error if the request failed.
+  if (error) {
+    return <p>Error: {error}</p>;
   }
+
   return (
-  <>
-      <div>
-      <h2>
-          <Link to='/'>
-            + Plan New Trip
-          </Link>
-      </h2>
-    </div>
-    <section className='text-center'>
-      {trips.map((trip,index)=> (
-      <div key={index} className='mb-6'>
-        <Link to={`/trips/${trip.id}`}>
-          <h2>
-            {trip.destination} Trip 
-          </h2>
-          <h3>
-            Budget: ${trip.budget[0].value}-${trip.budget[1].value}
-          </h3>
-          <p>
-            Start Date: {trip.date_Range[0].value}
-          </p>
-          <p>
-            End Date: {trip.date_Range[1].value}
-          </p>
-          <TripCalendar tripId={trip.id} />
-        </Link>
-        <br/>
-      </div>
-       ))}
-    </section>
-    <br/>
-    <h1>
-      Suggested Trips
-    </h1>
+    <section className="mx-auto max-w-3xl p-8">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold">
+          My Trips
+        </h1>
 
-  </>
+        {/* Go back to the Home page to create another trip. */}
+        <Link
+          to="/"
+          className="rounded-md bg-blue-600 px-4 py-2 text-white"
+        >
+          + Plan New Trip
+        </Link>
+      </div>
+
+      {/* Show a message if the user has no saved trips. */}
+      {trips.length === 0 ? (
+        <p>No saved trips yet.</p>
+      ) : (
+        <div className="space-y-4">
+
+          {/* Create one card for every saved trip. */}
+          {trips.map((trip) => (
+            <Link
+              key={trip.id}
+              to={`/trips/${trip.id}`}
+              className="block rounded-md border bg-white p-4"
+            >
+              <h2 className="text-xl font-semibold">
+                {trip.destination}
+              </h2>
+
+              {/* The backend stores budget as a min/max range. */}
+              <p>
+                Budget: ${trip.budget[0].value}
+                {" - $"}
+                {trip.budget[1].value}
+              </p>
+
+              {/* The backend stores the trip dates as a date range. */}
+              <p>
+                Start Date: {trip.date_Range[0].value}
+              </p>
+
+              <p>
+                End Date: {trip.date_Range[1].value}
+              </p>
+            </Link>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }

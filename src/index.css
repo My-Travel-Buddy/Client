@@ -1,157 +1,22 @@
-/* /* src/index.css — the design system, in one file.
- *
- * Everything visual starts here: the palette, the two typefaces, and a handful
- * of component classes for the shapes that repeat across every screen (cards,
- * chips, buttons, inputs). Pages then compose Tailwind utilities on top.
- */
-
 @import "tailwindcss";
 
-@theme {
-  /* ---------- brand ----------
-   * The teal from the mockups. It carries every primary action, the active nav
-   * link, and the progress bar, so it lives as a full scale rather than a
-   * single hex — hovers and tints need neighbours to move to.
-   */
-  --color-brand-50: #eefaf8;
-  --color-brand-100: #d3f2ee;
-  --color-brand-200: #a8e5de;
-  --color-brand-300: #74d2c8;
-  --color-brand-400: #3fbab0;
-  --color-brand-500: #14a89b;
-  --color-brand-600: #0e8b81;
-  --color-brand-700: #0d6f68;
-  --color-brand-800: #0e5854;
-  --color-brand-900: #0d4946;
-
-  /* ---------- neutrals ---------- */
-  --color-ink: #0f1729; /* headings */
-  --color-body: #475569; /* paragraphs */
-  --color-muted: #64748b; /* labels, meta */
-  --color-line: #e6ebf1; /* borders and dividers */
-  --color-canvas: #f7f9fb; /* page background behind the cards */
-
-  /* ---------- type ----------
-   * Display for headings (geometric, slightly rounded), Inter for everything
-   * else. Both are loaded in index.html.
-   */
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-
-  /* ---------- elevation ----------
-   * One soft, wide shadow used everywhere. The mockups never stack heavy
-   * shadows; depth comes from the shadow being large and very low-opacity.
-   */
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px rgb(15 23 42 / 0.06);
-  --shadow-lift: 0 2px 4px rgb(15 23 42 / 0.05), 0 16px 40px rgb(15 23 42 / 0.10);
+/* Basic global styles for the app. */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f8fafc;
+  color: #1f2937;
 }
 
-@layer base {
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    margin: 0;
-    min-width: 320px;
-    min-height: 100vh;
-    background-color: var(--color-canvas);
-    color: var(--color-body);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1, h2, h3, h4 {
-    font-family: var(--font-display);
-    color: var(--color-ink);
-    letter-spacing: -0.02em;
-  }
-
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  button {
-    cursor: pointer;
-    font-family: inherit;
-  }
-
-  /* One visible focus style for keyboard users across the whole app. Removing
-   * outlines without replacing them is the most common way a polished-looking
-   * UI becomes unusable without a mouse. */
-  :focus-visible {
-    outline: 2px solid var(--color-brand-500);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
+/* Remove the default underline from links. */
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-@layer components {
-  /* ---------- surfaces ---------- */
-  .card {
-    @apply rounded-2xl bg-white shadow-[var(--shadow-card)];
-  }
-
-  /* ---------- buttons ----------
-   * Tailwind v4 only lets @apply pull in real utilities, not other custom
-   * classes — so the shared base is a grouped selector rather than
-   * `.btn-primary { @apply btn ... }`, and each variant only adds its colours.
-   */
-  .btn,
-  .btn-primary,
-  .btn-secondary,
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3
-           text-sm font-semibold transition
-           disabled:cursor-not-allowed disabled:opacity-60;
-  }
-
-  .btn-primary {
-    @apply bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700;
-  }
-
-  .btn-secondary {
-    @apply border border-line bg-white text-ink hover:bg-slate-50;
-  }
-
-  .btn-ghost {
-    @apply border border-brand-500 bg-white text-brand-600 hover:bg-brand-50;
-  }
-
-  /* ---------- form controls ---------- */
-  .label {
-    @apply mb-1.5 block text-xs font-semibold text-ink;
-  }
-
-  .input {
-    @apply w-full rounded-xl border border-line bg-slate-50/70 px-4 py-3
-           text-sm text-ink transition
-           placeholder:text-slate-400
-           focus:border-brand-400 focus:bg-white focus:outline-none
-           focus:ring-4 focus:ring-brand-500/10;
-  }
-
-  /* ---------- chips ----------
-   * The interest selector on the planner, and the read-only tags on a trip.
-   */
-  .chip,
-  .chip-idle,
-  .chip-active,
-  .chip-static {
-    @apply inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5
-           text-xs font-medium transition;
-  }
-
-  .chip-idle {
-    @apply border-line bg-slate-50 text-body hover:border-slate-300;
-  }
-
-  .chip-active {
-    @apply border-brand-300 bg-brand-50 text-brand-700;
-  }
-
-  .chip-static {
-    @apply border-transparent bg-slate-100 text-body;
-  }
-} */
+/* Show the pointer when hovering over buttons. */
+button {
+  cursor: pointer;
+}
