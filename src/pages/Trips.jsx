@@ -51,24 +51,6 @@ export default function Trips() {
       </h2>
     </div>
     <section className='text-center'>
-      {trips.map((trip,index)=> (
-      <div key={index} className='mb-6'>
-        <Link to={`/trips/${trip.id}`}>
-          <h2>
-            {trip.destination} Trip 
-          </h2>
-          <h3>
-            Budget: ${trip.budget[0].value}-${trip.budget[1].value}
-          </h3>
-          <p>
-            Start Date: {trip.date_Range[0].value}
-          </p>
-          <p>
-            End Date: {trip.date_Range[1].value}
-          </p>
-        </Link>
-      </div>
-
       {/* Show a message if the user has no saved trips. */}
       {trips.length === 0 ? (
         <p>No saved trips yet.</p>
@@ -88,9 +70,7 @@ export default function Trips() {
 
               {/* The backend stores budget as a min/max range. */}
               <p>
-                Budget: ${trip.budget[0].value}
-                {" - $"}
-                {trip.budget[1].value}
+                Budget: ${trip.budget}
               </p>
 
               {/* The backend stores the trip dates as a date range. */}
@@ -106,5 +86,6 @@ export default function Trips() {
         </div>
       )}
     </section>
+  </>
   );
 }
