@@ -42,18 +42,30 @@ export default function Trips() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">
-          My Trips
-        </h1>
-
-        {/* Go back to the Home page to create another trip. */}
-        <Link
-          to="/"
-          className="rounded-md bg-blue-600 px-4 py-2 text-white"
-        >
-          + Plan New Trip
+  <>
+      <div>
+      <h2>
+          <Link to='/'>
+            + Plan New Trip
+          </Link>
+      </h2>
+    </div>
+    <section className='text-center'>
+      {trips.map((trip,index)=> (
+      <div key={index} className='mb-6'>
+        <Link to={`/trips/${trip.id}`}>
+          <h2>
+            {trip.destination} Trip 
+          </h2>
+          <h3>
+            Budget: ${trip.budget[0].value}-${trip.budget[1].value}
+          </h3>
+          <p>
+            Start Date: {trip.date_Range[0].value}
+          </p>
+          <p>
+            End Date: {trip.date_Range[1].value}
+          </p>
         </Link>
       </div>
 
