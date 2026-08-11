@@ -5,6 +5,7 @@ import TasksPage from './pages/TasksPage';
 import TripDetails from './pages/TripDetails';
 import NotFoundPage from './pages/NotFoundPage';
 import Trips from './pages/Trips';
+import "./App.css";
 
 // App maps every URL to a page. The Layout route wraps the others with the
 // shared navbar; each child route renders inside Layout's <Outlet />.
