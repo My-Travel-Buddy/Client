@@ -1,18 +1,30 @@
 function Checklist({ trip }) {
   console.log(trip.Checklists);
 
+async function check(params) {
+  
+  
+}
+
+
   return (
     <>
-      <div>Checklist</div>
-      {trip.Checklists.map((list, index) => (
-        <div key={index}>
-          <ol>
-            <li>
+
+      <form>
+      <fieldset>
+        <legend>Checklist</legend>
+        {trip.Checklists.map((list, index) => (
+          <label key={list.text} value={list.text}>
+            <ul>
+              <li>
+                <input type="checkbox" id="checklist"  />{" "}
                 {list.text}
-            </li>
-          </ol>
-        </div>
-      ))}
+              </li>
+            </ul>
+          </label>
+        ))}
+      </fieldset>
+      </form>
     </>
   );
 }
