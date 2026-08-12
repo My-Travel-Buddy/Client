@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
-import TasksPage from './pages/TasksPage';
+import Confirmation from './pages/Confirmation';
 import TripDetails from './pages/TripDetails';
 import NotFoundPage from './pages/NotFoundPage';
 import Trips from './pages/Trips';
@@ -139,6 +139,7 @@ function App() {
         }
       >
         <Route path='/' element={<HomePage />} />
+        <Route path='/trips/itinerary' element={<Confirmation/>}/>
 
         {/* Public on purpose: you can reach these while logged OUT.
             They get setUser so they can report a successful login back up. */}
