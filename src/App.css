@@ -113,6 +113,31 @@ form input:focus {
   box-shadow: 0 0 0 4px rgba(16, 156, 139, 0.12);
 }
 
+/* Interest dropdown */
+.interest-dropdown {
+  width: 100%;
+  min-height: 52px;          
+  box-sizing: border-box;
+  padding: 12px 24px;          
+  
+  color: #172033;             
+  font-family: inherit;
+  font-size: 1rem;
+  
+  background-color: #f9fbfc;   
+  border: 1px solid #cad5df;   
+  border-radius: 15px;         
+  outline: none;              
+  cursor: pointer;
+  transition: 0.2s ease;      
+
+/* Focus glow effect for interest dropdown */
+.interest-dropdown:focus {
+  border-color: #109c8b;
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(16, 156, 139, 0.12);
+}
+
 /* Generate button */
 form button[type="submit"] {
   align-self: end;
@@ -267,23 +292,3 @@ section section > button[type="button"]:hover {
     columns: 1;
   }
 }
-
-
-/* Interes dropdown */
-.interest-dropdown {
-  width: 100%;
-  height: 50
-  px;
-  box-sizing: border-box;
-  padding: 0 24px;
-
-  color: #475569;
-  font-family: inherit;
-  font-size: 1rem;
-
-  background-color: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
