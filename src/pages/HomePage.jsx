@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import RenderingTrips from "../components/harcodedTrips"
 
 import {
   generateItinerary,
@@ -220,7 +221,7 @@ export default function HomePage() {
 
       {message && <p className="mt-4">{message}</p>}
 
-      {itinerary && (
+      {itinerary ? (
         <section className="mt-8">
           <h2 className="mb-2 text-2xl font-bold">{itinerary.title}</h2>
 
@@ -269,7 +270,8 @@ export default function HomePage() {
             Save Trip
           </button>
         </section>
-      )}
+      ) : 
+      <RenderingTrips />}
     </section>
   );
 }
