@@ -1,3 +1,5 @@
+import TripCalendar from "./Calendar";
+
 function Activities({ trip }) {
   console.log(trip.Activities);
 
