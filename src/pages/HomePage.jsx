@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { getVisaRequirements } from "../api/client";
+import heroImage from "../assets/hero.png";
 
 import {
   generateItinerary,
@@ -23,13 +24,11 @@ export default function HomePage() {
     interests: "",
   });
 
-const [visaInfo, setVisaInfo] = useState(null);
-async function handleVisaCheck() {
-  const data = await getVisaRequirements("US", "CN");
-  setVisaInfo(data);
-}
-
-
+  const [visaInfo, setVisaInfo] = useState(null);
+  async function handleVisaCheck() {
+    const data = await getVisaRequirements("US", "CN");
+    setVisaInfo(data);
+  }
 
   // Store the itinerary returned by Gemini.
   const [itinerary, setItinerary] = useState(null);
@@ -66,9 +65,9 @@ async function handleVisaCheck() {
 
       const data = await generateItinerary(tripData);
       console.log("AI RESPONSE:", data);
-      
+
       setItinerary(data);
-      console.log(data)
+      console.log(data);
     } catch (error) {
       setMessage(error.message);
     }
@@ -100,7 +99,7 @@ async function handleVisaCheck() {
         setMessage("Enter budget as minimum,maximum. Example: 0,1000");
         return;
       }
-        // Then I send that array to the backend:
+      // Then I send that array to the backend:
       const savedTrip = await createTrip({
         destination: itinerary.destination,
         date_Range: [itinerary.startDate, itinerary.endDate],
@@ -131,11 +130,17 @@ async function handleVisaCheck() {
       navigate(`/trips/${tripId}`);
     } catch (error) {
       setMessage(error.message);
+      ƒ;
     }
   }
 
   return (
-    <section className="mx-auto max-w-2xl p-8">
+    <section
+      className="mx-auto max-w-2xl bg-cover bg-center bg-no-repeat p-8"
+      style={{
+        backgroundImage: `url(${heroImage})`,
+      }}
+    >
       <h1 className="mb-2 text-3xl font-bold">Plan Your Trip</h1>
 
       <p className="mb-6 text-gray-600">
@@ -205,18 +210,27 @@ async function handleVisaCheck() {
         </div>
 
         <div>
-          <label htmlFor="interests" className="mb-1 block font-medium">
-            Interests
+          <label htmlFOr="interess" className="mb-1 block font-medium">
+            Interest & activities
           </label>
 
-          <input
+          <select
             id="interests"
             name="interests"
-            placeholder="Food, Culture"
             value={formData.interests}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 p-2"
-          />
+            className="interest-dropdown"
+            required
+          >
+            <option value="">Select an interest</option>
+            <option value="Culture & History">Culture & History</option>
+            <option value="Food & Culinary">Food & Culinary</option>
+            <option value="Nature & Outdoors">Nature & Outdoors</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Art & Architecture">Art & Architecture</option>
+            <option value="Photograpy Hotspots">Photograpy Hotspots</option>
+            <option value="Cozy Cafes">Cozy Cafes</option>
+          </select>
         </div>
 
         <button
@@ -252,7 +266,7 @@ async function handleVisaCheck() {
                 className="rounded-md border border-gray-200 bg-white p-4"
               >
                 {console.log(activity)}
-                
+
                 <h4 className="mb-2 font-semibold">
                   Day {activity.day}: {activity.title}
                 </h4>
