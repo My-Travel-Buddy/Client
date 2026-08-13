@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips"
 import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
-import { generateItinerary } from "../api/client";
+// import { generateItinerary } from "../api/client";
 
 export default function HomePage() {
   const navigate = useNavigate();
