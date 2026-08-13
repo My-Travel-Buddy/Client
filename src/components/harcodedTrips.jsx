@@ -37,7 +37,7 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             id:"banff",
             destination: "Banff, Canada",
             interest: "kayaking, hiking, nature photography",
-            price:"$160/day",
+            price:160,
             season: "Summer",
             image:"https://images.unsplash.com/photo-1662434449168-35f32702b665?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJhbmZmfGVufDB8fDB8fHww"
 
@@ -72,14 +72,14 @@ function TripCard({ trip, selected, onClick }) {
                     <h3>{trip.destination.split(",")[0]}</h3>
                     <span className="trip-card-season">{trip.season}</span>
                  </div>
-                 <p className= "trip-card-price">cost:{trip.price}</p>
+                 <p className= "trip-card-price">cost:${trip.price}/per day</p>
 
             </div>
             
         </div>
     );
 }
-export default function RenderingTrips(){
+export default function RenderingTrips({setFormData}){
     const [activeInterests, setActiveinterests] = useState([]);
     const [selectedTrip, setSelectedTrip] = useState(null);
     
@@ -89,6 +89,16 @@ export default function RenderingTrips(){
         
     );
     console.log(activeInterests)
+    }
+
+    function handleOnClick(idx){
+        setFormData({
+            destination: trips[idx].destination,
+            startDate: "awds",
+            endDate: "aw",
+            budget: trips[idx].price,
+            interests: "culture",
+        })
     }
 
     return(
@@ -114,7 +124,7 @@ export default function RenderingTrips(){
                 key={idx}
                 trip={trip}
                 selected={selectedTrip === idx}
-                onClick={() => setSelectedTrip(idx)}
+                onClick={() => handleOnClick(idx)}
                 />
             ))}
            </div>
