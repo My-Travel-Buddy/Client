@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import RenderingTrips from "../components/harcodedTrips"
+import {
+  generateItinerary,
+  createTrip,
+  createActivity,
+  createChecklistItem,
+} from "../api/client";
 import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
 import { generateItinerary } from "../api/client";
@@ -184,5 +191,8 @@ export default function HomePage() {
       {message && <p className="mt-4">{message}</p>}
 
     </section>
+    
   );
+  
+<RenderingTrips/>
 }
