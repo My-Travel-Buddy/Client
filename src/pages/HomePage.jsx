@@ -70,7 +70,7 @@ export default function HomePage() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget,
-        interests: formData.interests
+        interests: formData.interests.split(","),
       };
       
       const data = await generateItinerary(tripData);
@@ -201,7 +201,7 @@ export default function HomePage() {
       </form>
 
       {message && <p className="mt-4">{message}</p>}
-<RenderingTrips setFormData={setFormData}/>
+
     </section>
     
   );

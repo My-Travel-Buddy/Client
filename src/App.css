@@ -176,6 +176,7 @@ section section > button[type="button"] {
   transition: 0.2s ease;
 }
 
+<<<<<<< Updated upstream
 form input:focus {
   border-color: #109c8b;
   background-color: white;
@@ -195,6 +196,8 @@ form button[type="submit"] {
   transition: 0.2s ease;
 }
 
+=======
+>>>>>>> Stashed changes
 form button[type="submit"]:hover,
 section section > button[type="button"]:hover {
   background: #087f72;
