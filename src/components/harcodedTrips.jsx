@@ -96,17 +96,7 @@ export default function RenderingTrips(){
 
 
         <div className="trips-page">
-            <div className="interests-bar">
-                <span className="interests-label">Interests:</span>
-                {interests.map((interest) =>(
-                    <InterestTag
-                    key={interest}
-                    label={interest}
-                    active={activeInterests.includes(interest)}
-                    onClick={() => toggleInterest(interest)}
-                    />
-                ))}
-            </div>
+            <br />
            <h1> Popular destinations</h1>
            <div className="trips-grid">
             {trips.map((trip,idx) => (

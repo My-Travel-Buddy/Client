@@ -93,9 +93,78 @@ form label {
   font-weight: 700;
 }
 
-/* Inputs */
 form input {
   width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  color: #172033;
+  font: inherit;
+  background: #f9fbfc;
+  border: 1px solid #cad5df;
+  border-radius: 12px;
+  outline: none;
+}
+
+form input:focus {
+  background: white;
+  border-color: #109c8b;
+  box-shadow: 0 0 0 4px #109c8b1f;
+}
+
+/* Interests */
+.interests-section {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.interests-label {
+  color: #334155;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.interest-options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.interest-pill {
+  padding: 10px 24px;
+  color: #475569;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  background-color: #f1f5f9;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.interest-pill:hover {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.interest-pill.selected {
+  background-color: #b9f5e8;
+  color: #008f83;
+}
+
+/* Buttons */
+form button[type="submit"],
+section section > button[type="button"] {
   min-height: 52px;
   padding: 12px 15px;
   border: 1px solid #cad5df;
@@ -126,9 +195,9 @@ form button[type="submit"] {
   transition: 0.2s ease;
 }
 
-form button[type="submit"]:hover {
-  transform: translateY(-1px);
-  background-color: #087f72;
+form button[type="submit"]:hover,
+section section > button[type="button"]:hover {
+  background: #087f72;
 }
 
 form button[type="submit"]:disabled {
@@ -261,6 +330,20 @@ section section > button[type="button"]:hover {
 
   form > div:first-child {
     grid-column: auto;
+  }
+
+  .interests-section {
+    grid-column: auto;
+    align-items: flex-start;
+  }
+
+  .interest-options {
+    width: 100%;
+  }
+
+  .interest-pill {
+    padding: 9px 18px;
+    font-size: 15px;
   }
 
   section section > ul {

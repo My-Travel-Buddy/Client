@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips"
 import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
-// import { generateItinerary } from "../api/client";
+import { generateItinerary } from "../api/client";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function HomePage() {
     startDate: "",
     endDate: "",
     budget: "",
-    interests: "",
+    interests: [],
   });
 
   const [visaInfo, setVisaInfo] = useState(null);
@@ -42,12 +42,27 @@ export default function HomePage() {
     });
   }
 
+  // the function that validate the interest field
+  function handleInterestClick(interest) {
+    setFormData((previewsFormData) => {
+      const isSelected = previewsFormData.interests.includes(interest);
+
+      return {
+        ...previewsFormData,
+        interests: isSelected
+          ? previewsFormData.interests.filter((item) => item !== interest)
+          : [...previewsFormData.interests, interest],
+      };
+    });
+  }
+
   // Generate the itinerary.
   async function handleGenerate(event) {
     event.preventDefault();
 
     setLoading(true);
     setMessage("");
+    // console.log(formData.interests.join(", "))
 
     try {
       const tripData = {
@@ -55,24 +70,24 @@ export default function HomePage() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget,
-        interests: formData.interests.split(","),
+        interests: formData.interests
       };
-
+      
       const data = await generateItinerary(tripData);
       console.log("AI RESPONSE:", data);
 
       setItinerary(data);
       console.log(data);
-     
-      navigate('/trips/itinerary', {state: {itinerary: {...tripData, ...data} }});
-    
+
+      navigate("/trips/itinerary", {
+        state: { itinerary: { ...tripData, ...data } },
+      });
     } catch (error) {
       setMessage(error.message);
     }
 
     setLoading(false);
   }
-  
 
   return (
     <section
@@ -148,29 +163,32 @@ export default function HomePage() {
             className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
+        <div className="interests-section">
+          <span className="interests-label">INTERESTS:</span>
 
-        <div>
-          <label htmlFOr="interess" className="mb-1 block font-medium">
-            Interest & activities
-          </label>
-
-          <select
-            id="interests"
-            name="interests"
-            value={formData.interests}
-            onChange={handleChange}
-            className="interest-dropdown"
-            required
-          >
-            <option value="">Select an interest</option>
-            <option value="Culture & History">Culture & History</option>
-            <option value="Food & Culinary">Food & Culinary</option>
-            <option value="Nature & Outdoors">Nature & Outdoors</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Art & Architecture">Art & Architecture</option>
-            <option value="Photograpy Hotspots">Photograpy Hotspots</option>
-            <option value="Cozy Cafes">Cozy Cafes</option>
-          </select>
+          <div className="interest-options">
+            {[
+              "Food",
+              "Sightseeing",
+              "Culture",
+              "Adventure",
+              "Shopping",
+              "Transportation",
+              "Entertainment",
+              "Other",
+            ].map((interest) => (
+              <button
+                key={interest}
+                type="button"
+                onClick={() => handleInterestClick(interest)}
+                className={`interest-pill ${
+                  formData.interests.includes(interest) ? "selected" : ""
+                }`}
+              >
+                {interest}
+              </button>
+            ))}
+          </div>
         </div>
 
         <button
