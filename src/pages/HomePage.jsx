@@ -3,12 +3,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips"
-import {
-  generateItinerary,
-  createTrip,
-  createActivity,
-  createChecklistItem,
-} from "../api/client";
 import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
 import { generateItinerary } from "../api/client";
@@ -83,9 +77,9 @@ export default function HomePage() {
   return (
     <section
       className="mx-auto max-w-2xl bg-cover bg-center bg-no-repeat p-8"
-      style={{
-        backgroundImage: `url(${heroImage})`,
-      }}
+      // style={{
+      //   backgroundImage: `url(${heroImage})`,
+      // }}
     >
       <h1 className="mb-2 text-3xl font-bold">Plan Your Trip</h1>
 
@@ -189,10 +183,10 @@ export default function HomePage() {
       </form>
 
       {message && <p className="mt-4">{message}</p>}
-
+<RenderingTrips/>
     </section>
     
   );
   
-<RenderingTrips/>
+
 }
