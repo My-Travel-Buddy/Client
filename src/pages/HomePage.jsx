@@ -201,7 +201,7 @@ export default function HomePage() {
       </form>
 
       {message && <p className="mt-4">{message}</p>}
-<RenderingTrips/>
+<RenderingTrips setFormData={setFormData}/>
     </section>
     
   );
