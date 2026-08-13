@@ -5,12 +5,12 @@
 // Where the backend lives. In dev it's your local Express server; in production
 // set VITE_API_URL to your deployed backend URL. Vite only exposes vars that
 // start with VITE_, and reads them at build time.
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // send cookies (needed once you add login/auth)
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // send cookies (needed once you add login/auth)
     ...options,
   });
 
@@ -32,11 +32,36 @@ export async function request(path, options = {}) {
 
 // Ask Gemini to generate an itinerary.
 export function generateItinerary(tripData) {
-  return request("/api/ai/itinerary", {
+  return request("/trips/itinerary", {
     method: "POST",
     body: JSON.stringify(tripData),
   });
 }
+
+// --------------------------------------------------
+// getVisaRequirements
+// --------------------------------------------------
+export function getVisaRequirements(passportCode, destinationCode) {
+  return request("/trips/visa", {
+    method: "POST",
+    body: JSON.stringify({
+      passportCode,
+      destinationCode,
+    }),
+  });
+}
+
+// // this give me GET /trips/travel-requirements
+// export function getTravelRequirements(destination, passportCountry) {
+//   const params = new URLSearchParams({
+//      destination,
+//      passportCountry
+//      });
+//      return request(
+//       `/trips/travel-requirements?${params.toString()}`
+//      );
+// }
+
 
 // --------------------------------------------------
 // TRIPS
@@ -62,7 +87,7 @@ export function createActivity(tripId, activityData) {
   });
 }
 
-// -------------------------------------------------- 
+// --------------------------------------------------
 // CHECKLIST
 // --------------------------------------------------
 

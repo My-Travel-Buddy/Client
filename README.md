@@ -10,7 +10,7 @@ HOW TO USE THIS TEMPLATE
 
 ---
 
-# [Project Name]
+# My Travel Buddy
 
 [One or two sentences describing what the app does and who it's for.]
 
@@ -123,8 +123,9 @@ The app runs at `http://localhost:5173` (Vite's default).
 
 | Name | Focused on |
 | --- | --- |
-| [Name] | [e.g. frontend pages] |
+| Yomara | [e.g. frontend pages] |
 | [Name] | [e.g. backend routes] |
+| [Name] | [e.g. database + deployment] |
 | [Name] | [e.g. database + deployment] |
 
 *Roles overlapping is normal — just say who focused where.*

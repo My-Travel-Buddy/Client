@@ -1,62 +1,210 @@
-/* src/App.css — app-level rules that aren't part of the design system.
- *
- * The palette, typography and component classes live in index.css. What's here
- * are two behaviours that apply to the whole app regardless of theme.
- */
-
-/* ---------------------------------------------------------------------------
- * Respect "reduce motion"
- * -------------------------------------------------------------------------
- * Some people get motion sickness from animation, and the OS setting is how
- * they say so. Our spinners still need to convey "working", so they're allowed
- * to keep turning — just slowly — while everything else stops moving.
- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .animate-spin {
-    animation-duration: 1.5s !important;
-    animation-iteration-count: infinite !important;
-  }
+#root {
+  min-height: 100vh;
 }
 
-/* ---------------------------------------------------------------------------
- * Printing a trip
- * -------------------------------------------------------------------------
- * A traveller printing their itinerary wants the schedule, not the navigation,
- * the hero photo or the delete button. Cmd-P on a trip page gives a clean
- * one-page plan they can fold into a passport.
- */
-@media print {
-  header,
-  footer,
-  aside,
-  button,
-  .no-print {
-    display: none !important;
+main {
+  width: 100%;
+}
+
+/* Navbar */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+header nav {
+  max-width: 1200px;
+  min-height: 75px;
+  margin: auto;
+  padding: 0 32px;
+}
+
+header nav > a:first-child {
+  color: #172033;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+header nav > a:not(:first-child) {
+  padding: 26px 14px;
+  color: #526174;
+}
+
+header nav > a[aria-current="page"] {
+  color: #109c8b;
+  border-bottom: 3px solid #109c8b;
+}
+
+/* Home page */
+main > section,
+#root > section {
+  width: min(100% - 40px, 1050px);
+  margin: auto;
+  padding: 60px 0 80px;
+}
+
+main > section > h1,
+#root > section > h1 {
+  margin-bottom: 8px;
+  color: #172033;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+main > section > h1 + p,
+#root > section > h1 + p {
+  margin-bottom: 32px;
+  color: #647186;
+  font-size: 1.1rem;
+}
+
+/* Form */
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  padding: 30px;
+  background: white;
+  border: 1px solid #dde5ec;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px #17203314;
+}
+
+form > div:first-child {
+  grid-column: 1 / -1;
+}
+
+form label {
+  margin-bottom: 8px;
+  color: #172033;
+  font-weight: 700;
+}
+
+form input,
+.interest-dropdown {
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  color: #172033;
+  font: inherit;
+  background: #f9fbfc;
+  border: 1px solid #cad5df;
+  border-radius: 12px;
+  outline: none;
+}
+
+form input:focus,
+.interest-dropdown:focus {
+  background: white;
+  border-color: #109c8b;
+  box-shadow: 0 0 0 4px #109c8b1f;
+}
+
+.interest-dropdown {
+  cursor: pointer;
+}
+
+/* Buttons */
+form button[type="submit"],
+section section > button[type="button"] {
+  min-height: 52px;
+  padding: 14px 24px;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  background: #109c8b;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+form button:hover,
+section section > button:hover {
+  background: #087f72;
+}
+
+form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Itinerary */
+form + section,
+form + p + section {
+  margin-top: 50px;
+}
+
+section section > h2,
+section section > h3,
+section section h4 {
+  color: #172033;
+}
+
+section section > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+section section > div > div,
+section section > h2 + p,
+section section > ul {
+  padding: 24px;
+  background: white;
+  border: 1px solid #dde5ec;
+  border-radius: 15px;
+  box-shadow: 0 7px 25px #1720330d;
+}
+
+section section > div > div {
+  border-left: 5px solid #109c8b;
+}
+
+section section p,
+section section li {
+  color: #647186;
+  line-height: 1.6;
+}
+
+section section > ul {
+  padding-left: 48px;
+  columns: 2;
+}
+
+section section > ul li::marker {
+  color: #109c8b;
+}
+
+section section > button[type="button"] {
+  display: block;
+  margin: 30px 0 0 auto;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  header nav {
+    padding: 0 18px;
   }
 
-  body {
-    background: #fff;
+  main > section,
+  #root > section {
+    width: calc(100% - 28px);
+    padding-top: 40px;
   }
 
-  /* Cards become plain rows: shadows and rounded corners waste toner and add
-     nothing on paper. */
-  .card {
-    box-shadow: none !important;
-    border: 1px solid #e6ebf1;
-    border-radius: 0;
+  form,
+  section section > div {
+    grid-template-columns: 1fr;
   }
 
-  /* Don't split an activity across two sheets. */
-  li {
-    break-inside: avoid;
+  form > div:first-child {
+    grid-column: auto;
+  }
+
+  section section > ul {
+    columns: 1;
   }
 }
