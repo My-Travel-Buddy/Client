@@ -1,150 +1,173 @@
-#root {
-  min-height: 100vh;
+/* ==============================
+   HOME PAGE
+============================== */
+
+.home-hero {
+  /* Full-bleed: escape the padded <main> without touching Layout.jsx. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-bottom: 0;
+  height: 455px;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-main {
+.hero-overlay {
   width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  background: rgba(10, 18, 30, 0.48);
 }
 
-/* Navbar */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background-color: white;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-header nav {
-  max-width: 1200px;
-  min-height: 75px;
+.hero-content {
+  width: min(100% - 80px, 1400px);
   margin: 0 auto;
-  padding: 0 32px;
 }
 
-/* App name */
-header nav > a:first-child {
-  color: #172033;
-  font-size: 1.35rem;
+.hero-content h1 {
+  max-width: 720px;
+  margin: 0 0 24px;
+
+  color: white;
+  font-size: 3.2rem;
   font-weight: 800;
-}
-
-/* Navbar links */
-header nav > a:not(:first-child) {
-  padding: 26px 14px;
-  border-radius: 0;
-  color: #526174;
-  font-size: 1rem;
-}
-
-/* Active navbar link */
-header nav > a:not(:first-child)[aria-current="page"] {
-  border-bottom: 3px solid #109c8b;
-  color: #109c8b;
-}
-
-/* Main HomePage section */
-main > section,
-#root > section {
-  width: min(100% - 40px, 1050px);
-  max-width: 1050px;
-  margin: 0 auto;
-  padding: 60px 0 80px;
-}
-
-/* Main title */
-main > section > h1,
-#root > section > h1 {
-  margin-bottom: 8px;
-  color: #172033;
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
   line-height: 1.1;
 }
 
-/* Introduction */
-main > section > h1 + p,
-#root > section > h1 + p {
-  margin-bottom: 32px;
-  color: #647186;
-  font-size: 1.1rem;
+.hero-content p {
+  max-width: 760px;
+  margin: 0;
+
+  color: white;
+  font-size: 1.2rem;
+  line-height: 1.55;
 }
 
-/* Form card */
-form {
+
+/* ==============================
+   MAIN HOME CONTENT
+============================== */
+
+.home-main {
+  width: min(100% - 80px, 1400px);
+  margin: 0 auto;
+}
+
+
+/* ==============================
+   TRIP FORM
+============================== */
+
+.trip-form {
+  position: relative;
+  z-index: 5;
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
+  grid-template-columns: repeat(3, 1fr);
+
+  column-gap: 22px;
+  row-gap: 24px;
+
+  margin-top: -55px;
   padding: 30px;
-  border: 1px solid #dde5ec;
+
+  background: white;
+  border: 1px solid #e2e8f0;
   border-radius: 18px;
-  background-color: white;
-  box-shadow: 0 12px 35px rgba(23, 32, 51, 0.08);
+
+  box-shadow: 0 16px 36px rgba(23, 32, 51, 0.12);
 }
 
-/* Destination field */
-form > div:first-child {
-  grid-column: 1 / -1;
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Labels */
-form label {
-  margin-bottom: 8px;
+.trip-form label {
   color: #172033;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
-form input {
+.trip-form input {
   width: 100%;
-  height: 56px;
-  box-sizing: border-box;
-  padding: 0 20px;
+  height: 48px;
+
+  padding: 0 16px;
+
   color: #172033;
-  font: inherit;
-  background: #f9fbfc;
-  border: 1px solid #cad5df;
-  border-radius: 12px;
+  font-size: 1rem;
+
+  background: white;
+  border: 1px solid #d5dee8;
+  border-radius: 9px;
+
   outline: none;
 }
 
-form input:focus {
-  background: white;
+.trip-form input:focus {
   border-color: #109c8b;
-  box-shadow: 0 0 0 4px #109c8b1f;
+  box-shadow: 0 0 0 3px rgba(16, 156, 139, 0.12);
 }
 
-/* Interests */
+
+/* ==============================
+   DATES
+============================== */
+
+.date-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+
+/* ==============================
+   INTERESTS
+============================== */
+
 .interests-section {
-  grid-column: 1 / -1;
+  grid-column: 1 / 3;
+
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  gap: 10px;
+
+  margin: 0;
 }
 
 .interests-label {
-  color: #334155;
-  font-size: 18px;
-  font-weight: 700;
+  flex-shrink: 0;
+
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
 .interest-options {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .interest-pill {
-  padding: 10px 24px;
+  padding: 7px 14px;
+
   color: #475569;
-  font: inherit;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 500;
-  background-color: #f1f5f9;
+
+  background: #f1f5f9;
   border: none;
   border-radius: 999px;
+
   cursor: pointer;
 
   transition:
@@ -153,331 +176,650 @@ form input:focus {
 }
 
 .interest-pill:hover {
-  background-color: #e2e8f0;
-  color: #334155;
+  background: #e2e8f0;
 }
 
 .interest-pill.selected {
-  background-color: #b9f5e8;
-  color: #008f83;
+  color: #087f72;
+  background: #b9f5e8;
 }
 
-/* Buttons */
-form button[type="submit"],
-section section > button[type="button"] {
-  min-height: 52px;
-  padding: 12px 15px;
-  border: 1px solid #cad5df;
-  border-radius: 10px;
-  outline: none;
-  background-color: #f9fbfc;
-  color: #172033;
-  font-size: 1rem;
-  transition: 0.2s ease;
-}
 
-<<<<<<< Updated upstream
-form input:focus {
-  border-color: #109c8b;
-  background-color: white;
-  box-shadow: 0 0 0 4px rgba(16, 156, 139, 0.12);
-}
+/* ==============================
+   GENERATE BUTTON
+============================== */
 
-/* Generate button */
-form button[type="submit"] {
-  align-self: end;
-  min-height: 52px;
-  border: none;
-  border-radius: 10px;
-  background-color: #109c8b;
+.generate-button {
+  grid-column: 3;
+
+  justify-self: end;
+  align-self: center;
+
+  min-width: 230px;
+  height: 48px;
+
+  padding: 0 24px;
+
   color: white;
   font-size: 1rem;
   font-weight: 700;
-  transition: 0.2s ease;
+
+  background: #109c8b;
+  border: none;
+  border-radius: 9px;
+
+  cursor: pointer;
 }
 
-=======
->>>>>>> Stashed changes
-form button[type="submit"]:hover,
-section section > button[type="button"]:hover {
+.generate-button:hover {
   background: #087f72;
 }
 
-form button[type="submit"]:disabled {
+.generate-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
 
-/* Generated itinerary section */
-form + p + section,
-form + section {
-  margin-top: 50px;
+
+/* ==============================
+   MESSAGE
+============================== */
+
+.form-message {
+  margin: 18px 0;
+  color: #b42318;
 }
 
-/* Itinerary title */
-section section > h2 {
+
+/* ==============================
+   POPULAR DESTINATIONS
+============================== */
+
+.popular-section {
+  margin-top: 4px;
+  margin-bottom: 80px;
+}
+
+.popular-section h2 {
+  margin: 0 0 20px;
+
   color: #172033;
-  font-size: 2rem;
-}
-
-/* Summary text */
-section section > h2 + p {
-  padding: 25px;
-  border: 1px solid #dde5ec;
-  border-radius: 15px;
-  background-color: white;
-  color: #647186;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  box-shadow: 0 7px 25px rgba(23, 32, 51, 0.05);
-}
-
-/* Section headings */
-section section > h3 {
-  margin-top: 40px;
-  color: #172033;
-  font-size: 1.5rem;
-}
-
-/* Activities container */
-section section > div {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-/* Activity cards */
-section section > div > div {
-  margin: 0;
-  padding: 24px;
-  border: 1px solid #dde5ec;
-  border-left: 5px solid #109c8b;
-  border-radius: 14px;
-  background-color: white;
-  box-shadow: 0 7px 24px rgba(23, 32, 51, 0.05);
-  transition: 0.2s ease;
-}
-
-section section > div > div:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(23, 32, 51, 0.1);
-}
-
-/* Activity title */
-section section > div > div h4 {
-  margin: 0 0 14px;
-  color: #172033;
-  font-size: 1.15rem;
-}
-
-/* Activity information */
-section section > div > div p {
-  margin: 5px 0;
-  color: #647186;
-  line-height: 1.55;
-}
-
-/* Checklist */
-section section > ul {
-  padding: 25px 25px 25px 48px;
-  border: 1px solid #dde5ec;
-  border-radius: 15px;
-  background-color: white;
-  columns: 2;
-  box-shadow: 0 7px 25px rgba(23, 32, 51, 0.05);
-}
-
-section section > ul li {
-  margin-bottom: 12px;
-  color: #526174;
-}
-
-section section > ul li::marker {
-  color: #109c8b;
-}
-
-/* Save Trip button */
-section section > button[type="button"] {
-  display: block;
-  min-width: 170px;
-  margin: 30px 0 0 auto;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 10px;
-  background-color: #109c8b;
-  color: white;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-section section > button[type="button"]:hover {
-  background-color: #087f72;
-}
-
-/* Mobile layout */
-@media (max-width: 700px) {
-  header nav {
-    padding: 0 18px;
-  }
-
-  main > section,
-  #root > section {
-    width: min(100% - 28px, 1050px);
-    padding-top: 40px;
-  }
-
-  form,
-  section section > div {
-    grid-template-columns: 1fr;
-  }
-
-  form > div:first-child {
-    grid-column: auto;
-  }
-
-  .interests-section {
-    grid-column: auto;
-    align-items: flex-start;
-  }
-
-  .interest-options {
-    width: 100%;
-  }
-
-  .interest-pill {
-    padding: 9px 18px;
-    font-size: 15px;
-  }
-
-  section section > ul {
-    columns: 1;
-  }
+  font-size: 1.75rem;
+  font-weight: 800;
 }
 
 
-/* Interes dropdown */
-.interest-dropdown {
-  width: 100%;
-  height: 50
-  px;
-  box-sizing: border-box;
-  padding: 0 24px;
-
-  color: #475569;
-  font-family: inherit;
-  font-size: 1rem;
-
-  background-color: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-.interests-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  background: var(--surface);
-  padding: 1.25rem 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(183, 148, 246, 0.1);
-  max-width: 900px;
-  margin: 2rem auto 1.5rem;
-}
-
-.interests-label {
-  font-weight: 600;
-  color: var(--ink);
-  font-size: 0.85rem;
-  margin-right: 0.25rem;
-}
-.interest-tag {
-  border: none;
-  background: var(--accent-soft);
-  color: var(--ink);
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
-}
-
-.interest-tag:hover {
-  transform: translateY(-1px);
-}
-.interest-tag.active {
-  background: linear-gradient(135deg, var(--accent), #f6a8d8);
-  color: #fff;
-  font-weight: 600;
-}
-
-.trips-page h1 {
-  max-width: 900px;
-  margin: 0 auto 1.25rem;
-  padding: 0 0.25rem;
-  color: var(--ink);
-  font-size: 1.4rem;
-}
+/* ==============================
+   TRIP CARDS
+============================== */
 
 .trips-grid {
-  max-width: 900px;
-  margin: 0 auto 3rem;
+  width: 100%;
+
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 
 .trip-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(183, 148, 246, 0.1);
-  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-}
+  width: 100%;
 
-.trip-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(183, 148, 246, 0.22);
-}
-.trip-card.selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  overflow: hidden;
+
+  background: white;
+  border: 1px solid #dde5ec;
+  border-radius: 14px;
+
+  box-shadow: 0 5px 18px rgba(23, 32, 51, 0.06);
 }
 
 .trip-card-image {
-  height: 150px;
+  width: 100%;
+  height: 205px;
+
   background-size: cover;
   background-position: center;
-  background-color: var(--accent-soft);
 }
 
 .trip-card-body {
-  padding: 1rem 1.1rem 1.15rem;
+  padding: 18px;
 }
 
 .trip-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.25rem;
 }
 
 .trip-card-top h3 {
   margin: 0;
-  color: var(--ink);
-  font-size: 1.05rem;
+
+  color: #172033;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
+
 .trip-card-season {
-  font-size: 0.75rem;
+  color: #109c8b;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: var(--accent-hover);
 }
 
 .trip-card-price {
+  margin: 8px 0 0;
+  color: #647186;
+}
+
+
+/* ==============================
+   TABLET
+============================== */
+
+@media (max-width: 1000px) {
+  .trip-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .budget-field {
+    grid-column: 1 / -1;
+  }
+
+  .interests-section {
+    grid-column: 1 / -1;
+  }
+
+  .generate-button {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+}
+
+
+/* ==============================
+   MOBILE
+============================== */
+
+@media (max-width: 700px) {
+  .home-hero {
+    height: 360px;
+  }
+
+  .hero-content {
+    width: calc(100% - 32px);
+  }
+
+  .hero-content h1 {
+    font-size: 2.3rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .home-main {
+    width: calc(100% - 28px);
+  }
+
+  .trip-form {
+    grid-template-columns: 1fr;
+
+    margin-top: -35px;
+    padding: 22px;
+  }
+
+  .budget-field,
+  .interests-section,
+  .generate-button {
+    grid-column: auto;
+  }
+
+  .date-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .interests-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .generate-button {
+    width: 100%;
+  }
+
+  .trips-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==================================================================
+   VOYAGER THEME
+   Everything below re-skins the pages that are written in bare
+   Tailwind utilities. These rules are UNLAYERED, and Tailwind's
+   utilities live in @layer utilities — unlayered CSS always wins over
+   layered CSS, so no !important and no JSX edits are needed.
+================================================================== */
+
+/* ---------- App shell: wider canvas ---------- */
+
+.flex.min-h-screen.flex-col {
+  background: var(--page);
+}
+
+main.mx-auto {
+  max-width: min(100% - 48px, 1400px);
+  padding: 32px 0 72px;
+}
+
+/* The home page brings its own container + full-bleed hero. */
+main.mx-auto:has(.home-hero) {
+  max-width: 100%;
+  padding: 0 0 40px;
+}
+
+/* ---------- Navbar ---------- */
+
+header.border-b {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(16, 32, 58, 0.05);
+}
+
+header nav.mx-auto {
+  max-width: min(100% - 48px, 1400px);
+  gap: 4px;
+  padding: 14px 0;
+}
+
+/* Brand: teal rounded logo mark + heavier wordmark. */
+header nav > a:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+header nav > a:first-child::before {
+  content: "";
+
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  background: var(--accent);
+  border-radius: 11px;
+
+  /* compass glyph, drawn in CSS so no asset is needed */
+  background-image: radial-gradient(circle at 50% 50%, #fff 3px, transparent 3.5px),
+    radial-gradient(circle at 50% 50%, transparent 10px, #fff 10px, #fff 11.5px, transparent 12px);
+}
+
+/* Nav links: centered, roomier, teal underline on the active route. */
+header nav a:not(:first-child),
+header nav button {
+  position: relative;
+  padding: 8px 16px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--text);
+  border-radius: 8px;
+  transition: color 0.15s ease;
+}
+
+header nav a:not(:first-child):hover,
+header nav button:hover {
+  color: var(--text-h);
+}
+
+/* NavLink adds no class of its own, but it DOES set aria-current on the
+   active route — which is a perfectly good CSS hook. */
+header nav a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+header nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -2px;
+
+  height: 2.5px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Sign up stays a solid teal pill. */
+header nav a.bg-\(--accent\) {
+  padding: 9px 20px;
+  color: #fff;
+  font-weight: 600;
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+header nav a.bg-\(--accent\)::after {
+  display: none;
+}
+
+header nav a.bg-\(--accent\):hover {
+  background: var(--accent-strong);
+}
+
+/* ---------- Section headings ---------- */
+
+main h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+main h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* ---------- Cards (Trips list, Confirmation activities) ---------- */
+
+main .bg-white.p-4,
+main .rounded-md.border {
+  padding: 22px 24px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+main a.bg-white.p-4:hover {
+  transform: translateY(-2px);
+  border-color: #cfe6e1;
+  box-shadow: var(--shadow-lg);
+}
+
+main a.bg-white.p-4 h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+main a.bg-white.p-4 p {
+  margin: 4px 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* Trips list: two-up grid like the mockup instead of a single stack. */
+main .space-y-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+/* "+ Plan New Trip" reads as a heading in the JSX — make it the teal button. */
+main > div > h2 > a[href="/"] {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 12px 22px;
+  margin-bottom: 24px;
+
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 600;
+
+  background: var(--accent);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+main > div > h2 > a[href="/"]:hover {
+  background: var(--accent-strong);
+}
+
+/* ---------- Trip detail: tab bar ---------- */
+
+section > a[href="/trips"] {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* The row of section buttons. No active class exists in the JSX, so these
+   get the tab SHAPE; the selected-tab underline needs a markup change. */
+section > div:has(> button.m-3) {
+  display: flex;
+  gap: 4px;
+
+  margin: 26px 0 28px;
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+section > div > button.m-3,
+section > div > button.mr-3 {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.85rem;
+  padding: 12px 20px;
+
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 500;
+
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  border-radius: 0;
+
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+section > div > button.m-3:hover,
+section > div > button.mr-3:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent-bg);
+}
+
+section > div > button:focus-visible {
+  outline: none;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Trip detail header block */
+section > h1.mt-4 {
+  margin: 14px 0 6px;
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+section > h1.mt-4 + p,
+section > h1.mt-4 ~ p {
+  margin: 2px 0;
+  color: var(--text-muted);
+}
+
+/* ---------- Checklist ---------- */
+
+fieldset {
+  padding: 26px 28px;
+  margin: 0;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+legend {
+  padding: 0 6px;
+  color: var(--text-h);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+fieldset label {
+  display: block;
+}
+
+fieldset ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+fieldset li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+
+  color: var(--text-h);
+  font-size: 0.98rem;
+  cursor: pointer;
+}
+
+fieldset label:last-of-type li {
+  border-bottom: none;
+}
+
+fieldset li:hover {
+  color: var(--accent);
+}
+
+fieldset li:has(input:checked) {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
+}
+
+/* ---------- Auth cards (Login / Signup) ---------- */
+
+section.max-w-md {
+  margin-top: 40px;
+}
+
+section.max-w-md > div {
+  padding: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+}
+
+section.max-w-md h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* Inputs from FormField */
+input.w-full.rounded-md {
+  height: 46px;
+  padding: 0 14px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+input.w-full.rounded-md:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+/* Buttons: submit + Auth0 */
+button.bg-\(--accent\) {
+  height: 48px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+button.w-full.rounded-md.border {
+  height: 48px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+button.w-full.rounded-md.border:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Confirmation page ---------- */
+
+section.mt-8 > h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+section.mt-8 h3 {
+  margin-top: 36px;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+section.mt-8 .bg-white.p-4 h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+section.mt-8 .bg-white.p-4 p {
+  margin: 3px 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+button.bg-green-600 {
+  height: 48px;
+  padding: 0 26px;
+
+  font-weight: 600;
+
+  background: var(--accent);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+button.bg-green-600:hover {
+  background: var(--accent-strong);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 700px) {
+  main.mx-auto {
+    max-width: calc(100% - 28px);
+    padding: 22px 0 56px;
+  }
+
+  header nav.mx-auto {
+    max-width: calc(100% - 28px);
+    flex-wrap: wrap;
+  }
+
+  main .space-y-4 {
+    grid-template-columns: 1fr;
+  }
+
+  section > div:has(> button.m-3) {
+    overflow-x: auto;
+  }
 }

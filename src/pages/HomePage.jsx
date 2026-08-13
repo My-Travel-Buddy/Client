@@ -70,7 +70,7 @@ export default function HomePage() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget,
-        interests: formData.interests.split(","),
+        interests: formData.interests,
       };
       
       const data = await generateItinerary(tripData);
@@ -88,81 +88,75 @@ export default function HomePage() {
 
     setLoading(false);
   }
-
-  return (
+return (
+  <>
     <section
-      className="mx-auto max-w-2xl bg-cover bg-center bg-no-repeat p-8"
-      // style={{
-      //   backgroundImage: `url(${heroImage})`,
-      // }}
+      className="home-hero"
+      style={{
+        backgroundImage: `url(${heroImage})`,
+      }}
     >
-      <h1 className="mb-2 text-3xl font-bold">Plan Your Trip</h1>
+      <div className="hero-overlay">
+        <div className="hero-content">
+          <h1>Plan Your Next Adventure with AI</h1>
 
-      <p className="mb-6 text-gray-600">
-        Enter your trip details and let My Travel Buddy create an itinerary for
-        you.
-      </p>
+          <p>
+            Discover personalized itineraries, dynamic budget insights, and
+            real-time travel coordination in one seamless companion designed
+            for travelers.
+          </p>
+        </div>
+      </div>
+    </section>
 
-      <form onSubmit={handleGenerate} className="space-y-4">
-        <div>
-          <label htmlFor="destination" className="mb-1 block font-medium">
-            Destination
-          </label>
+    <main className="home-main">
+      <form onSubmit={handleGenerate} className="trip-form">
+        <div className="form-field destination-field">
+          <label htmlFor="destination">DESTINATION</label>
 
           <input
             id="destination"
             name="destination"
-            placeholder="Kyoto, Japan"
+            placeholder="Where do you want to go?"
             value={formData.destination}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
 
-        <div>
-          <label htmlFor="startDate" className="mb-1 block font-medium">
-            Start Date
-          </label>
+        <div className="form-field dates-field">
+          <label>DATES</label>
 
-          <input
-            id="startDate"
-            name="startDate"
-            type="date"
-            value={formData.startDate}
-            onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 p-2"
-          />
+          <div className="date-inputs">
+            <input
+              id="startDate"
+              name="startDate"
+              type="date"
+              value={formData.startDate}
+              onChange={handleChange}
+            />
+
+            <input
+              id="endDate"
+              name="endDate"
+              type="date"
+              value={formData.endDate}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="endDate" className="mb-1 block font-medium">
-            End Date
-          </label>
-
-          <input
-            id="endDate"
-            name="endDate"
-            type="date"
-            value={formData.endDate}
-            onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 p-2"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="budget" className="mb-1 block font-medium">
-            Budget
-          </label>
+        <div className="form-field budget-field">
+          <label htmlFor="budget">BUDGET ESTIMATE</label>
 
           <input
             id="budget"
             name="budget"
-            placeholder="0 - 1000000"
+            placeholder="Moderate ($150 - $300/day)"
             value={formData.budget}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
+
         <div className="interests-section">
           <span className="interests-label">INTERESTS:</span>
 
@@ -194,17 +188,19 @@ export default function HomePage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+          className="generate-button"
         >
-          {loading ? "Generating..." : "Generate Itinerary"}
+          {loading ? "Generating..." : "Generate Dream Plan"}
         </button>
       </form>
 
-      {message && <p className="mt-4">{message}</p>}
+      {message && <p className="form-message">{message}</p>}
 
-    </section>
-    
-  );
-  
-
+      <section className="popular-section">
+        <h2>Popular Destinations</h2>
+        <RenderingTrips />
+      </section>
+    </main>
+  </>
+);
 }
