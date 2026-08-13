@@ -2,20 +2,16 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router";
-<<<<<<< HEAD
 import RenderingTrips from "../components/harcodedTrips"
-
 import {
   generateItinerary,
   createTrip,
   createActivity,
   createChecklistItem,
 } from "../api/client";
-=======
 import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
 import { generateItinerary } from "../api/client";
->>>>>>> 3562f53ddf277a3dd038591f77ac26b6d1928b9a
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -194,60 +190,9 @@ export default function HomePage() {
 
       {message && <p className="mt-4">{message}</p>}
 
-<<<<<<< HEAD
-      {itinerary ? (
-        <section className="mt-8">
-          <h2 className="mb-2 text-2xl font-bold">{itinerary.title}</h2>
-
-          <p className="mb-4 text-gray-600">{itinerary.summary}</p>
-
-          {itinerary.hasMoreDays && (
-            <p className="mb-4">
-              Your trip is {itinerary.tripDays} days. We generated the first{" "}
-              {itinerary.generatedDays} days.
-            </p>
-          )}
-
-          <h3 className="mb-3 text-xl font-semibold">Activities</h3>
-
-          <div className="space-y-4">
-            {(itinerary.activities || []).map((activity, index) => (
-              <div
-                key={index}
-                className="rounded-md border border-gray-200 bg-white p-4"
-              >
-                <h4 className="mb-2 font-semibold">
-                  Day {activity.day}: {activity.title}
-                </h4>
-
-                <p>Time: {activity.time}</p>
-                <p>Category: {activity.category}</p>
-                <p>Estimated Cost: ${activity.estimatedCost}</p>
-                <p className="mt-2">{activity.notes}</p>
-              </div>
-            ))}
-          </div>
-
-          <h3 className="mb-2 mt-6 text-xl font-semibold">Checklist</h3>
-
-          <ul className="list-disc pl-6">
-            {(itinerary.checklist || []).map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-
-          <button
-            type="button"
-            onClick={handleSaveTrip}
-            className="mt-6 rounded-md bg-green-600 px-4 py-2 text-white"
-          >
-            Save Trip
-          </button>
-        </section>
-      ) : 
-      <RenderingTrips />}
-=======
->>>>>>> 3562f53ddf277a3dd038591f77ac26b6d1928b9a
     </section>
+    
   );
+  
+<RenderingTrips/>
 }
