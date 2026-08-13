@@ -5,7 +5,7 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             id: "kyoto",
             destination:"Kyoto, Japan",
             interest:"Food , culture",
-            price: "$180/day",
+            budget: 1500,
             season:"Autumn",
             image:"https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8amFwYW4lMjBreW90b3xlbnwwfHwwfHx8MA%3D%3D"
         },
@@ -13,7 +13,7 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             id:"santorini",
             destination:"Santorini, Greece",
             interest:"sunset-chasing, luxury relaxation",
-            price:"$220/day",
+            budget:2500,
             season:"Summer",
             image:"https://media.istockphoto.com/id/1036361536/photo/panoramia-of-oia-town-in-santorini.jpg?s=612x612&w=0&k=20&c=zC34PF-WEOUPz2LWlHClV6TgYyjaOWm_U7EYSuQ4PYU="
         },
@@ -21,7 +21,7 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             id:"bali",
             destination:"Bali, Indonesia",
             interest:"nature, spirituality",
-            price :"$90/day",
+            budget :1000,
             season:"Spring",
             image:"https://media.istockphoto.com/id/2273946349/photo/pura-ulun-danu-bratan-hindu-temple-with-boat-on-bratan-lake-landscape-at-sunrise-in-bali.jpg?s=612x612&w=0&k=20&c=dPzjSygNBhVIBQzBrNHxw80WxeuaGhQpSLgQky444JI="
         },
@@ -29,7 +29,7 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             id:"lisbon",
             destination:"Lisbon, Portugal",
             interest:"food, history",
-            price:"$140/day",
+            budget:1400,
             season:"Spring",
             image:"https://media.istockphoto.com/id/516550104/photo/lisbon-tram-and-cityscape.jpg?s=612x612&w=0&k=20&c=NrZ14iMTzaKBuNawkv95nZGoYJcsg-JikID5s7orSkg="
         },
@@ -37,7 +37,7 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             id:"banff",
             destination: "Banff, Canada",
             interest: "kayaking, hiking, nature photography",
-            price:160,
+            budget:600,
             season: "Summer",
             image:"https://images.unsplash.com/photo-1662434449168-35f32702b665?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJhbmZmfGVufDB8fDB8fHww"
 
@@ -72,7 +72,7 @@ function TripCard({ trip, selected, onClick }) {
                     <h3>{trip.destination.split(",")[0]}</h3>
                     <span className="trip-card-season">{trip.season}</span>
                  </div>
-                 <p className= "trip-card-price">cost:${trip.price}/per day</p>
+                 <p className= "trip-card-price">cost:${trip.budget}/per day</p>
 
             </div>
             
@@ -96,7 +96,7 @@ export default function RenderingTrips({setFormData}){
             destination: trips[idx].destination,
             startDate: "awds",
             endDate: "aw",
-            budget: trips[idx].price,
+            budget: trips[idx].budget,
             interests: "culture",
         })
     }
@@ -106,17 +106,7 @@ export default function RenderingTrips({setFormData}){
 
 
         <div className="trips-page">
-            <div className="interests-bar">
-                <span className="interests-label">Interests:</span>
-                {interests.map((interest) =>(
-                    <InterestTag
-                    key={interest}
-                    label={interest}
-                    active={activeInterests.includes(interest)}
-                    onClick={() => toggleInterest(interest)}
-                    />
-                ))}
-            </div>
+            <br />
            <h1> Popular destinations</h1>
            <div className="trips-grid">
             {trips.map((trip,idx) => (
