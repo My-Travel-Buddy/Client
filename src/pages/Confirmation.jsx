@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import { useState } from "react";
-import { createTrip, createActivity, createChecklistItem } from "../api/client";
+import { saveItinerary } from "../api/client";
 import { getMe } from "../api/auth";
 
 export default function Confirmation() {
@@ -10,39 +10,6 @@ export default function Confirmation() {
 
   const { itinerary } = location.state;
   console.log(itinerary);
-
-  async function saveItinerary(itinerary) {
-    if (itinerary.budget < 0) {
-      throw new Error("Enter budget as minimum 0");
-    }
-
-    const savedTrip = await createTrip({
-      destination: itinerary.destination,
-      date_Range: [itinerary.startDate, itinerary.endDate],
-      budget: itinerary.budget,
-    });
-
-    const tripId = savedTrip.id;
-
-    // Save every generated activity.
-    for (const activity of itinerary.activities || []) {
-      await createActivity(tripId, {
-        title: activity.title,
-        category: activity.category,
-        dateTime: activity.dateTime,
-        estimatedCost: activity.estimatedCost,
-        notes: activity.notes,
-      });
-    }
-
-    // Save every generated checklist item.
-    for (const item of itinerary.checklist || []) {
-      await createChecklistItem(tripId, {
-        text: item.text,
-        completed: item.completed,
-      });
-    }
-  }
 
   async function handleSaveTrip() {
     console.log("SAVE BUTTON CLICKED");
@@ -59,9 +26,11 @@ export default function Confirmation() {
       await saveItinerary(itinerary);
 
       setMessage("Trip saved successfully!");
+      navigate("/trips", { replace: true });
     } catch (error) {
-      console.log("Auth Error:", error)
-      console.log("Error Message:", error.message)
+      
+      console.log("Auth Error:", error);
+      console.log("Error Message:", error.message);
       if (error.message === "Authentication required") {
         sessionStorage.setItem("pendingItinerary", JSON.stringify(itinerary));
         navigate("/login");

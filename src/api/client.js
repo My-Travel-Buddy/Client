@@ -99,3 +99,40 @@ export function createChecklistItem(tripId, item) {
       item),
   });
 }
+
+// --------------------------------------------------
+// To temporarily save the itinerary when navigating to login
+// --------------------------------------------------
+
+async function saveItinerary(itinerary) {
+    if (itinerary.budget < 0) {
+      throw new Error("Enter budget as minimum 0");
+    }
+
+    const savedTrip = await createTrip({
+      destination: itinerary.destination,
+      date_Range: [itinerary.startDate, itinerary.endDate],
+      budget: itinerary.budget,
+    });
+
+    const tripId = savedTrip.id;
+
+    // Save every generated activity.
+    for (const activity of itinerary.activities || []) {
+      await createActivity(tripId, {
+        title: activity.title,
+        category: activity.category,
+        dateTime: activity.dateTime,
+        estimatedCost: activity.estimatedCost,
+        notes: activity.notes,
+      });
+    }
+
+    // Save every generated checklist item.
+    for (const item of itinerary.checklist || []) {
+      await createChecklistItem(tripId, {
+        text: item.text,
+        completed: item.completed,
+      });
+    }
+  }
