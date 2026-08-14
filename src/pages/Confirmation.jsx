@@ -48,7 +48,11 @@ export default function Confirmation() {
     
           // Save every generated checklist item.
           for (const item of itinerary.checklist || []) {
-            await createChecklistItem(tripId, item);
+            await createChecklistItem(tripId,{
+              text: item.text,
+              completed: item.completed
+            });
+
           }
     
           setMessage("Trip saved successfully!");
@@ -84,13 +88,17 @@ export default function Confirmation() {
                 key={index}
                 className="rounded-md border border-gray-200 bg-white p-4"
               >
-                {console.log(activity)}
+                {/* {console.log(activity)} */}
 
                 <h4 className="mb-2 font-semibold">
-                  Day {activity.day}: {activity.title}
+                  Day {activity.dateTime}: {activity.title}
                 </h4>
 
-                <p>Time: {activity.time}</p>
+                <p>Time: {new Date(activity.dateTime).toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+                })}
+                </p>
                 <p>Category: {activity.category}</p>
                 <p>Estimated Cost: ${activity.estimatedCost}</p>
                 <p className="mt-2">{activity.notes}</p>
@@ -102,7 +110,9 @@ export default function Confirmation() {
 
           <ul className="list-disc pl-6">
             {(itinerary.checklist || []).map((item, index) => (
-              <li key={index}>{item}</li>
+              <li key={index}>
+                {item.text}
+              </li>
             ))}
           </ul>
 
