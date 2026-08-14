@@ -93,10 +93,9 @@ export function createActivity(tripId, activityData) {
 
 // Save a checklist item that belongs to a trip.
 export function createChecklistItem(tripId, item) {
-  return request(`/trips/${tripId}/checklist`, {
+  return request(`/trips/${tripId}/checklist/post`, {
     method: "POST",
-    body: JSON.stringify({
-      item,
-    }),
+    body: JSON.stringify(
+      item),
   });
 }
