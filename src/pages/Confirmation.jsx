@@ -1,73 +1,82 @@
-import { useLocation } from "react-router"
+import { useLocation, useNavigate } from "react-router";
 import { useState } from "react";
 import { createTrip, createActivity, createChecklistItem } from "../api/client";
+import { getMe } from "../api/auth";
 
 export default function Confirmation() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
-    const location = useLocation();
-    const [message,setMessage] = useState("")
+  const { itinerary } = location.state;
+  console.log(itinerary);
 
-    const {itinerary} = location.state;
-    console.log(itinerary)
+  async function saveItinerary(itinerary) {
+    if (itinerary.budget < 0) {
+      throw new Error("Enter budget as minimum 0");
+    }
 
-    async function handleSaveTrip() {
-        
-        console.log("SAVE BUTTON CLICKED");
- 
-        if (!itinerary) {
-          return;
-        }
-    
-        try {
-          setMessage("Saving trip...");
-    
-          // I convert that string into numbers before sending it:
-          if (itinerary.budget < 0 ) {
-            setMessage("Enter budget as minimum 0");
-            return;
-          }
-          // Then I send that array to the backend:
-          const savedTrip = await createTrip({
-            destination: itinerary.destination,
-            date_Range: [itinerary.startDate, itinerary.endDate],
-            budget: itinerary.budget,
-          });
-    
-          const tripId = savedTrip.id;
-    
-          // Save every generated activity.
-          for (const activity of itinerary.activities || []) {
-            await createActivity(tripId, {
-              title: activity.title,
-              category: activity.category,
-              dateTime: activity.dateTime,
-              estimatedCost: activity.estimatedCost,
-              notes: activity.notes,
-            });
-          }
-    
-          // Save every generated checklist item.
-          for (const item of itinerary.checklist || []) {
-            await createChecklistItem(tripId,{
-              text: item.text,
-              completed: item.completed
-            });
+    const savedTrip = await createTrip({
+      destination: itinerary.destination,
+      date_Range: [itinerary.startDate, itinerary.endDate],
+      budget: itinerary.budget,
+    });
 
-          }
-  
-          setMessage("Trip saved successfully!");
-    
-        } catch (error) {
-          setMessage(error.message);
-        }
+    const tripId = savedTrip.id;
+
+    // Save every generated activity.
+    for (const activity of itinerary.activities || []) {
+      await createActivity(tripId, {
+        title: activity.title,
+        category: activity.category,
+        dateTime: activity.dateTime,
+        estimatedCost: activity.estimatedCost,
+        notes: activity.notes,
+      });
+    }
+
+    // Save every generated checklist item.
+    for (const item of itinerary.checklist || []) {
+      await createChecklistItem(tripId, {
+        text: item.text,
+        completed: item.completed,
+      });
+    }
+  }
+
+  async function handleSaveTrip() {
+    console.log("SAVE BUTTON CLICKED");
+
+    if (!itinerary) {
+      return;
+    }
+
+    try {
+      setMessage("Checking authentication...");
+      await getMe();
+
+      setMessage("Saving Trip...");
+      await saveItinerary(itinerary);
+
+      setMessage("Trip saved successfully!");
+    } catch (error) {
+      console.log("Auth Error:", error)
+      console.log("Error Message:", error.message)
+      if (error.message === "Authentication required") {
+        sessionStorage.setItem("pendingItinerary", JSON.stringify(itinerary));
+        navigate("/login");
+        return;
+      } else {
+        setMessage(error.message);
       }
+    }
+  }
 
   return (
-
     <>
-    <div>Confirm Itinerary</div>
+      <div>Confirm Itinerary</div>
 
-        {itinerary && (
+      {itinerary && (
         <section className="mt-8">
           <h2 className="mb-2 text-2xl font-bold">{itinerary.title}</h2>
 
@@ -94,10 +103,12 @@ export default function Confirmation() {
                   Day {activity.dateTime}: {activity.title}
                 </h4>
 
-                <p>Time: {new Date(activity.dateTime).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-                })}
+                <p>
+                  Time:{" "}
+                  {new Date(activity.dateTime).toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
                 </p>
                 <p>Category: {activity.category}</p>
                 <p>Estimated Cost: ${activity.estimatedCost}</p>
@@ -110,9 +121,7 @@ export default function Confirmation() {
 
           <ul className="list-disc pl-6">
             {(itinerary.checklist || []).map((item, index) => (
-              <li key={index}>
-                {item.text}
-              </li>
+              <li key={index}>{item.text}</li>
             ))}
           </ul>
 
@@ -126,5 +135,5 @@ export default function Confirmation() {
         </section>
       )}
     </>
-  )
+  );
 }

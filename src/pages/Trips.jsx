@@ -75,11 +75,11 @@ export default function Trips() {
 
               {/* The backend stores the trip dates as a date range. */}
               <p>
-                Start Date: {trip.date_Range[0].value}
+                Start Date: {trip.date_Range[0]?.value}
               </p>
 
               <p>
-                End Date: {trip.date_Range[1].value}
+                End Date: {trip.date_Range[1]?.value}
               </p>
             </Link>
           ))}

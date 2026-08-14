@@ -38,7 +38,7 @@ function Login({ setUser }) {
   // If ProtectedRoute sent the user here, it stashed where they were headed.
   // Send them back there after login rather than dumping them on the home
   // page — they asked for /protected, they should land on /protected.
-  const redirectTo = location.state?.from ?? '/';
+  const redirectTo = location.state?.from ?? '/trips';
 
   const handleChange = (event) => {
     const { name, value } = event.target;
