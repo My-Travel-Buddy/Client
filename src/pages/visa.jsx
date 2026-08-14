@@ -29,3 +29,57 @@ const COUNTRIES = [
   { code: "AE", name: "United Arab Emirates" },
   { code: "AU", name: "Australia" },
 ];
+
+// The API's colour vocabulary -> the banner variants in voyager-ui.css.
+
+// The API's colour vocabulary -> the banner variants in voyager-ui.css.
+// This converts the API’s color into a CSS class:
+const BANNER_VARIANT = {
+  green: "",
+  yellow: "vy-banner--warn",
+  red: "vy-banner--danger",
+};
+
+export default function visa() {
+  const [passportCode, setPassportCode] = useState("US");
+  const [destinationCode, setPassportCode] = useState("US");
+
+  const [result, setResult] = useState(null);
+  const [result, setResult] = useState("idle"); // idle | loading | done | error
+  const [message, setMessage] = useState("");
+
+  // Fetch new visa information when the passport or destination changes.
+  // Ignore outdated responses if the user changes a selection quickly.
+  useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      setStatus("loading");
+      setMessage("");
+
+      try {
+        const data = await getVisaRequirements(passportCode, destinationCode);
+        if (ignore) return;
+
+        setResult(data);
+        setStatus("done");
+      } catch (error) {
+        if (ignore) return;
+
+        setMessage(error.message);
+        setStatus("error");
+      }
+    }
+
+    load();
+
+    return () => {
+      ignore = true;
+    };
+  }, [passportCode, destinationCode]);
+
+  const info = result?.data;
+  const rule = info?.visa_rules?.primary_rule;
+  const destination = info?.destination;
+  const registration = info?.mandatory_registration;
+}
