@@ -98,7 +98,7 @@ export default function TripDetails() {
       {activeSection === 'Overview'}
       {activeSection === 'Itinerary' && <TripCalendar tripId={trip.id} />}
       {activeSection === 'Documents'}
-      {activeSection === 'Checklist' && <Checklist trip={trip} />}
+      {activeSection === 'Checklist' && <Checklist trip={trip} setTrip={setTrip} />}
       {activeSection === "Activities" && <Activities trip={trip} />}
     </section>
   );
