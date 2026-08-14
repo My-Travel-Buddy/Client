@@ -151,7 +151,7 @@ return (
           <input
             id="budget"
             name="budget"
-            placeholder="Moderate ($150 - $300/day)"
+            placeholder= "0-100000"
             value={formData.budget}
             onChange={handleChange}
           />
