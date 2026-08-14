@@ -320,7 +320,7 @@ section section > button[type="button"]:hover {
   main > section,
   #root > section {
     width: min(100% - 28px, 1050px);
-    padding-top: 40px;
+    padding-top: 40px; 
   }
 
   form,

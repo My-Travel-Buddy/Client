@@ -31,19 +31,16 @@ export default function Navbar({ user, onLogout }) {
         </NavLink>
 
         {/* Only show the protected link once someone is logged in. */}
-        {user && (
+        {/* {user && (
           <NavLink to='/protected' className={linkClass}>
             Protected
           </NavLink>
-        )}
+        )} */}
 
         {/* Auth controls: your name + Log out, or the Log in / Sign up pair. */}
         {user ? (
           <>
             <span className='px-2 text-sm'>
-              {/* Our own users always have a username; Auth0 users may also
-                  have a name or email worth falling back to. */}
-              {user.username || user.name || user.email}
             </span>
             <button
               onClick={onLogout}
