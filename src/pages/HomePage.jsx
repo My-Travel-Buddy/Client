@@ -6,6 +6,7 @@ import RenderingTrips from "../components/harcodedTrips"
 import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
 import { generateItinerary } from "../api/client";
+import Checklist from "../components/Checklist";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function HomePage() {
     endDate: "",
     budget: "",
     interests: [],
+    checklist: [],
   });
 
   const [visaInfo, setVisaInfo] = useState(null);
@@ -70,7 +72,8 @@ export default function HomePage() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget,
-        interests: formData.interests
+        interests: formData.interests,
+         checklist: formData.checklist
       };
       
       const data = await generateItinerary(tripData);
