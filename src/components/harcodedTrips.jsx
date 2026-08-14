@@ -72,7 +72,7 @@ function TripCard({ trip, selected, onClick }) {
                     <h3>{trip.destination.split(",")[0]}</h3>
                     <span className="trip-card-season">{trip.season}</span>
                  </div>
-                 <p className= "trip-card-price">cost:${trip.budget}/per day</p>
+                 <p className= "trip-card-price">Est:${trip.budget}</p>
 
             </div>
             
@@ -94,10 +94,10 @@ export default function RenderingTrips({setFormData}){
     function handleOnClick(idx){
         setFormData({
             destination: trips[idx].destination,
-            startDate: "awds",
-            endDate: "aw",
+            startDate: "",
+            endDate: "",
             budget: trips[idx].budget,
-            interests: "culture",
+            interests: [],
         })
     }
 

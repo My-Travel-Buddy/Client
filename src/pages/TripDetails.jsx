@@ -20,7 +20,9 @@ export default function TripDetails() {
   useEffect(() => {
     const getTrip = async () => {
       try {
-        const response = await axios.get(`${BACKEND_API}/trips/${id}`);
+        const response = await axios.get(`${BACKEND_API}/trips/${id}`, {
+  withCredentials: true,
+});
         const data = await response.data;
         setTrip(data);
       } catch (err) {
@@ -30,7 +32,7 @@ export default function TripDetails() {
       }
     };
     getTrip();
-  }, []);
+  }, [id]);
 
   if (error) return <p className="text-red-500">{error}</p>;
   if (!trip) return <p>Loading…</p>; // no task yet = still loading

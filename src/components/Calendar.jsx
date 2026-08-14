@@ -134,6 +134,9 @@ export default function TripCalendar({ tripId }) {
     try {
       const response = await fetch(
         `http://localhost:8080/trips/${tripId}/activities`,
+        {
+          credentials: "include",
+        },
       );
 
       if (!response.ok) {

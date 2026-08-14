@@ -13,7 +13,7 @@ export default function Confirmation() {
     async function handleSaveTrip() {
         
         console.log("SAVE BUTTON CLICKED");
-    
+ 
         if (!itinerary) {
           return;
         }
@@ -54,7 +54,7 @@ export default function Confirmation() {
             });
 
           }
-    
+  
           setMessage("Trip saved successfully!");
     
         } catch (error) {
