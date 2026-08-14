@@ -1,18 +1,20 @@
 import { Outlet } from 'react-router';
 import Navbar from './Navbar';
 
-// Layout is the frame every page shares: navbar on top, page below.
-// <Outlet /> is the slot where the matched child route renders.
-export default function Layout() {
+export default function Layout({ user, onLogout, authError }) {
   return (
     <div className="flex min-h-screen flex-col text-left">
-      <Navbar />
+      <Navbar user={user} onLogout={onLogout} />
+
+      {authError && (
+        <p className="mx-auto mt-4 w-full max-w-3xl px-4 text-red-500">
+          {authError}
+        </p>
+      )}
+
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
         <Outlet />
       </main>
-
     </div>
   );
 }
-
-

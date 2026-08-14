@@ -71,7 +71,7 @@ function Login({ setUser }) {
       // Notice we never see, store, or pass the token around — the browser
       // holds it and attaches it to every later request for us.
       const loggedInUser = await login(formData);
-
+console.log("LOGIN RESPONSE:", loggedInUser);
       // Hand the user up to App so the Navbar and protected pages update.
       setUser(loggedInUser);
 
