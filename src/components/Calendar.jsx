@@ -302,7 +302,7 @@ export default function TripCalendar({ tripId }) {
         ref={calendarElement}
         style={{
           width: "100%",
-          height: "700px",
+          height: "850px",
         }}
       />
 
