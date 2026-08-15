@@ -1,28 +1,37 @@
-// api/client.js — the one place that talks to the backend.
-// Every API call goes through request(), so shared logic (base URL, headers,
-// error handling) lives in ONE spot instead of being copy-pasted everywhere.
+// api/client.js
 
-// Where the backend lives. In dev it's your local Express server; in production
-// set VITE_API_URL to your deployed backend URL. Vite only exposes vars that
-// start with VITE_, and reads them at build time.
+// This file is where the frontend sends requests to the backend.
+// request() handles the common setup so we do not repeat it in every function.
+
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // send cookies (needed once you add login/auth)
+
+    // This sends the login cookie with the request.
+    credentials: "include",
+
     ...options,
   });
 
-  // fetch only throws on a network failure, so we check the HTTP status ourselves.
+  // If the backend returns an error, we get the message here.
   if (!res.ok) {
-    // Our backend sends errors as { error: "..." }. Fall back if it didn't.
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Request failed (${res.status})`);
+
+    const error = new Error(body.error || `Request failed (${res.status})`);
+
+    // Save the status so we can check errors like 401.
+    error.status = res.status;
+
+    throw error;
   }
 
-  // 204 No Content (e.g. after a DELETE) has no body to parse.
-  if (res.status === 204) return null;
+  // Some requests, like DELETE, may not return any data.
+  if (res.status === 204) {
+    return null;
+  }
+
   return res.json();
 }
 
@@ -30,7 +39,7 @@ export async function request(path, options = {}) {
 // AI
 // --------------------------------------------------
 
-// Ask Gemini to generate an itinerary.
+// Send the trip information to the backend to generate the itinerary.
 export function generateItinerary(tripData) {
   return request("/trips/itinerary", {
     method: "POST",
@@ -39,8 +48,10 @@ export function generateItinerary(tripData) {
 }
 
 // --------------------------------------------------
-// getVisaRequirements
+// VISA
 // --------------------------------------------------
+
+// Send the passport and destination codes to check visa requirements.
 export function getVisaRequirements(passportCode, destinationCode) {
   return request("/trips/visa", {
     method: "POST",
@@ -51,23 +62,11 @@ export function getVisaRequirements(passportCode, destinationCode) {
   });
 }
 
-// // this give me GET /trips/travel-requirements
-// export function getTravelRequirements(destination, passportCountry) {
-//   const params = new URLSearchParams({
-//      destination,
-//      passportCountry
-//      });
-//      return request(
-//       `/trips/travel-requirements?${params.toString()}`
-//      );
-// }
-
-
 // --------------------------------------------------
 // TRIPS
 // --------------------------------------------------
 
-// Save a new trip.
+// Save a new trip in the database.
 export function createTrip(tripData) {
   return request("/trips/post", {
     method: "POST",
@@ -79,7 +78,7 @@ export function createTrip(tripData) {
 // ACTIVITIES
 // --------------------------------------------------
 
-// Save an activity that belongs to a trip.
+// Save a new activity for a trip.
 export function createActivity(tripId, activityData) {
   return request(`/trips/${tripId}/activities`, {
     method: "POST",
@@ -91,11 +90,10 @@ export function createActivity(tripId, activityData) {
 // CHECKLIST
 // --------------------------------------------------
 
-// Save a checklist item that belongs to a trip.
+// Save a new checklist item for a trip.
 export function createChecklistItem(tripId, item) {
   return request(`/trips/${tripId}/checklist/post`, {
     method: "POST",
-    body: JSON.stringify(
-      item),
+    body: JSON.stringify(item),
   });
 }
