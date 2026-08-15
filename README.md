@@ -1,149 +1,378 @@
-<!--
-HOW TO USE THIS TEMPLATE
-1. This becomes your FRONTEND repo's README.md — the front door of your project.
-   Copy everything below the line into that README.md.
-2. Replace every [bracket] with your own answer.
-3. Delete the italic hints once a section is filled in.
-4. The goal is a README a NEW developer could read and run your project without asking you anything.
-5. Due Monday, 10:00 AM. The poll app is used as the running example throughout.
--->
+# My Travel Buddy — Client
 
----
+The frontend for **My Travel Buddy**, an AI-powered travel planning application.
 
-# My Travel Buddy
-
-[One or two sentences describing what the app does and who it's for.]
-
-> *Example: **QuickPoll** — a web app where anyone can create a poll with multiple options, vote, and watch the results update. Built as a team to practice the full PERN stack end to end.*
-
-## Live Demo
-
-| Environment | URL |
-| --- | --- |
-| Frontend (Vercel) | [https://...] |
-| Backend API (Render) | [https://...] |
-
-*Both links must load. This is how we confirm the app is deployed.*
+Users can enter a destination, travel dates, budget, and interests to generate a personalized itinerary. They can review the generated plan, save trips, manage activities and checklist items, view trips on a calendar, and check visa requirements.
 
 ## Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| Frontend | React (Vite), React Router, CSS |
-| Backend | Node.js, Express |
-| Database | PostgreSQL, Sequelize (ORM) |
-| Auth | Auth0 *(remove if you didn't add login)* |
-| Hosting | Vercel (frontend), Render (backend), Neon (database) |
-
-*List only what you actually used. If you added a library (e.g. a chart library), add it here.*
+| Technology         | Purpose                                |
+| ------------------ | -------------------------------------- |
+| React 19           | Frontend user interface                |
+| Vite               | Development and build tool             |
+| React Router       | Client-side routing                    |
+| CSS / Tailwind CSS | Styling                                |
+| Toast UI Calendar  | Trip activity calendar                 |
+| React Toastify     | User notifications                     |
+| Fetch API          | Communication with the Express backend |
+| Auth0              | Social authentication                  |
 
 ## Features
 
-- [ ] View all polls on a home page
-- [ ] Create a poll with a title, description, and 2+ options
-- [ ] Vote on a poll
-- [ ] See results — vote count per option, most votes first
-- [ ] [Any stretch feature you shipped, e.g. one vote per browser]
+* [x] Create a trip using destination, dates, budget, and interests
+* [x] Select multiple travel interests
+* [x] Generate an AI itinerary
+* [x] Review an itinerary before saving
+* [x] Save trips
+* [x] View saved trips
+* [x] View individual trip details
+* [x] Add and delete activities
+* [x] Manage checklist items
+* [x] View activities on a calendar
+* [x] Check visa requirements
+* [x] Local email/password authentication
+* [x] Auth0 social authentication
+* [x] Popular destination cards on the Home page
 
-## Architecture
+## Getting Started
 
-[One sentence on how the pieces talk to each other.]
+Install the dependencies:
 
-```
-React (Vercel)  ──fetch──▶  Express API (Render)  ──Sequelize──▶  PostgreSQL (Neon)
-```
-
-*Example: The React frontend calls the Express API over HTTP. Express uses Sequelize to read and write to a PostgreSQL database hosted on Neon.*
-
-## Database Schema
-
-[Paste a screenshot of your dbdiagram.io ERD, or link to it.]
-
-| Table | Key columns | Relationships |
-| --- | --- | --- |
-| Polls | title, description | has many Options |
-| Options | text, pollId (FK) | belongs to Poll, has many Votes |
-| Votes | optionId (FK) | belongs to Option |
-
-## API Reference
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| GET | `/polls` | Return all polls |
-| POST | `/polls` | Create a poll with its options |
-| GET | `/polls/:id` | Return one poll with options and vote counts |
-| POST | `/polls/:id/vote` | Submit a vote for an option |
-
-*Add any extra routes you built (e.g. `DELETE /polls/:id`).*
-
-## Getting Started (Run It Locally)
-
-### Prerequisites
-- Node.js (v18+) and npm installed
-- A PostgreSQL database URL (we use [Neon](https://neon.tech))
-
-### 1. Clone both repos
 ```bash
-git clone [frontend-repo-url]
-git clone [backend-repo-url]
-```
-
-### 2. Start the backend
-```bash
-cd [backend-folder]
 npm install
-# create a .env file (see below)
+```
+
+Create the local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-Backend `.env`:
-```
-DATABASE_URL=postgresql://user:password@host/dbname
-PORT=3000
+The frontend runs at:
+
+```text
+http://localhost:5173
 ```
 
-### 3. Start the frontend
+The backend should also be running locally at:
+
+```text
+http://localhost:8080
+```
+
+## Environment Variables
+
+Example `Client/.env`:
+
+```env
+VITE_API_URL=http://localhost:8080
+
+VITE_AUTH0_DOMAIN=
+VITE_AUTH0_CLIENT_ID=
+VITE_AUTH0_AUDIENCE=
+```
+
+### Variables
+
+| Variable               | Purpose                          |
+| ---------------------- | -------------------------------- |
+| `VITE_API_URL`         | Base URL for the Express backend |
+| `VITE_AUTH0_DOMAIN`    | Auth0 tenant domain              |
+| `VITE_AUTH0_CLIENT_ID` | Auth0 SPA client ID              |
+| `VITE_AUTH0_AUDIENCE`  | Auth0 API audience               |
+
+Vite only exposes environment variables beginning with `VITE_`.
+
+Do not place private API keys or secrets in the frontend `.env` file.
+
+## Frontend Routes
+
+| Path               | Page                             |
+| ------------------ | -------------------------------- |
+| `/`                | Home / Trip Planner              |
+| `/trips/itinerary` | Generated itinerary confirmation |
+| `/trips`           | Saved trips                      |
+| `/trips/:id`       | Individual trip details          |
+| `/login`           | Login                            |
+| `/signup`          | Sign up                          |
+| `/protected`       | Example protected page           |
+
+## Home Page
+
+The Home page allows users to enter:
+
+* Destination
+* Start date
+* End date
+* Budget
+* Interests
+
+Available interests include:
+
+```text
+Food
+Sightseeing
+Culture
+Adventure
+Shopping
+Transportation
+Entertainment
+Other
+```
+
+When the user selects **Generate Itinerary**, the frontend sends the trip information to the backend.
+
+Example:
+
+```json
+{
+  "destination": "Kyoto, Japan",
+  "startDate": "2026-08-15",
+  "endDate": "2026-08-20",
+  "budget": "1500",
+  "interests": [
+    "Food",
+    "Culture",
+    "Sightseeing"
+  ]
+}
+```
+
+The backend sends the request to Gemini and returns the generated itinerary to the frontend.
+
+## API Client
+
+Frontend API requests are handled in:
+
+```text
+src/api/client.js
+```
+
+The client uses:
+
+```env
+VITE_API_URL
+```
+
+as the backend base URL.
+
+For local development:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+Example request flow:
+
+```text
+HomePage
+   ↓
+generateItinerary()
+   ↓
+src/api/client.js
+   ↓
+POST /trips/itinerary
+   ↓
+Express backend
+   ↓
+Gemini
+```
+
+## Project Structure
+
+```text
+Client/
+├── src/
+│   ├── api/
+│   │   ├── client.js
+│   │   └── auth.js
+│   │
+│   ├── assets/
+│   │
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Layout.jsx
+│   │   ├── Activities.jsx
+│   │   ├── Checklist.jsx
+│   │   ├── Calendar.jsx
+│   │   └── ProtectedRoute.jsx
+│   │
+│   ├── pages/
+│   │   ├── HomePage.jsx
+│   │   ├── Confirmation.jsx
+│   │   ├── Trips.jsx
+│   │   ├── TripDetails.jsx
+│   │   ├── Login.jsx
+│   │   ├── Signup.jsx
+│   │   └── visa.jsx
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
+│
+├── .env.example
+├── package.json
+└── vite.config.js
+```
+
+## Styling
+
+The frontend uses:
+
+```text
+src/App.css
+```
+
+for page and component styling.
+
+Global styling and Tailwind are configured in:
+
+```text
+src/index.css
+```
+
+The Home page includes:
+
+* Hero image
+* Trip planning form
+* Interest selection buttons
+* Generate Itinerary button
+* Popular destination cards
+
+## Calendar
+
+Trip activities can be displayed using **Toast UI Calendar**.
+
+The calendar uses activity dates returned by the backend and organizes saved trip activities by date.
+
+## Authentication
+
+The frontend supports two authentication methods:
+
+* Email and password
+* Auth0 social login
+
+Protected pages verify that the user is authenticated before displaying private trip information.
+
+## Available Scripts
+
+Start the development server:
+
 ```bash
-cd [frontend-folder]
-npm install
-# create a .env file (see below)
 npm run dev
 ```
 
-Frontend `.env`:
+Create a production build:
+
+```bash
+npm run build
 ```
-VITE_API_URL=http://localhost:3000
+
+Preview the production build:
+
+```bash
+npm run preview
 ```
 
-The app runs at `http://localhost:5173` (Vite's default).
+## Build
 
-*If you added Auth0, list its env vars here too (e.g. `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`, `AUTH0_AUDIENCE`).*
+Create the production build with:
 
-## Team & Roles
+```bash
+npm run build
+```
 
-| Name | Focused on |
-| --- | --- |
-| Yomara | [e.g. frontend pages] |
-| [Name] | [e.g. backend routes] |
-| [Name] | [e.g. database + deployment] |
-| [Name] | [e.g. database + deployment] |
+Vite generates the production files inside:
 
-*Roles overlapping is normal — just say who focused where.*
+```text
+dist/
+```
 
-## Design Decisions
+## Troubleshooting
 
-Write 2–3 short "we did X because Y" lines. Plain English.
+### Frontend starts on port 5174
 
-- [Example: We count votes by loading each option with its votes and using `.length`, because it was the simplest thing that worked.]
-- [Example: We used React Router so moving between pages doesn't reload the browser.]
-- [Your decision here.]
+The application should normally run on:
 
-Design file (Figma / wireframe / sketch): [link or screenshot — a photo of a paper sketch is fine]
+```text
+http://localhost:5173
+```
 
-## Challenges & What We Learned
+If Vite starts on another port, another process may already be using port 5173.
 
-Answer in a sentence or two each. Honesty helps you more than polish.
+Stop that process and restart:
 
-- **Hardest bug or blocker:** [what was it, and how did you get past it?]
-- **What we'd do differently:** [one thing]
-- **One thing we learned about working as a team:** [one thing]
+```bash
+npm run dev
+```
+
+### `Failed to fetch`
+
+Verify that the backend is running:
+
+```text
+http://localhost:8080
+```
+
+Also verify:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+### Vite dependency error
+
+If you see a Vite dependency/cache error, stop the frontend and run:
+
+```bash
+rm -rf node_modules/.vite
+npm run dev -- --force
+```
+
+Also make sure React files do not contain imports such as:
+
+```js
+import { preview } from "vite";
+```
+
+Vite should not be imported directly into React page components.
+
+### Generated itinerary disappears after refresh
+
+The `/trips/itinerary` page currently receives the generated itinerary through React Router state.
+
+Refreshing that page clears the router state, so generate the itinerary again from the Home page.
+
+## Backend
+
+The frontend communicates with the separate **My Travel Buddy Server** repository.
+
+The backend handles:
+
+* PostgreSQL database access
+* User authentication
+* Gemini itinerary generation
+* Trip persistence
+* Activities
+* Checklist items
+* Visa requirements
+
+Local backend URL:
+
+```text
+http://localhost:8080
+```
+
+## Team
+
+| Name              | Focus              |
+| ----------------- | ------------------ |
+| *Add team member* | *Add contribution* |
+| *Add team member* | *Add contribution* |
