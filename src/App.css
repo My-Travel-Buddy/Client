@@ -281,12 +281,18 @@
   }
 }
 
+/* The picked interests get the teal → pink ring, the same marker the active
+   tab and the open day card use. Unselected pills keep their plain border, so
+   the ring means "chosen" rather than being decoration on all eight. */
 .interest-pill.selected {
   color: var(--accent-strong);
   font-weight: 600;
 
-  background: var(--accent-bg);
-  border-color: var(--accent);
+  border-color: transparent;
+
+  background:
+    linear-gradient(var(--accent-bg), var(--accent-bg)) padding-box,
+    linear-gradient(90deg, var(--accent), #e0559c) border-box;
 }
 
 .interest-icon {
@@ -818,7 +824,15 @@ main .space-y-4 {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 
-  background: var(--accent-bg);
+  /* Thin teal → pink ring, the same accent the tab underline and card hover
+     bars use. Two backgrounds: the mint fill clipped to the padding box, the
+     gradient clipped to the border box, so the border itself carries it. */
+  border: 1px solid transparent;
+
+  background:
+    linear-gradient(var(--accent-bg), var(--accent-bg)) padding-box,
+    linear-gradient(90deg, var(--accent), #e0559c) border-box;
+
   border-radius: 999px;
 }
 
@@ -2089,8 +2103,15 @@ section > h1.mt-4 ~ p {
   font-size: 0.9rem;
   font-weight: 500;
 
-  background: var(--surface);
-  border: 1px solid var(--border);
+  /* Same teal → pink ring as the Confirm Itinerary badge and the tab
+     underline: white fill clipped to the padding box, gradient clipped to
+     the border box. */
+  border: 1px solid transparent;
+
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(90deg, var(--accent), #e0559c) border-box;
+
   border-radius: 999px;
 }
 
