@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips";
-import { getVisaRequirements } from "../api/client";
 import heroImage from "../assets/hero.png";
 import heroFuji from "../assets/heroes/japan-mount-fuji-hero.png";
 import heroTokyo from "../assets/japan/tokyo.jpg";
@@ -18,6 +17,19 @@ const HERO_IMAGES = [
   heroTokyo,
   heroMarrakech,
   heroBarcelona,
+];
+
+// What the traveller can pick from. The label is what gets sent to Gemini,
+// so it doubles as the wording of the request.
+const INTERESTS = [
+  { label: "Culture & History", icon: "🏛️" },
+  { label: "Food & Culinary", icon: "🍜" },
+  { label: "Nature & Outdoors", icon: "🏞️" },
+  { label: "Shopping", icon: "🛍️" },
+  { label: "Cozy Cafes", icon: "☕" },
+  { label: "Art & Architecture", icon: "🎨" },
+  { label: "Photography hotspots", icon: "📷" },
+  { label: "Nightlife", icon: "🌃" },
 ];
 
 export default function HomePage() {
@@ -38,15 +50,6 @@ export default function HomePage() {
     interests: [],
   });
 
-  const [visaInfo, setVisaInfo] = useState(null);
-  async function handleVisaCheck() {
-    const data = await getVisaRequirements("US", "CN");
-    setVisaInfo(data);
-  }
-
-  // Store the itinerary returned by Gemini.
-  const [itinerary, setItinerary] = useState(null);
-
   // Used while Gemini is generating the itinerary.
   const [loading, setLoading] = useState(false);
 
@@ -61,161 +64,173 @@ export default function HomePage() {
     });
   }
 
-  // the function that validate the interest field
+  // Add or remove an interest when the user clicks it.
   function handleInterestClick(interest) {
-    setFormData((previewsFormData) => {
-      const isSelected = previewsFormData.interests.includes(interest);
+      setFormData((previewsFormData) => {
+        const isSelected = previewsFormData.interests.includes(interest);
 
-      return {
-        ...previewsFormData,
-        interests: isSelected
-          ? previewsFormData.interests.filter((item) => item !== interest)
-          : [...previewsFormData.interests, interest],
-      };
-    });
-  }
-
-  // Generate the itinerary.
-  async function handleGenerate(event) {
-    event.preventDefault();
-
-    setLoading(true);
-    setMessage("");
-    // console.log(formData.interests.join(", "))
-
-    try {
-      const tripData = {
-        destination: formData.destination,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        budget: formData.budget,
-        interests: formData.interests,
-      };
-
-      const data = await generateItinerary(tripData);
-      console.log("AI RESPONSE:", data);
-
-      setItinerary(data);
-      console.log(data);
-
-      navigate("/trips/itinerary", {
-        state: { itinerary: { ...tripData, ...data } },
+        return {
+          ...previewsFormData,
+          interests: isSelected
+            ? previewsFormData.interests.filter((item) => item !== interest)
+            : [...previewsFormData.interests, interest],
+        };
       });
-    } catch (error) {
-      setMessage(error.message);
     }
 
-    setLoading(false);
-  }
-  return (
-    <>
-      <section
-        className="home-hero"
-        style={{
-          backgroundImage: `url(${hero})`,
-        }}
-      >
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <h1>Plan Your Next Adventure with AI</h1>
+    // Generate the itinerary.
+    async function handleGenerate(event) {
+      event.preventDefault();
 
-            <p>
-              Discover personalized itineraries, dynamic budget insights, and
-              real-time travel coordination in one seamless companion designed
-              for travelers.
-            </p>
-          </div>
-        </div>
-      </section>
+      setLoading(true);
+      setMessage("");
+      // console.log(formData.interests.join(", "))
 
-      <main className="home-main">
-        <form onSubmit={handleGenerate} className="trip-form">
-          <div className="form-field destination-field">
-            <label htmlFor="destination">DESTINATION</label>
+      try {
+        const tripData = {
+          destination: formData.destination,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          budget: formData.budget,
+          interests: formData.interests,
+        };
 
-            <input
-              id="destination"
-              name="destination"
-              placeholder="Where do you want to go?"
-              value={formData.destination}
-              onChange={handleChange}
-            />
-          </div>
+        const data = await generateItinerary(tripData);
+        console.log("AI RESPONSE:", data);
+        navigate("/trips/itinerary", {
+          state: { itinerary: { ...tripData, ...data } },
+        });
+      } catch (error) {
+        setMessage(error.message);
+      }
 
-          <div className="form-field dates-field">
-            <label>DATES</label>
+      setLoading(false);
+    }
+    return (
+      <>
+        <section
+          className="home-hero"
+          style={{
+            backgroundImage: `url(${hero})`,
+          }}
+        >
+          <div className="hero-overlay">
+            <div className="hero-content">
+              <h1>Plan Your Next Adventure with AI</h1>
 
-            <div className="date-inputs">
-              <input
-                id="startDate"
-                name="startDate"
-                type="date"
-                value={formData.startDate}
-                onChange={handleChange}
-              />
-
-              <input
-                id="endDate"
-                name="endDate"
-                type="date"
-                value={formData.endDate}
-                onChange={handleChange}
-              />
+              <p>
+                Discover personalized itineraries, dynamic budget insights, and
+                real-time travel coordination in one seamless companion designed
+                for travelers.
+              </p>
             </div>
           </div>
-
-          <div className="form-field budget-field">
-            <label htmlFor="budget">BUDGET ESTIMATE</label>
-
-            <input
-              id="budget"
-              name="budget"
-              placeholder="0-100000"
-              value={formData.budget}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="interests-section">
-            <span className="interests-label">INTERESTS:</span>
-
-            <div className="interest-options">
-              {[
-                "Food",
-                "Sightseeing",
-                "Culture",
-                "Adventure",
-                "Shopping",
-                "Transportation",
-                "Entertainment",
-                "Other",
-              ].map((interest) => (
-                <button
-                  key={interest}
-                  type="button"
-                  onClick={() => handleInterestClick(interest)}
-                  className={`interest-pill ${
-                    formData.interests.includes(interest) ? "selected" : ""
-                  }`}
-                >
-                  {interest}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <button type="submit" disabled={loading} className="generate-button">
-            {loading ? "Generating..." : "Generate Dream Plan"}
-          </button>
-        </form>
-
-        {message && <p className="form-message">{message}</p>}
-
-        <section className="popular-section">
-          <h2>Popular Destinations</h2>
-          <RenderingTrips />
         </section>
-      </main>
-    </>
-  );
-}
+
+        <main className="home-main">
+          <form onSubmit={handleGenerate} className="trip-form">
+            <div className="form-field destination-field">
+              <label htmlFor="destination">DESTINATION</label>
+
+              <input
+                id="destination"
+                name="destination"
+                required
+                placeholder="Where do you want to go?"
+                value={formData.destination}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-field dates-field">
+              <label>DATES</label>
+
+              <div className="date-inputs">
+                <input
+                  id="startDate"
+                  name="startDate"
+                  type="date"
+                  required
+                  value={formData.startDate}
+                  onChange={handleChange}
+                />
+
+                <input
+                  id="endDate"
+                  name="endDate"
+                  type="date"
+                  required
+                  value={formData.endDate}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-field budget-field">
+              <label htmlFor="budget">BUDGET ESTIMATE</label>
+
+              {/* A trip cannot be saved without a budget, so ask for a real
+                number here instead of failing later on Save. The max matches
+                the database column (DECIMAL(10,2) tops out at 99,999,999.99),
+                so the form never accepts a value the database will reject. */}
+              <input
+                id="budget"
+                name="budget"
+                type="number"
+                min="1"
+                max="99999999"
+                step="0.01"
+                required
+                placeholder="e.g. 2500"
+                value={formData.budget}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="interests-section">
+              <span className="interests-label">
+                Interests &amp; Activities
+              </span>
+
+              <div className="interest-options">
+                {INTERESTS.map((interest) => (
+                  <button
+                    key={interest.label}
+                    type="button"
+                    onClick={() => handleInterestClick(interest.label)}
+                    className={`interest-pill ${
+                      formData.interests.includes(interest.label)
+                        ? "selected"
+                        : ""
+                    }`}
+                  >
+                    <span className="interest-icon" aria-hidden="true">
+                      {interest.icon}
+                    </span>
+
+                    {interest.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="generate-button"
+            >
+              {loading ? "Generating..." : "Generate Dream Plan"}
+            </button>
+          </form>
+
+          {message && <p className="form-message">{message}</p>}
+
+          <section className="popular-section">
+            <h2>Popular Destinations</h2>
+            <RenderingTrips setFormData={setFormData} />
+          </section>
+        </main>
+      </>
+    );
+  }
+
