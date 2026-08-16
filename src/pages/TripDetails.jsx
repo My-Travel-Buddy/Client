@@ -6,6 +6,16 @@ import Checklist from "../components/Checklist";
 import Documents from "../components/Documents";
 import TripCalendar from "../components/Calendar";
 
+// The tabs on this page, in order. Each one is both the button label and the
+// value stored in `activeSection`.
+const SECTIONS = [
+  "Overview",
+  "Itinerary",
+  "Documents",
+  "Checklist",
+  "Activities",
+];
+
 // The API base URL never changes while the app is running, so it lives
 // outside the component.
 const BACKEND_API = import.meta.env.VITE_API_URL;
@@ -60,44 +70,19 @@ export default function TripDetails() {
       <p>
         Budget: ${trip.budget}
       </p>
-      <div>
-        <button
-          type="button"
-          className="mr-3"
-          onClick={() => setActiveSection("Overview")}
-        >
-          Overview
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => setActiveSection("Itinerary")}
-        >
-          Itinerary
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => setActiveSection("Documents")}
-        >
-          Documents
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => setActiveSection("Checklist")}
-        >
-          Checklist
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => {
-            setActiveSection("Activities");
-          }}
-        >
-          Activities
-        </button>
+      <div className="trip-tabs" role="tablist" aria-label="Trip sections">
+        {SECTIONS.map((section) => (
+          <button
+            key={section}
+            type="button"
+            role="tab"
+            aria-selected={activeSection === section}
+            className={`trip-tab ${activeSection === section ? "active" : ""}`}
+            onClick={() => setActiveSection(section)}
+          >
+            {section}
+          </button>
+        ))}
       </div>
 
       {activeSection === 'Overview'}
