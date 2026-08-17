@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 import { login } from '../api/auth';
 import FormField from '../components/FormField';
+import { saveItinerary } from "../api/client";
 
 // Login validates far less than Signup, on purpose. Here we only check that
 // the fields aren't EMPTY. We must NOT say a password "looks too short" —
@@ -38,7 +39,7 @@ function Login({ setUser }) {
   // If ProtectedRoute sent the user here, it stashed where they were headed.
   // Send them back there after login rather than dumping them on the home
   // page — they asked for /protected, they should land on /protected.
-  const redirectTo = location.state?.from ?? '/';
+  const redirectTo = location.state?.from ?? '/trips';
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -71,9 +72,28 @@ function Login({ setUser }) {
       // Notice we never see, store, or pass the token around — the browser
       // holds it and attaches it to every later request for us.
       const loggedInUser = await login(formData);
-
+console.log("LOGIN RESPONSE:", loggedInUser);
       // Hand the user up to App so the Navbar and protected pages update.
       setUser(loggedInUser);
+
+      const pendingItinerary = sessionStorage.getItem("pendingItinerary");
+
+      if (pendingItinerary){
+        console.log("PENDING ITINERARY FOUND");
+
+        const itinerary = JSON.parse(pendingItinerary);
+
+        console.log("ITINERARY:", itinerary);
+
+        const savedTrip = await saveItinerary(itinerary);
+
+        console.log("ITINERARY SAVED:", savedTrip);
+
+        sessionStorage.removeItem("pendingItinerary")
+
+        navigate("/trips", { replace: true });
+        return;
+      }
 
       navigate(redirectTo, { replace: true }); // replace: no "back" to the login page
     } catch (error) {

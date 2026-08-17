@@ -1,6 +1,8 @@
 import { useLocation, Link, useNavigate } from "react-router";
 import { useState, useMemo } from "react";
-import { createTrip, createActivity, createChecklistItem } from "../api/client";
+import { useLocation, useNavigate } from "react-router";
+import { saveItinerary } from "../api/client";
+import { getMe } from "../api/auth";
 
 export default function Confirmation() {
   const location = useLocation();
@@ -26,6 +28,8 @@ export default function Confirmation() {
       if (!buckets.has(key)) {
         buckets.set(key, []);
       }
+    }
+  }
 
       buckets.get(key).push(activity);
     }
@@ -49,7 +53,7 @@ export default function Confirmation() {
       }));
   }, [itinerary]);
 
-  async function handleSaveTrip() {
+async function handleSaveTrip() {
     console.log("SAVE BUTTON CLICKED");
 
     if (!itinerary) {
@@ -57,55 +61,25 @@ export default function Confirmation() {
     }
 
     try {
-      setMessage("Saving trip...");
+      setMessage("Checking authentication...");
+      await getMe();
 
-      // I convert that string into numbers before sending it:
-      if (itinerary.budget < 0) {
-        setMessage("Enter budget as minimum 0");
-        return;
-      }
-      // Then I send that array to the backend:
-      const savedTrip = await createTrip({
-        destination: itinerary.destination,
-        date_Range: [itinerary.startDate, itinerary.endDate],
-        budget: itinerary.budget,
-      });
+      setMessage("Saving Trip...");
+      await saveItinerary(itinerary);
 
-      const tripId = savedTrip.id;
-
-      // Save every generated activity.
-      for (const activity of itinerary.activities || []) {
-        await createActivity(tripId, {
-          title: activity.title,
-          category: activity.category,
-          dateTime: activity.dateTime,
-          estimatedCost: activity.estimatedCost,
-          notes: activity.notes,
-        });
-      }
-
-      // Save every generated checklist item.
-      for (const item of itinerary.checklist || []) {
-        await createChecklistItem(tripId, {
-          text: item.text,
-          completed: item.completed,
-        });
-      }
-
-      setMessage("");
-      setSaved(true);
+      setMessage("Trip saved successfully!");
+      navigate("/trips", { replace: true });
     } catch (error) {
-      // Saving needs an account. Rather than showing "Authentication
-      // required" and leaving them stuck, send them to log in — and carry
-      // the itinerary along so it isn't lost on the way.
-      if (error.status === 401) {
-        navigate("/login", {
-          state: { from: "/trips/itinerary", itinerary },
-        });
+      
+      console.log("Auth Error:", error);
+      console.log("Error Message:", error.message);
+      if (error.message === "Authentication required") {
+        sessionStorage.setItem("pendingItinerary", JSON.stringify(itinerary));
+        navigate("/login");
         return;
+      } else {
+        setMessage(error.message);
       }
-
-      setMessage(error.message);
     }
   }
 
