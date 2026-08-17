@@ -102,7 +102,7 @@ export function createChecklistItem(tripId, item) {
 // To temporarily save the itinerary when navigating to login
 // --------------------------------------------------
 
-async function saveItinerary(itinerary) {
+export async function saveItinerary(itinerary) {
     if (itinerary.budget < 0) {
       throw new Error("Enter budget as minimum 0");
     }

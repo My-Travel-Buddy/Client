@@ -1,6 +1,5 @@
 import { useLocation, Link, useNavigate } from "react-router";
 import { useState, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router";
 import { saveItinerary } from "../api/client";
 import { getMe } from "../api/auth";
 
@@ -28,9 +27,7 @@ export default function Confirmation() {
       if (!buckets.has(key)) {
         buckets.set(key, []);
       }
-    }
-  }
-
+      
       buckets.get(key).push(activity);
     }
 
