@@ -42,6 +42,8 @@ export default function TripCalendar({ tripId }) {
     "Entertainment",
     "Other",
   ];
+
+  // ---------- REMOVED in commit 373b5d4 ----------
   const handleOpenAddActivity = () => {
     setActivityForm({
       title: "",
@@ -54,6 +56,7 @@ export default function TripCalendar({ tripId }) {
     setShowAddActivity(true);
   };
 
+  // ---------- end removed ----------
   const calendarElement = useRef(null);
   const calendarInstance = useRef(null);
 
@@ -125,11 +128,6 @@ export default function TripCalendar({ tripId }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (tripId) {
-      getActivities();
-    }
-  }, [tripId]);
   const getActivities = async () => {
     try {
       const response = await fetch(
@@ -185,6 +183,12 @@ export default function TripCalendar({ tripId }) {
       console.error("Error fetching activities:", error);
     }
   };
+
+  useEffect(() => {
+    if (tripId) {
+      getActivities();
+    }
+  }, [tripId]);
 
   async function addActivities() {
     console.log("Sending activity:", activityForm);

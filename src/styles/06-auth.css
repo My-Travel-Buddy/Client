@@ -1,0 +1,299 @@
+/* Authentication pages */
+
+main:has(> section.max-w-md) {
+  position: relative;
+  isolation: isolate;
+}
+
+main:has(> section.max-w-md)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  animation: auth-photo 80s step-end infinite, auth-fade 80s ease-in-out infinite;
+}
+
+main:has(> section.max-w-md)::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient( 180deg, rgba(12, 22, 38, 0.55) 0%, rgba(12, 22, 38, 0.68) 100% );
+}
+
+@keyframes auth-photo {
+  0% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/01-amalfi-coast-sunrise.webp");
+  }
+
+  10% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/02-mount-fuji-cherry-blossoms.webp");
+  }
+
+  20% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/03-santorini-blue-hour.webp");
+  }
+
+  30% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/04-maldives-tropical-lagoon.webp");
+  }
+
+  40% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/05-paris-sunrise.webp");
+  }
+
+  50% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/06-swiss-alpine-lake.webp");
+  }
+
+  60% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/07-sahara-sunset.webp");
+  }
+
+  70% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/08-new-york-blue-hour.webp");
+  }
+
+  80% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/09-iceland-waterfall.webp");
+  }
+
+  90% {
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/10-venice-canal-dawn.webp");
+  }
+}
+
+@keyframes auth-fade {
+  0% {
+    opacity: 0;
+  }
+
+  1.2% {
+    opacity: 1;
+  }
+
+  8.8% {
+    opacity: 1;
+  }
+
+  10% {
+    opacity: 0;
+  }
+
+  11.2% {
+    opacity: 1;
+  }
+
+  18.8% {
+    opacity: 1;
+  }
+
+  20% {
+    opacity: 0;
+  }
+
+  21.2% {
+    opacity: 1;
+  }
+
+  28.8% {
+    opacity: 1;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  31.2% {
+    opacity: 1;
+  }
+
+  38.8% {
+    opacity: 1;
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  41.2% {
+    opacity: 1;
+  }
+
+  48.8% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  51.2% {
+    opacity: 1;
+  }
+
+  58.8% {
+    opacity: 1;
+  }
+
+  60% {
+    opacity: 0;
+  }
+
+  61.2% {
+    opacity: 1;
+  }
+
+  68.8% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0;
+  }
+
+  71.2% {
+    opacity: 1;
+  }
+
+  78.8% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 0;
+  }
+
+  81.2% {
+    opacity: 1;
+  }
+
+  88.8% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  91.2% {
+    opacity: 1;
+  }
+
+  98.8% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  @keyframes auth-photo {
+    0% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/01-amalfi-coast-sunrise.webp");
+    }
+
+    10% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/02-mount-fuji-cherry-blossoms.webp");
+    }
+
+    20% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/03-santorini-blue-hour.webp");
+    }
+
+    30% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/04-maldives-tropical-lagoon.webp");
+    }
+
+    40% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/05-paris-sunrise.webp");
+    }
+
+    50% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/06-swiss-alpine-lake.webp");
+    }
+
+    60% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/07-sahara-sunset.webp");
+    }
+
+    70% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/08-new-york-blue-hour.webp");
+    }
+
+    80% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/09-iceland-waterfall.webp");
+    }
+
+    90% {
+      background-image: url("../assets/travel-auth-backgrounds/mobile-webp/10-venice-canal-dawn.webp");
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main:has(> section.max-w-md)::before {
+    animation: none;
+    opacity: 1;
+    background-image: url("../assets/travel-auth-backgrounds/desktop-webp/02-mount-fuji-cherry-blossoms.webp");
+  }
+}
+
+section.max-w-md {
+  margin-top: 40px;
+}
+
+main:has(> section.max-w-md) section.max-w-md > div {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 24px 60px rgba(8, 15, 26, 0.45);
+}
+
+section.max-w-md > div {
+  padding: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+}
+
+section.max-w-md h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+input.w-full.rounded-md {
+  height: 46px;
+  padding: 0 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+input.w-full.rounded-md:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+button.bg-\(--accent\) {
+  height: 48px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+button.w-full.rounded-md.border {
+  height: 48px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+button.w-full.rounded-md.border:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}

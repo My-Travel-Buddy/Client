@@ -3,28 +3,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips";
-import { getVisaRequirements } from "../api/client";
-import heroImage from "../assets/hero.png";
-import heroFuji from "../assets/heroes/japan-mount-fuji-hero.png";
-import heroTokyo from "../assets/japan/tokyo.jpg";
-import heroMarrakech from "../assets/morocco/marrakech.jpg";
-import heroBarcelona from "../assets/spain/barcelona.jpg";
+
 import { generateItinerary } from "../api/client";
 
-// Every photo the hero can show. Add a file here and it joins the rotation.
-const HERO_IMAGES = [
-  heroImage,
-  heroFuji,
-  heroTokyo,
-  heroMarrakech,
-  heroBarcelona,
+// Load all hero images and put them in an array.
+const HERO_IMAGES = Object.entries(
+  import.meta.glob("../assets/travel-auth-backgrounds/desktop-webp/*.webp", {
+    eager: true, // Load the images right away.
+    query: "?url", // Get the image URL.
+    import: "default", // Get the default image URL.
+  }),
+)
+  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
+  .map(([, url]) => url);
+
+// Interests the user can choose.
+const INTERESTS = [
+  { label: "Culture & History", icon: "🏛️" },
+  { label: "Food & Culinary", icon: "🍜" },
+  { label: "Nature & Outdoors", icon: "🏞️" },
+  { label: "Shopping", icon: "🛍️" },
+  { label: "Cozy Cafes", icon: "☕" },
+  { label: "Art & Architecture", icon: "🎨" },
+  { label: "Photography hotspots", icon: "📷" },
+  { label: "Nightlife", icon: "🌃" },
 ];
 
 export default function HomePage() {
   const navigate = useNavigate();
 
-  // Pick a random hero image when the page loads.
-  // useState keeps the same image while the user fills out the form.
+  // Pick one random hero image when the page loads.
   const [hero] = useState(
     () => HERO_IMAGES[Math.floor(Math.random() * HERO_IMAGES.length)],
   );
@@ -38,22 +46,13 @@ export default function HomePage() {
     interests: [],
   });
 
-  const [visaInfo, setVisaInfo] = useState(null);
-  async function handleVisaCheck() {
-    const data = await getVisaRequirements("US", "CN");
-    setVisaInfo(data);
-  }
-
-  // Store the itinerary returned by Gemini.
-  const [itinerary, setItinerary] = useState(null);
-
-  // Used while Gemini is generating the itinerary.
+  // Track when the itinerary is being generated.
   const [loading, setLoading] = useState(false);
 
-  // Show success or error messages.
+  // Store a message or error.
   const [message, setMessage] = useState("");
 
-  // Update the correct form field when the user types.
+  // Update the form field the user changes.
   function handleChange(event) {
     setFormData({
       ...formData,
@@ -61,7 +60,7 @@ export default function HomePage() {
     });
   }
 
-  // the function that validate the interest field
+  // Add or remove an interest.
   function handleInterestClick(interest) {
     setFormData((previewsFormData) => {
       const isSelected = previewsFormData.interests.includes(interest);
@@ -75,7 +74,7 @@ export default function HomePage() {
     });
   }
 
-  // Generate the itinerary.
+  // Generate the trip itinerary.
   async function handleGenerate(event) {
     event.preventDefault();
 
@@ -95,9 +94,12 @@ export default function HomePage() {
       const data = await generateItinerary(tripData);
       console.log("AI RESPONSE:", data);
 
-      setItinerary(data);
-      console.log(data);
-
+      // ---------- REMOVED in commit 373b5d4 ----------
+      //
+      //       setItinerary(data);
+      //       console.log(data);
+      //
+      // ---------- end removed ----------
       navigate("/trips/itinerary", {
         state: { itinerary: { ...tripData, ...data } },
       });
@@ -136,6 +138,7 @@ export default function HomePage() {
             <input
               id="destination"
               name="destination"
+              required
               placeholder="Where do you want to go?"
               value={formData.destination}
               onChange={handleChange}
@@ -150,6 +153,7 @@ export default function HomePage() {
                 id="startDate"
                 name="startDate"
                 type="date"
+                required
                 value={formData.startDate}
                 onChange={handleChange}
               />
@@ -158,6 +162,7 @@ export default function HomePage() {
                 id="endDate"
                 name="endDate"
                 type="date"
+                required
                 value={formData.endDate}
                 onChange={handleChange}
               />
@@ -167,38 +172,42 @@ export default function HomePage() {
           <div className="form-field budget-field">
             <label htmlFor="budget">BUDGET ESTIMATE</label>
 
+            {/* Keep the budget inside the allowed range. */}
+
             <input
               id="budget"
               name="budget"
-              placeholder="0-100000"
+              type="number"
+              min="1"
+              max="99999999"
+              step="0.01"
+              required
+              placeholder="e.g. 2500"
               value={formData.budget}
               onChange={handleChange}
             />
           </div>
 
           <div className="interests-section">
-            <span className="interests-label">INTERESTS:</span>
+            <span className="interests-label">Interests &amp; Activities</span>
 
             <div className="interest-options">
-              {[
-                "Food",
-                "Sightseeing",
-                "Culture",
-                "Adventure",
-                "Shopping",
-                "Transportation",
-                "Entertainment",
-                "Other",
-              ].map((interest) => (
+              {INTERESTS.map((interest) => (
                 <button
-                  key={interest}
+                  key={interest.label}
                   type="button"
-                  onClick={() => handleInterestClick(interest)}
+                  onClick={() => handleInterestClick(interest.label)}
                   className={`interest-pill ${
-                    formData.interests.includes(interest) ? "selected" : ""
+                    formData.interests.includes(interest.label)
+                      ? "selected"
+                      : ""
                   }`}
                 >
-                  {interest}
+                  <span className="interest-icon" aria-hidden="true">
+                    {interest.icon}
+                  </span>
+
+                  {interest.label}
                 </button>
               ))}
             </div>
@@ -213,7 +222,7 @@ export default function HomePage() {
 
         <section className="popular-section">
           <h2>Popular Destinations</h2>
-          <RenderingTrips />
+          <RenderingTrips setFormData={setFormData} />
         </section>
       </main>
     </>

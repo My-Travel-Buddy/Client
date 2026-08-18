@@ -1,7 +1,13 @@
+/* ============================================================
+   src/pages/visa.jsx — deleted in commit 373b5d4.
+   Documents.jsx replaced this file.
+   This old file is kept here only for reference.
+   ============================================================ */
+
 import { useEffect, useState } from "react";
 import { getVisaRequirements } from "../api/client";
 
-// Common countries using the ISO alpha-2 codes required by the Visa API.
+// List of country codes used by the Visa API.
 const COUNTRIES = [
   { code: "US", name: "United States" },
   { code: "CA", name: "Canada" },
@@ -30,10 +36,10 @@ const COUNTRIES = [
   { code: "AU", name: "Australia" },
 ];
 
-// The API's colour vocabulary -> the banner variants in voyager-ui.css.
+// Match API colors to CSS styles.
 
-// The API's colour vocabulary -> the banner variants in voyager-ui.css.
-// This converts the API’s color into a CSS class:
+// Match API colors to CSS styles.
+// Change the API color into the correct CSS class.
 const BANNER_VARIANT = {
   green: "",
   yellow: "vy-banner--warn",
@@ -45,11 +51,11 @@ export default function visa() {
   const [destinationCode, setPassportCode] = useState("US");
 
   const [result, setResult] = useState(null);
-  const [result, setResult] = useState("idle"); // idle | loading | done | error
+  const [result, setResult] = useState("idle"); // Track the request status.
   const [message, setMessage] = useState("");
 
-  // Fetch new visa information when the passport or destination changes.
-  // Ignore outdated responses if the user changes a selection quickly.
+  // Get visa information when the passport or destination changes.
+  // Ignore an old response if the user changes the selection.
   useEffect(() => {
     let ignore = false;
 

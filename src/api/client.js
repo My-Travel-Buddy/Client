@@ -1,7 +1,7 @@
 // api/client.js
 
-// This file is where the frontend sends requests to the backend.
-// request() handles the common setup so we do not repeat it in every function.
+// Handles requests from the frontend to the backend.
+// request() keeps the shared fetch setup in one place.
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -9,25 +9,25 @@ export async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json" },
 
-    // This sends the login cookie with the request.
+    // Send the login cookie with the request.
     credentials: "include",
 
     ...options,
   });
 
-  // If the backend returns an error, we get the message here.
+  // Show the backend error if the request fails.
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
 
     const error = new Error(body.error || `Request failed (${res.status})`);
 
-    // Save the status so we can check errors like 401.
+    // Keep the status code so it can be checked later.
     error.status = res.status;
 
     throw error;
   }
 
-  // Some requests, like DELETE, may not return any data.
+  // Return nothing when the backend sends no content.
   if (res.status === 204) {
     return null;
   }
@@ -39,7 +39,7 @@ export async function request(path, options = {}) {
 // AI
 // --------------------------------------------------
 
-// Send the trip information to the backend to generate the itinerary.
+// Send trip details to the backend to generate an itinerary.
 export function generateItinerary(tripData) {
   return request("/trips/itinerary", {
     method: "POST",
@@ -51,7 +51,12 @@ export function generateItinerary(tripData) {
 // VISA
 // --------------------------------------------------
 
-// Send the passport and destination codes to check visa requirements.
+// Get the passport and destination country lists.
+export function getVisaCountries() {
+  return request("/trips/visa/countries");
+}
+
+// Check visa requirements for a passport and destination.
 export function getVisaRequirements(passportCode, destinationCode) {
   return request("/trips/visa", {
     method: "POST",
@@ -66,7 +71,7 @@ export function getVisaRequirements(passportCode, destinationCode) {
 // TRIPS
 // --------------------------------------------------
 
-// Save a new trip in the database.
+// Save a new trip.
 export function createTrip(tripData) {
   return request("/trips/post", {
     method: "POST",
@@ -86,6 +91,13 @@ export function createActivity(tripId, activityData) {
   });
 }
 
+// Delete an activity from a trip.
+export function deleteActivity(tripId, activityId) {
+  return request(`/trips/${tripId}/activities/${activityId}`, {
+    method: "DELETE",
+  });
+}
+
 // --------------------------------------------------
 // CHECKLIST
 // --------------------------------------------------
@@ -99,38 +111,38 @@ export function createChecklistItem(tripId, item) {
 }
 
 // --------------------------------------------------
-// To temporarily save the itinerary when navigating to login
+// Save the itinerary before going to login
 // --------------------------------------------------
 
 export async function saveItinerary(itinerary) {
-    if (itinerary.budget < 0) {
-      throw new Error("Enter budget as minimum 0");
-    }
-
-    const savedTrip = await createTrip({
-      destination: itinerary.destination,
-      date_Range: [itinerary.startDate, itinerary.endDate],
-      budget: itinerary.budget,
-    });
-
-    const tripId = savedTrip.id;
-
-    // Save every generated activity.
-    for (const activity of itinerary.activities || []) {
-      await createActivity(tripId, {
-        title: activity.title,
-        category: activity.category,
-        dateTime: activity.dateTime,
-        estimatedCost: activity.estimatedCost,
-        notes: activity.notes,
-      });
-    }
-
-    // Save every generated checklist item.
-    for (const item of itinerary.checklist || []) {
-      await createChecklistItem(tripId, {
-        text: item.text,
-        completed: item.completed,
-      });
-    }
+  if (itinerary.budget < 0) {
+    throw new Error("Enter budget as minimum 0");
   }
+
+  const savedTrip = await createTrip({
+    destination: itinerary.destination,
+    date_Range: [itinerary.startDate, itinerary.endDate],
+    budget: itinerary.budget,
+  });
+
+  const tripId = savedTrip.id;
+
+  // Save all generated activities.
+  for (const activity of itinerary.activities || []) {
+    await createActivity(tripId, {
+      title: activity.title,
+      category: activity.category,
+      dateTime: activity.dateTime,
+      estimatedCost: activity.estimatedCost,
+      notes: activity.notes,
+    });
+  }
+
+  // Save all generated checklist items.
+  for (const item of itinerary.checklist || []) {
+    await createChecklistItem(tripId, {
+      text: item.text,
+      completed: item.completed,
+    });
+  }
+}

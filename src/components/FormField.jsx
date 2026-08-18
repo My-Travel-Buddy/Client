@@ -1,28 +1,26 @@
-// FormField.jsx — one labelled input, plus its error message.
+// FormField.jsx — reusable input field with a label and error message.
 //
-// The Login and Signup forms need this exact trio (label, input, error text)
-// six times between them. Pulling it into one component means the styling and
-// the accessibility wiring are written ONCE.
+// Login and Signup use the same label, input, and error setup several times.
+// This component keeps that code in one place.
 //
-// The accessibility wiring, since it's easy to skip:
-//   htmlFor + id      — clicking the label focuses the input.
-//   aria-invalid      — tells a screen reader this field is wrong, not just red.
-//   aria-describedby  — points the screen reader at the error text, so the user
-//                       hears WHAT is wrong, not only that something is.
+// Accessibility:
+// htmlFor + id — clicking the label focuses the input.
+// aria-invalid — tells screen readers when the field has an error.
+// aria-describedby — connects the input to its error message.
 export default function FormField({
   label,
   name,
-  type = 'text',
+  type = "text",
   value,
   onChange,
   error,
-  ...inputProps // placeholder, autoComplete, required, ... pass straight through
+  ...inputProps // Pass extra input settings like placeholder and required.
 }) {
   const errorId = `${name}-error`;
 
   return (
-    <div className='flex flex-col gap-1.5'>
-      <label htmlFor={name} className='text-sm font-medium text-(--text-h)'>
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={name} className="text-sm font-medium text-(--text-h)">
         {label}
       </label>
 
@@ -36,13 +34,13 @@ export default function FormField({
         aria-describedby={error ? errorId : undefined}
         className={`w-full rounded-md border bg-transparent px-3 py-2 outline-none transition
           focus:border-(--accent) focus:ring-2 focus:ring-(--accent-bg)
-          ${error ? 'border-red-500' : 'border-(--border)'}`}
+          ${error ? "border-red-500" : "border-(--border)"}`}
         {...inputProps}
       />
 
-      {/* role="alert" makes a screen reader announce the message the moment it appears. */}
+      {/* Makes screen readers announce the error when it appears. */}
       {error && (
-        <span id={errorId} role='alert' className='text-sm text-red-500'>
+        <span id={errorId} role="alert" className="text-sm text-red-500">
           {error}
         </span>
       )}
