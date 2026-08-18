@@ -105,3 +105,58 @@ export default function TripDetails() {
 
 /* <p className='mt-2'>{trip.description || 'No description.'}</p> */
 /* Status: {task.completed ? '✅ Done' : '⬜ Not done'} */
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+     const BACKEND_API = import.meta.env.VITE_API_URL;
+   
+   ---------- removed block ----------
+         <div>
+           <button
+             type="button"
+             className="mr-3"
+             onClick={() => setActiveSection("Overview")}
+           >
+             Overview
+           </button>
+           <button
+             type="button"
+             className="m-3"
+             onClick={() => setActiveSection("Itinerary")}
+           >
+             Itinerary
+           </button>
+           <button
+             type="button"
+             className="m-3"
+             onClick={() => setActiveSection("Documents")}
+           >
+             Documents
+           </button>
+           <button
+             type="button"
+             className="m-3"
+             onClick={() => setActiveSection("Checklist")}
+           >
+             Checklist
+           </button>
+           <button
+             type="button"
+             className="m-3"
+             onClick={() => {
+               setActiveSection("Activities");
+             }}
+           >
+             Activities
+           </button>
+   ---------- removed block ----------
+         {activeSection === 'Itinerary' && <TripCalendar tripId={trip.id} />}
+         {activeSection === 'Documents'}
+   ---------- removed block ----------
+         {activeSection === "Activities" && <Activities trip={trip} />}
+   ============================================================ */

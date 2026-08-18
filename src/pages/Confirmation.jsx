@@ -350,3 +350,27 @@ async function handleSaveTrip() {
     </>
   );
 }
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+     // Get the itinerary passed from the previous page.
+     // The ? prevents an error if there is no router state.
+     const itinerary = location.state?.itinerary;
+   ---------- removed block ----------
+         <div>Confirm Itinerary</div>
+   ---------- removed block ----------
+             <h3 className="mb-2 mt-6 text-xl font-semibold">Checklist</h3>
+   ---------- removed block ----------
+             <ul className="list-disc pl-6">
+               {(itinerary.checklist || []).map((item, index) => (
+                 <li key={index}>{item.text}</li>
+               ))}
+             </ul>
+   ---------- removed block ----------
+               Save Trip
+   ============================================================ */

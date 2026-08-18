@@ -6,6 +6,10 @@ import { NavLink } from 'react-router';
 // Navbar takes `user` and `onLogout` as props from App. It doesn't fetch
 // anything or know how you logged in — it just renders what it's handed. A
 // component this simple is easy to reason about and easy to reuse.
+
+// ---------- REMOVED in commit 373b5d4 ----------
+// export default function Navbar({ user, onLogout }) {
+// ---------- end removed ----------
 export default function Navbar({ user, onLogout, isLoading }) {
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded-md text-sm font-medium ${
@@ -41,6 +45,10 @@ export default function Navbar({ user, onLogout, isLoading }) {
         {user ? (
           <>
             <span className='px-2 text-sm'>
+              {/* ADDED: the name to show. Our own users always have a
+                  username; Auth0 users may only have a name or an email,
+                  so fall back through all three. */}
+              {user.username || user.name || user.email}
             </span>
             <button
               onClick={onLogout}
@@ -66,3 +74,15 @@ export default function Navbar({ user, onLogout, isLoading }) {
     </header>
   );
 }
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+             Home
+   ---------- removed block ----------
+             Trips
+   ============================================================ */

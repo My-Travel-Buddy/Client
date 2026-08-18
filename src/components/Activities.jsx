@@ -86,3 +86,28 @@ function Activities({ trip, setTrip }) {
 }
 
 export default Activities;
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+   import TripCalendar from "./Calendar";
+   ---------- removed block ----------
+   function Activities({ trip }) {
+     console.log(trip.Activities);
+   ---------- removed block ----------
+         <div>Activities</div>
+         {trip.Activities.map((activity, index) => (
+           <div key={index}>
+   ---------- removed block ----------
+               <li>
+                   Cost: ${activity.estimatedCost}
+               </li>
+             </ul>
+             <br />
+           </div>
+         ))}
+   ============================================================ */

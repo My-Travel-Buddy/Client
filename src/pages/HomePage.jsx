@@ -3,6 +3,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips";
+
+// ---------- REMOVED in commit 373b5d4 ----------
+// import { getVisaRequirements } from "../api/client";
+// import heroImage from "../assets/hero.png";
+// import heroFuji from "../assets/heroes/japan-mount-fuji-hero.png";
+// import heroTokyo from "../assets/japan/tokyo.jpg";
+// import heroMarrakech from "../assets/morocco/marrakech.jpg";
+// import heroBarcelona from "../assets/spain/barcelona.jpg";
+// ---------- end removed ----------
 import { generateItinerary } from "../api/client";
 
 // To support the cycling hero photos, I load all desktop WebP images
@@ -96,6 +105,13 @@ export default function HomePage() {
 
       const data = await generateItinerary(tripData);
       console.log("AI RESPONSE:", data);
+
+  // ---------- REMOVED in commit 373b5d4 ----------
+  //
+  //       setItinerary(data);
+  //       console.log(data);
+  //
+  // ---------- end removed ----------
       navigate("/trips/itinerary", {
         state: { itinerary: { ...tripData, ...data } },
       });
@@ -225,3 +241,56 @@ export default function HomePage() {
     </>
   );
 }
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+   // Every photo the hero can show. Add a file here and it joins the rotation.
+   const HERO_IMAGES = [
+     heroImage,
+     heroFuji,
+     heroTokyo,
+     heroMarrakech,
+     heroBarcelona,
+   ---------- removed block ----------
+     const [visaInfo, setVisaInfo] = useState(null);
+     async function handleVisaCheck() {
+       const data = await getVisaRequirements("US", "CN");
+       setVisaInfo(data);
+     }
+   
+     // Store the itinerary returned by Gemini.
+     const [itinerary, setItinerary] = useState(null);
+   
+   ---------- removed block ----------
+     // the function that validate the interest field
+   ---------- removed block ----------
+                 placeholder="0-100000"
+   ---------- removed block ----------
+               <span className="interests-label">INTERESTS:</span>
+   ---------- removed block ----------
+                 {[
+                   "Food",
+                   "Sightseeing",
+                   "Culture",
+                   "Adventure",
+                   "Shopping",
+                   "Transportation",
+                   "Entertainment",
+                   "Other",
+                 ].map((interest) => (
+   ---------- removed block ----------
+                     key={interest}
+   ---------- removed block ----------
+                     onClick={() => handleInterestClick(interest)}
+   ---------- removed block ----------
+                       formData.interests.includes(interest) ? "selected" : ""
+   ---------- removed block ----------
+                     {interest}
+   ---------- removed block ----------
+             <RenderingTrips />
+   ============================================================ */

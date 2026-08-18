@@ -265,3 +265,13 @@ function Documents({ trip }) {
 }
 
 export default Documents;
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+   //need the api
+   ============================================================ */

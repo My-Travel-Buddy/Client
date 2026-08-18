@@ -151,7 +151,11 @@ function App() {
           path="/trips"
           element={
             <ProtectedRoute user={user} isLoading={isLoading}>
-              <Trips />
+              {/* ADDED: pass `user` down. Trips reads user?.username for its
+                  greeting, so without this prop it always fell back to the
+                  default and rendered "Welcome back, traveler!". */}
+              {/* was: <Trips />   ← no user prop, hence "traveler" */}
+              <Trips user={user} />
             </ProtectedRoute>
           }
         />
@@ -193,3 +197,24 @@ function App() {
 }
 
 export default App;
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+     // On a page refresh, THREE things can be in flight at once, and
+     // ProtectedRoute must not redirect while any of them is still running —
+     // otherwise a logged-in user gets bounced to /login every time they hit F5:
+   ---------- removed block ----------
+     // The third clause is the subtle one. An Auth0 user has no cookie, so step 1
+     // finishes almost instantly with user === null. Without waiting for the sync
+     // below, there'd be a window where nothing is "loading" but nobody is logged
+     // in either — and that window is exactly when the redirect fires.
+   ---------- removed block ----------
+             <Layout user={user} onLogout={handleLogout} authError={authError} />
+   ---------- removed block ----------
+                 <ProtectedPage user={user} />
+   ============================================================ */

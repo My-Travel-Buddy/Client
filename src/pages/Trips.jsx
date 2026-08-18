@@ -113,3 +113,25 @@ export default function Trips({ user }) {
   </>
   );
 }
+
+/* ============================================================
+   REMOVED in commit 373b5d4.
+   Kept here rather than inline: these came out of JSX markup,
+   where a // line would RENDER ON THE PAGE instead of being a
+   comment. Listed so nothing is missing.
+   ============================================================
+   ---------- removed block ----------
+   export default function Trips() {
+   ---------- removed block ----------
+         <div>
+         <h2>
+             <Link to='/'>
+               + Plan New Trip
+             </Link>
+         </h2>
+       </div>
+   ---------- removed block ----------
+         {/* Show a message if the user has no saved trips. * /}
+   ---------- removed block ----------
+           <p>No saved trips yet.</p>
+   ============================================================ */
