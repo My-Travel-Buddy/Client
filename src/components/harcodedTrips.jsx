@@ -36,15 +36,6 @@ const trips = [
     image:
       "https://media.istockphoto.com/id/516550104/photo/lisbon-tram-and-cityscape.jpg?s=612x612&w=0&k=20&c=NrZ14iMTzaKBuNawkv95nZGoYJcsg-JikID5s7orSkg=",
   },
-  {
-    id: "banff",
-    destination: "Banff, Canada",
-    interest: "kayaking, hiking, nature photography",
-    budget: 600,
-    season: "Summer",
-    image:
-      "https://images.unsplash.com/photo-1662434449168-35f32702b665?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJhbmZmfGVufDB8fDB8fHww",
-  },
 ];
 
 // Shows one trip card.
