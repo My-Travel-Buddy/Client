@@ -6,8 +6,7 @@ import Checklist from "../components/Checklist";
 import Documents from "../components/Documents";
 import TripCalendar from "../components/Calendar";
 
-// The tabs on this page, in order. Each one is both the button label and the
-// value stored in `activeSection`.
+// List of tabs shown on the trip details page.
 const SECTIONS = [
   "Overview",
   "Itinerary",
@@ -16,11 +15,10 @@ const SECTIONS = [
   "Activities",
 ];
 
-// The API base URL never changes while the app is running, so it lives
-// outside the component.
+// Backend API URL.
 const BACKEND_API = import.meta.env.VITE_API_URL;
 
-// Shows one task. The id comes from the URL, e.g. /tasks/3 -> id === "3".
+// Show the details for one trip using the id from the URL.
 export default function TripDetails() {
   const { id } = useParams();
 
@@ -28,14 +26,13 @@ export default function TripDetails() {
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("Overview");
 
-  // Fetch whenever the id in the URL changes. The `active` flag ignores a
-  // response that arrives after we've already navigated away.
+  // Get the trip when the page opens or the id changes.
   useEffect(() => {
     const getTrip = async () => {
       try {
         const response = await axios.get(`${BACKEND_API}/trips/${id}`, {
-  withCredentials: true,
-});
+          withCredentials: true,
+        });
         const data = await response.data;
         setTrip(data);
       } catch (err) {
@@ -48,7 +45,7 @@ export default function TripDetails() {
   }, [id]);
 
   if (error) return <p className="text-red-500">{error}</p>;
-  if (!trip) return <p>Loading…</p>; // no task yet = still loading
+  if (!trip) return <p>Loading…</p>; // Show loading until the trip arrives.
 
   // function showItinerary(){
   //   return(
@@ -67,9 +64,7 @@ export default function TripDetails() {
       <p>
         {trip.date_Range[0].value} -to- {trip.date_Range[1].value}
       </p>
-      <p>
-        Budget: ${trip.budget}
-      </p>
+      <p>Budget: ${trip.budget}</p>
       <div className="trip-tabs" role="tablist" aria-label="Trip sections">
         {SECTIONS.map((section) => (
           <button
@@ -85,78 +80,21 @@ export default function TripDetails() {
         ))}
       </div>
 
-      {activeSection === 'Overview'}
+      {activeSection === "Overview"}
 
-      {/* The calendar brings no card of its own, so it gets one here — that
-          way Itinerary, Documents and Checklist all sit on the same panel. */}
-      {activeSection === 'Itinerary' && (
+      {/* Show the calendar inside the Itinerary tab. */}
+      {activeSection === "Itinerary" && (
         <div className="tab-panel">
           <TripCalendar tripId={trip.id} />
         </div>
       )}
-      {activeSection === 'Documents' && <Documents trip={trip} />}
-      {activeSection === 'Checklist' && <Checklist trip={trip} setTrip={setTrip} />}
+      {activeSection === "Documents" && <Documents trip={trip} />}
+      {activeSection === "Checklist" && (
+        <Checklist trip={trip} setTrip={setTrip} />
+      )}
       {activeSection === "Activities" && (
         <Activities trip={trip} setTrip={setTrip} />
       )}
     </section>
   );
 }
-
-/* <p className='mt-2'>{trip.description || 'No description.'}</p> */
-/* Status: {task.completed ? '✅ Done' : '⬜ Not done'} */
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-     const BACKEND_API = import.meta.env.VITE_API_URL;
-   
-   ---------- removed block ----------
-         <div>
-           <button
-             type="button"
-             className="mr-3"
-             onClick={() => setActiveSection("Overview")}
-           >
-             Overview
-           </button>
-           <button
-             type="button"
-             className="m-3"
-             onClick={() => setActiveSection("Itinerary")}
-           >
-             Itinerary
-           </button>
-           <button
-             type="button"
-             className="m-3"
-             onClick={() => setActiveSection("Documents")}
-           >
-             Documents
-           </button>
-           <button
-             type="button"
-             className="m-3"
-             onClick={() => setActiveSection("Checklist")}
-           >
-             Checklist
-           </button>
-           <button
-             type="button"
-             className="m-3"
-             onClick={() => {
-               setActiveSection("Activities");
-             }}
-           >
-             Activities
-           </button>
-   ---------- removed block ----------
-         {activeSection === 'Itinerary' && <TripCalendar tripId={trip.id} />}
-         {activeSection === 'Documents'}
-   ---------- removed block ----------
-         {activeSection === "Activities" && <Activities trip={trip} />}
-   ============================================================ */

@@ -44,18 +44,18 @@ export default function TripCalendar({ tripId }) {
   ];
 
   // ---------- REMOVED in commit 373b5d4 ----------
-  //   const handleOpenAddActivity = () => {
-  //     setActivityForm({
-  //       title: "",
-  //       category: "",
-  //       dateTime: "",
-  //       estimatedCost: "",
-  //       notes: "",
-  //     });
-  //
-  //     setShowAddActivity(true);
-  //   };
-  //
+  const handleOpenAddActivity = () => {
+    setActivityForm({
+      title: "",
+      category: "",
+      dateTime: "",
+      estimatedCost: "",
+      notes: "",
+    });
+
+    setShowAddActivity(true);
+  };
+
   // ---------- end removed ----------
   const calendarElement = useRef(null);
   const calendarInstance = useRef(null);
@@ -691,17 +691,3 @@ export default function TripCalendar({ tripId }) {
     </div>
   );
 }
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-     useEffect(() => {
-       if (tripId) {
-         getActivities();
-       }
-     }, [tripId]);
-   ============================================================ */

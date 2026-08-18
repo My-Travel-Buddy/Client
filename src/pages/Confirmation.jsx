@@ -8,12 +8,10 @@ export default function Confirmation() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
 
-  // Show the saved popup after the trip is saved.
+  // Show a popup after the trip is saved.
   const [saved, setSaved] = useState(false);
 
-  // The itinerary arrives in the router state, but that is lost on a refresh
-  // or after a trip to the login page. So we keep a copy in sessionStorage
-  // and fall back to it. sessionStorage clears when the tab closes.
+  // Keep the itinerary in sessionStorage so it is not lost after login or refresh.
   if (location.state?.itinerary) {
     sessionStorage.setItem(
       "itinerary",
@@ -27,14 +25,13 @@ export default function Confirmation() {
     location.state?.itinerary ||
     (savedItinerary ? JSON.parse(savedItinerary) : null);
 
-  // The checklist lives in state so the boxes can be ticked and new tasks
-  // added before the trip is saved.
+  // Store the checklist so the user can update it before saving.
   const [checklist, setChecklist] = useState(itinerary?.checklist || []);
 
-  // What the user is typing in the "add a task" box.
+  // Store the new checklist task being typed.
   const [newTask, setNewTask] = useState("");
 
-  // How many are done, as a count and as a percentage for the bar.
+  // Count completed checklist items and calculate the percentage.
   const doneCount = checklist.filter((item) => item.completed).length;
 
   const percent =
@@ -42,7 +39,7 @@ export default function Confirmation() {
       ? 0
       : Math.round((doneCount / checklist.length) * 100);
 
-  // Tick or untick one item.
+  // Check or uncheck a checklist item.
   function toggleItem(index) {
     const updated = [...checklist];
 
@@ -54,7 +51,7 @@ export default function Confirmation() {
     setChecklist(updated);
   }
 
-  // Add the typed task to the bottom of the list.
+  // Add a new task to the checklist.
   function addTask(event) {
     event.preventDefault();
 
@@ -66,19 +63,19 @@ export default function Confirmation() {
     setNewTask("");
   }
 
-  // Group activities by date so each day is shown together.
+  // Group activities by date.
   const days = useMemo(() => {
     const buckets = new Map();
 
     for (const activity of itinerary?.activities || []) {
-      // Get only the date from the dateTime.
-      // Example: "2026-08-14T09:00:00Z" -> "2026-08-14"
+      // Get only the date from dateTime.
+      // Example: "2026-08-14T09:00:00Z" becomes "2026-08-14".
       const key = String(activity.dateTime).slice(0, 10);
 
       if (!buckets.has(key)) {
         buckets.set(key, []);
       }
-      
+
       buckets.get(key).push(activity);
     }
 
@@ -101,7 +98,7 @@ export default function Confirmation() {
       }));
   }, [itinerary]);
 
-async function handleSaveTrip() {
+  async function handleSaveTrip() {
     console.log("SAVE BUTTON CLICKED");
 
     if (!itinerary) {
@@ -112,9 +109,7 @@ async function handleSaveTrip() {
       setMessage("Checking authentication...");
       await getMe();
 
-      // The budget arrives as text from the form. The database needs a real
-      // number above 0 — an empty box or 0 is what used to make the save fail
-      // with "Something went wrong on the server".
+      // Convert the budget to a number before saving.
       const budget = Number(itinerary.budget);
 
       if (!budget || budget <= 0) {
@@ -123,7 +118,8 @@ async function handleSaveTrip() {
         );
         return;
       }
-      // // Then I send that array to the backend:
+
+      // // Save the trip to the backend.
       // const savedTrip = await createTrip({
       //   destination: itinerary.destination,
       //   date_Range: [itinerary.startDate, itinerary.endDate],
@@ -132,7 +128,7 @@ async function handleSaveTrip() {
 
       // const tripId = savedTrip.id;
 
-      // // Save every generated activity.
+      // // Save all generated activities.
       // for (const activity of itinerary.activities || []) {
       //   await createActivity(tripId, {
       //     title: activity.title,
@@ -143,14 +139,14 @@ async function handleSaveTrip() {
       //   });
       // }
 
-      // // Save the checklist from state, so ticked boxes and any task the user
-      // // added are saved too.
+      // // Save all checklist items.
       // for (const item of checklist) {
       //   await createChecklistItem(tripId, {
       //     text: item.text,
       //     completed: item.completed,
       //   });
       // }
+
       setSaved(true);
       setMessage("Saving Trip...");
       await saveItinerary(itinerary);
@@ -158,7 +154,6 @@ async function handleSaveTrip() {
       setMessage("Trip saved successfully!");
       navigate("/trips", { replace: true });
     } catch (error) {
-      
       console.log("Auth Error:", error);
       console.log("Error Message:", error.message);
       if (error.message === "Authentication required") {
@@ -173,10 +168,10 @@ async function handleSaveTrip() {
 
   return (
     <>
-      {/* Step label above the itinerary title. */}
+      {/* Show the confirmation page label. */}
       <div className="page-eyebrow">Confirm Itinerary</div>
 
-      {/* No plan to show — say so instead of rendering an empty page. */}
+      {/* Show a message if there is no itinerary. */}
       {!itinerary && (
         <div className="trips-empty">
           <div className="trips-empty-icon">🧭</div>
@@ -211,8 +206,7 @@ async function handleSaveTrip() {
 
           <div className="space-y-4">
             {days.map((day, dayIndex) => (
-              // <details> gives us open/close, keyboard support and the
-              // disclosure semantics for free — no state to manage.
+              // details lets the user open and close each day.
               <details
                 key={day.key}
                 className="day-group"
@@ -310,12 +304,12 @@ async function handleSaveTrip() {
             Save Trip to My Account
           </button>
 
-          {/* Errors from the save were being swallowed — show them. */}
+          {/* Show the save message or error. */}
           {message && <p className="save-error">{message}</p>}
         </section>
       )}
 
-      {/* Confirmation popup: the save worked, so point them at the history. */}
+      {/* Show a confirmation popup after the trip is saved. */}
       {saved && (
         <div
           className="save-popup-backdrop"
@@ -350,27 +344,3 @@ async function handleSaveTrip() {
     </>
   );
 }
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-     // Get the itinerary passed from the previous page.
-     // The ? prevents an error if there is no router state.
-     const itinerary = location.state?.itinerary;
-   ---------- removed block ----------
-         <div>Confirm Itinerary</div>
-   ---------- removed block ----------
-             <h3 className="mb-2 mt-6 text-xl font-semibold">Checklist</h3>
-   ---------- removed block ----------
-             <ul className="list-disc pl-6">
-               {(itinerary.checklist || []).map((item, index) => (
-                 <li key={index}>{item.text}</li>
-               ))}
-             </ul>
-   ---------- removed block ----------
-               Save Trip
-   ============================================================ */

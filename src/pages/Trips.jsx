@@ -3,27 +3,26 @@ import { Link } from "react-router";
 import { request } from "../api/client";
 
 export default function Trips({ user }) {
-  // The name for the greeting. `user` is null for a moment while App checks
-  // the login cookie, and stays null when nobody is logged in.
+  // Get the user's name for the greeting.
   const name = user?.username || user?.name || user?.email || "traveler";
 
-  // Store the saved trips returned by the backend.
+  // Store the saved trips.
   const [trips, setTrips] = useState([]);
 
-  // Track whether the trips are still loading.
+  // Track whether trips are loading.
   const [loading, setLoading] = useState(true);
 
-  // Store an error message if the request fails.
+  // Store an error message.
   const [error, setError] = useState("");
 
-  // Load all saved trips when this page first opens.
+  // Load saved trips when the page opens.
   useEffect(() => {
     async function getTrips() {
       try {
-        // client.js sends GET /trips to the backend.
+        // Get all saved trips from the backend.
         const data = await request("/trips");
 
-        // The backend returns an array of saved trips.
+        // Save the trips in state.
         setTrips(data);
       } catch (error) {
         setError(error.message);
@@ -35,23 +34,25 @@ export default function Trips({ user }) {
     getTrips();
   }, []);
 
-  // Show a loading message while waiting for the backend.
+  // Show a loading message.
   if (loading) {
     return <p>Loading trips...</p>;
   }
 
-  // Show an error if the request failed.
+  // Show an error message.
   if (error) {
     return <p>Error: {error}</p>;
   }
 
   return (
-  <>
+    <>
       <div className="trips-header">
         <div>
           <h1>Welcome back, {name}! 👋</h1>
 
-          <p>Your upcoming travel plans, customized itineraries, and checklist.</p>
+          <p>
+            Your upcoming travel plans, customized itineraries, and checklist.
+          </p>
         </div>
 
         <Link to="/" className="plan-trip-button">
@@ -61,77 +62,47 @@ export default function Trips({ user }) {
 
       <h2 className="trips-section-title">My Upcoming Itineraries</h2>
 
-    <section className='text-center'>
-      {/* Show an empty state if the user has no saved trips. */}
-      {trips.length === 0 ? (
-        <div className="trips-empty">
-          <div className="trips-empty-icon">🧭</div>
+      <section className="text-center">
+        {/* Show a message if there are no saved trips. */}
+        {trips.length === 0 ? (
+          <div className="trips-empty">
+            <div className="trips-empty-icon">🧭</div>
 
-          <h3>No trips saved yet</h3>
+            <h3>No trips saved yet</h3>
 
-          <p>
-            Generate an itinerary from the home page and save it — it will
-            show up here.
-          </p>
+            <p>
+              Generate an itinerary from the home page and save it — it will
+              show up here.
+            </p>
 
-          <Link to="/" className="plan-trip-button">
-            Plan your first trip
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-4">
-
-          {/* Create one card for every saved trip. */}
-          {trips.map((trip) => (
-            <Link
-              key={trip.id}
-              to={`/trips/${trip.id}`}
-              className="block rounded-md border bg-white p-4"
-            >
-              <h2 className="text-xl font-semibold">
-                {trip.destination}
-              </h2>
-
-              {/* The backend stores budget as a min/max range. */}
-              <p>
-                Budget: ${trip.budget}
-              </p>
-
-              {/* The backend stores the trip dates as a date range. */}
-              <p>
-                Start Date: {trip.date_Range[0]?.value}
-              </p>
-
-              <p>
-                End Date: {trip.date_Range[1]?.value}
-              </p>
+            <Link to="/" className="plan-trip-button">
+              Plan your first trip
             </Link>
-          ))}
-        </div>
-      )}
-    </section>
-  </>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Show one card for each saved trip. */}
+            {trips.map((trip) => (
+              <Link
+                key={trip.id}
+                to={`/trips/${trip.id}`}
+                className="block rounded-md border bg-white p-4"
+              >
+                <h2 className="text-xl font-semibold">{trip.destination}</h2>
+
+                {/* Show the trip budget. */}
+                <p>Budget: ${trip.budget}</p>
+
+                {/* Show the trip start date. */}
+                <p>Start Date: {trip.date_Range[0]?.value}</p>
+
+                {/* Show the trip end date. */}
+                <p>End Date: {trip.date_Range[1]?.value}</p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 }
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-   export default function Trips() {
-   ---------- removed block ----------
-         <div>
-         <h2>
-             <Link to='/'>
-               + Plan New Trip
-             </Link>
-         </h2>
-       </div>
-   ---------- removed block ----------
-         {/* Show a message if the user has no saved trips. * /}
-   ---------- removed block ----------
-           <p>No saved trips yet.</p>
-   ============================================================ */
