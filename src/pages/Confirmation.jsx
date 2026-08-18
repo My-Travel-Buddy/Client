@@ -11,9 +11,60 @@ export default function Confirmation() {
   // Show the saved popup after the trip is saved.
   const [saved, setSaved] = useState(false);
 
-  // Get the itinerary passed from the previous page.
-  // The ? prevents an error if there is no router state.
-  const itinerary = location.state?.itinerary;
+  // The itinerary arrives in the router state, but that is lost on a refresh
+  // or after a trip to the login page. So we keep a copy in sessionStorage
+  // and fall back to it. sessionStorage clears when the tab closes.
+  if (location.state?.itinerary) {
+    sessionStorage.setItem(
+      "itinerary",
+      JSON.stringify(location.state.itinerary),
+    );
+  }
+
+  const savedItinerary = sessionStorage.getItem("itinerary");
+
+  const itinerary =
+    location.state?.itinerary ||
+    (savedItinerary ? JSON.parse(savedItinerary) : null);
+
+  // The checklist lives in state so the boxes can be ticked and new tasks
+  // added before the trip is saved.
+  const [checklist, setChecklist] = useState(itinerary?.checklist || []);
+
+  // What the user is typing in the "add a task" box.
+  const [newTask, setNewTask] = useState("");
+
+  // How many are done, as a count and as a percentage for the bar.
+  const doneCount = checklist.filter((item) => item.completed).length;
+
+  const percent =
+    checklist.length === 0
+      ? 0
+      : Math.round((doneCount / checklist.length) * 100);
+
+  // Tick or untick one item.
+  function toggleItem(index) {
+    const updated = [...checklist];
+
+    updated[index] = {
+      ...updated[index],
+      completed: !updated[index].completed,
+    };
+
+    setChecklist(updated);
+  }
+
+  // Add the typed task to the bottom of the list.
+  function addTask(event) {
+    event.preventDefault();
+
+    if (newTask.trim() === "") {
+      return;
+    }
+
+    setChecklist([...checklist, { text: newTask.trim(), completed: false }]);
+    setNewTask("");
+  }
 
   // Group activities by date so each day is shown together.
   const days = useMemo(() => {
@@ -61,6 +112,46 @@ async function handleSaveTrip() {
       setMessage("Checking authentication...");
       await getMe();
 
+      // The budget arrives as text from the form. The database needs a real
+      // number above 0 — an empty box or 0 is what used to make the save fail
+      // with "Something went wrong on the server".
+      const budget = Number(itinerary.budget);
+
+      if (!budget || budget <= 0) {
+        setMessage(
+          "This trip has no budget. Go back to the home page and generate it again with a budget above 0.",
+        );
+        return;
+      }
+      // // Then I send that array to the backend:
+      // const savedTrip = await createTrip({
+      //   destination: itinerary.destination,
+      //   date_Range: [itinerary.startDate, itinerary.endDate],
+      //   budget,
+      // });
+
+      // const tripId = savedTrip.id;
+
+      // // Save every generated activity.
+      // for (const activity of itinerary.activities || []) {
+      //   await createActivity(tripId, {
+      //     title: activity.title,
+      //     category: activity.category,
+      //     dateTime: activity.dateTime,
+      //     estimatedCost: activity.estimatedCost,
+      //     notes: activity.notes,
+      //   });
+      // }
+
+      // // Save the checklist from state, so ticked boxes and any task the user
+      // // added are saved too.
+      // for (const item of checklist) {
+      //   await createChecklistItem(tripId, {
+      //     text: item.text,
+      //     completed: item.completed,
+      //   });
+      // }
+      setSaved(true);
       setMessage("Saving Trip...");
       await saveItinerary(itinerary);
 
@@ -82,7 +173,26 @@ async function handleSaveTrip() {
 
   return (
     <>
-      <div>Confirm Itinerary</div>
+      {/* Step label above the itinerary title. */}
+      <div className="page-eyebrow">Confirm Itinerary</div>
+
+      {/* No plan to show — say so instead of rendering an empty page. */}
+      {!itinerary && (
+        <div className="trips-empty">
+          <div className="trips-empty-icon">🧭</div>
+
+          <h3>No itinerary to confirm</h3>
+
+          <p>
+            The generated plan is gone — this can happen after a refresh.
+            Generate a new itinerary from the home page.
+          </p>
+
+          <Link to="/" className="plan-trip-button">
+            Plan a trip
+          </Link>
+        </div>
+      )}
 
       {itinerary && (
         <section className="mt-8">
@@ -146,20 +256,58 @@ async function handleSaveTrip() {
             ))}
           </div>
 
-          <h3 className="mb-2 mt-6 text-xl font-semibold">Checklist</h3>
+          <div className="checklist-card">
+            <h3>Trip Preparation Checklist</h3>
 
-          <ul className="list-disc pl-6">
-            {(itinerary.checklist || []).map((item, index) => (
-              <li key={index}>{item.text}</li>
-            ))}
-          </ul>
+            <div className="checklist-progress">
+              <span>Tasks Completed</span>
+
+              <span className="checklist-count">
+                {doneCount} of {checklist.length} ({percent}%)
+              </span>
+            </div>
+
+            <div className="checklist-bar">
+              <div
+                className="checklist-bar-fill"
+                style={{ width: `${percent}%` }}
+              ></div>
+            </div>
+
+            <ul className="checklist-items">
+              {checklist.map((item, index) => (
+                <li key={index}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={item.completed}
+                      onChange={() => toggleItem(index)}
+                    />
+
+                    <span>{item.text}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+
+            <form className="checklist-add" onSubmit={addTask}>
+              <input
+                type="text"
+                value={newTask}
+                placeholder="Add a preparation task..."
+                onChange={(event) => setNewTask(event.target.value)}
+              />
+
+              <button type="submit">+</button>
+            </form>
+          </div>
 
           <button
             type="button"
             onClick={handleSaveTrip}
             className="mt-6 rounded-md bg-green-600 px-4 py-2 text-white"
           >
-            Save Trip
+            Save Trip to My Account
           </button>
 
           {/* Errors from the save were being swallowed — show them. */}

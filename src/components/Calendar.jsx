@@ -42,18 +42,6 @@ export default function TripCalendar({ tripId }) {
     "Entertainment",
     "Other",
   ];
-  const handleOpenAddActivity = () => {
-    setActivityForm({
-      title: "",
-      category: "",
-      dateTime: "",
-      estimatedCost: "",
-      notes: "",
-    });
-
-    setShowAddActivity(true);
-  };
-
   const calendarElement = useRef(null);
   const calendarInstance = useRef(null);
 
@@ -125,11 +113,6 @@ export default function TripCalendar({ tripId }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (tripId) {
-      getActivities();
-    }
-  }, [tripId]);
   const getActivities = async () => {
     try {
       const response = await fetch(
@@ -185,6 +168,12 @@ export default function TripCalendar({ tripId }) {
       console.error("Error fetching activities:", error);
     }
   };
+
+  useEffect(() => {
+    if (tripId) {
+      getActivities();
+    }
+  }, [tripId]);
 
   async function addActivities() {
     console.log("Sending activity:", activityForm);

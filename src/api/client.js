@@ -51,6 +51,11 @@ export function generateItinerary(tripData) {
 // VISA
 // --------------------------------------------------
 
+// The two country lists the dropdowns need (passports and destinations).
+export function getVisaCountries() {
+  return request("/trips/visa/countries");
+}
+
 // Send the passport and destination codes to check visa requirements.
 export function getVisaRequirements(passportCode, destinationCode) {
   return request("/trips/visa", {
@@ -83,6 +88,14 @@ export function createActivity(tripId, activityData) {
   return request(`/trips/${tripId}/activities`, {
     method: "POST",
     body: JSON.stringify(activityData),
+  });
+}
+
+// Delete one activity. The backend answers 204 (no content), so this
+// resolves to null.
+export function deleteActivity(tripId, activityId) {
+  return request(`/trips/${tripId}/activities/${activityId}`, {
+    method: "DELETE",
   });
 }
 

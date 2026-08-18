@@ -1,48 +1,58 @@
 # My Travel Buddy — Client
 
-The frontend for **My Travel Buddy**, an AI-powered travel planning application.
+Frontend application for **My Travel Buddy**, an AI-powered travel-planning app.
 
-Users can enter a destination, travel dates, budget, and interests to generate a personalized itinerary. They can review the generated plan, save trips, manage activities and checklist items, view trips on a calendar, and check visa requirements.
-
-## Tech Stack
-
-| Technology         | Purpose                                |
-| ------------------ | -------------------------------------- |
-| React 19           | Frontend user interface                |
-| Vite               | Development and build tool             |
-| React Router       | Client-side routing                    |
-| CSS / Tailwind CSS | Styling                                |
-| Toast UI Calendar  | Trip activity calendar                 |
-| React Toastify     | User notifications                     |
-| Fetch API          | Communication with the Express backend |
-| Auth0              | Social authentication                  |
+Users can enter a destination, travel dates, budget, and interests to generate a personalized itinerary. They can review the generated plan, save trips, manage activities and checklist items, view activities in a calendar, and check visa requirements.
 
 ## Features
 
-* [x] Create a trip using destination, dates, budget, and interests
-* [x] Select multiple travel interests
-* [x] Generate an AI itinerary
-* [x] Review an itinerary before saving
-* [x] Save trips
-* [x] View saved trips
-* [x] View individual trip details
-* [x] Add and delete activities
-* [x] Manage checklist items
-* [x] View activities on a calendar
-* [x] Check visa requirements
-* [x] Local email/password authentication
-* [x] Auth0 social authentication
-* [x] Popular destination cards on the Home page
+* Create a trip using a destination, dates, budget, and interests
+* Select multiple travel interests
+* Generate an AI itinerary
+* Review an itinerary before saving
+* Save and view trips
+* View individual trip details
+* Add and delete activities
+* Manage checklist items
+* View activities on a calendar
+* Check visa requirements by passport and destination
+* Display AI-assisted guidance when verified visa data is temporarily unavailable
+* Local email/password authentication
+* Auth0 social authentication
+* Protected saved-trip pages
+* Popular destination cards on the Home page
+* Responsive layout for desktop and mobile devices
+
+## Tech Stack
+
+| Technology         | Purpose                                      |
+| ------------------ | -------------------------------------------- |
+| React 19           | Frontend user interface                      |
+| Vite               | Development server and production build tool |
+| React Router       | Client-side routing                          |
+| CSS / Tailwind CSS | Styling and layout                           |
+| Toast UI Calendar  | Trip activity calendar                       |
+| React Toastify     | User notifications                           |
+| Fetch API          | Communication with the Express backend       |
+| Auth0              | Social authentication                        |
 
 ## Getting Started
 
-Install the dependencies:
+### Prerequisites
+
+* Node.js
+* npm
+* The [My Travel Buddy Server](https://github.com/My-Travel-Buddy/Server) running locally
+
+### Installation
+
+Clone the repository and install dependencies:
 
 ```bash
 npm install
 ```
 
-Create the local environment file:
+Create your local environment file:
 
 ```bash
 cp .env.example .env
@@ -60,7 +70,7 @@ The frontend runs at:
 http://localhost:5173
 ```
 
-The backend should also be running locally at:
+The backend should also be running at:
 
 ```text
 http://localhost:8080
@@ -68,7 +78,7 @@ http://localhost:8080
 
 ## Environment Variables
 
-Example `Client/.env`:
+Create a `Client/.env` file using `.env.example` as a guide:
 
 ```env
 VITE_API_URL=http://localhost:8080
@@ -78,8 +88,6 @@ VITE_AUTH0_CLIENT_ID=
 VITE_AUTH0_AUDIENCE=
 ```
 
-### Variables
-
 | Variable               | Purpose                          |
 | ---------------------- | -------------------------------- |
 | `VITE_API_URL`         | Base URL for the Express backend |
@@ -87,48 +95,47 @@ VITE_AUTH0_AUDIENCE=
 | `VITE_AUTH0_CLIENT_ID` | Auth0 SPA client ID              |
 | `VITE_AUTH0_AUDIENCE`  | Auth0 API audience               |
 
-Vite only exposes environment variables beginning with `VITE_`.
+Vite only exposes browser environment variables that begin with `VITE_`.
 
-Do not place private API keys or secrets in the frontend `.env` file.
+> Do not put private API keys, database URLs, or other secrets in the frontend `.env` file.
 
 ## Frontend Routes
 
 | Path               | Page                             |
 | ------------------ | -------------------------------- |
-| `/`                | Home / Trip Planner              |
+| `/`                | Home and trip planner            |
 | `/trips/itinerary` | Generated itinerary confirmation |
 | `/trips`           | Saved trips                      |
 | `/trips/:id`       | Individual trip details          |
 | `/login`           | Login                            |
 | `/signup`          | Sign up                          |
-| `/protected`       | Example protected page           |
 
 ## Home Page
 
-The Home page allows users to enter:
+The Home page collects:
 
 * Destination
 * Start date
 * End date
 * Budget
-* Interests
+* Travel interests
 
 Available interests include:
 
 ```text
-Food
-Sightseeing
-Culture
-Adventure
+Culture & History
+Food & Culinary
+Nature & Outdoors
 Shopping
-Transportation
-Entertainment
-Other
+Cozy Cafes
+Art & Architecture
+Photography hotspots
+Nightlife
 ```
 
-When the user selects **Generate Itinerary**, the frontend sends the trip information to the backend.
+When the user selects **Generate Dream Plan**, the frontend sends the trip data to the backend.
 
-Example:
+Example request data:
 
 ```json
 {
@@ -137,52 +144,50 @@ Example:
   "endDate": "2026-08-20",
   "budget": "1500",
   "interests": [
-    "Food",
-    "Culture",
-    "Sightseeing"
+    "Culture & History",
+    "Food & Culinary",
+    "Photography hotspots"
   ]
 }
 ```
 
-The backend sends the request to Gemini and returns the generated itinerary to the frontend.
+The backend sends the request to Gemini and returns a structured itinerary with activities and a preparation checklist.
 
 ## API Client
 
-Frontend API requests are handled in:
+Frontend API requests are organized in:
 
 ```text
 src/api/client.js
 ```
 
-The client uses:
+The client uses `VITE_API_URL` as the backend base URL.
 
-```env
-VITE_API_URL
-```
-
-as the backend base URL.
-
-For local development:
-
-```env
-VITE_API_URL=http://localhost:8080
-```
-
-Example request flow:
+Example itinerary request flow:
 
 ```text
 HomePage
-   ↓
-generateItinerary()
-   ↓
-src/api/client.js
-   ↓
-POST /trips/itinerary
-   ↓
-Express backend
-   ↓
-Gemini
+→ generateItinerary()
+→ src/api/client.js
+→ POST /trips/itinerary
+→ Express backend
+→ Gemini
 ```
+
+The API client also handles trip creation, activities, checklist items, and visa requirement requests.
+
+## Travel Documents
+
+The **Travel Documents** tab allows a user to:
+
+* Choose their passport country
+* Choose a destination country
+* View visa requirements
+* View destination details such as currency, passport validity, phone code, and time zone
+* Open a required registration form when one is available
+* Find an embassy link when one is provided
+
+When the visa-data service is temporarily unavailable, the app provides clearly labeled AI-assisted guidance and encourages travelers to confirm official entry requirements before departure.
 
 ## Project Structure
 
@@ -190,30 +195,31 @@ Gemini
 Client/
 ├── src/
 │   ├── api/
-│   │   ├── client.js
-│   │   └── auth.js
+│   │   ├── auth.js
+│   │   └── client.js
 │   │
 │   ├── assets/
 │   │
 │   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── Layout.jsx
 │   │   ├── Activities.jsx
-│   │   ├── Checklist.jsx
+│   │   ├── ActivityEdit.jsx
 │   │   ├── Calendar.jsx
+│   │   ├── Checklist.jsx
+│   │   ├── Documents.jsx
+│   │   ├── Layout.jsx
+│   │   ├── Navbar.jsx
 │   │   └── ProtectedRoute.jsx
 │   │
 │   ├── pages/
-│   │   ├── HomePage.jsx
 │   │   ├── Confirmation.jsx
-│   │   ├── Trips.jsx
-│   │   ├── TripDetails.jsx
+│   │   ├── HomePage.jsx
 │   │   ├── Login.jsx
 │   │   ├── Signup.jsx
-│   │   └── visa.jsx
+│   │   ├── TripDetails.jsx
+│   │   └── Trips.jsx
 │   │
-│   ├── App.jsx
 │   ├── App.css
+│   ├── App.jsx
 │   ├── index.css
 │   └── main.jsx
 │
@@ -224,15 +230,13 @@ Client/
 
 ## Styling
 
-The frontend uses:
+Most page and component styling is in:
 
 ```text
 src/App.css
 ```
 
-for page and component styling.
-
-Global styling and Tailwind are configured in:
+Global styles and Tailwind configuration are in:
 
 ```text
 src/index.css
@@ -241,25 +245,23 @@ src/index.css
 The Home page includes:
 
 * Hero image
-* Trip planning form
-* Interest selection buttons
+* Trip-planning form
+* Interest-selection buttons
 * Generate Itinerary button
 * Popular destination cards
 
 ## Calendar
 
-Trip activities can be displayed using **Toast UI Calendar**.
-
-The calendar uses activity dates returned by the backend and organizes saved trip activities by date.
+Saved trip activities can be displayed with **Toast UI Calendar**. The calendar organizes activities using the dates returned by the backend.
 
 ## Authentication
 
-The frontend supports two authentication methods:
+The application supports:
 
-* Email and password
+* Email and password login
 * Auth0 social login
 
-Protected pages verify that the user is authenticated before displaying private trip information.
+Saved trips and individual trip details are protected. Users who are not authenticated are redirected to sign in before accessing private trip information.
 
 ## Available Scripts
 
@@ -289,7 +291,7 @@ Create the production build with:
 npm run build
 ```
 
-Vite generates the production files inside:
+Vite generates the production files in:
 
 ```text
 dist/
@@ -297,17 +299,15 @@ dist/
 
 ## Troubleshooting
 
-### Frontend starts on port 5174
+### Frontend starts on a different port
 
-The application should normally run on:
+The app normally runs at:
 
 ```text
 http://localhost:5173
 ```
 
-If Vite starts on another port, another process may already be using port 5173.
-
-Stop that process and restart:
+If Vite uses another port, port `5173` may already be in use. Stop the existing process and run:
 
 ```bash
 npm run dev
@@ -315,44 +315,42 @@ npm run dev
 
 ### `Failed to fetch`
 
-Verify that the backend is running:
+Confirm the backend is running at:
 
 ```text
 http://localhost:8080
 ```
 
-Also verify:
+Also confirm your `.env` contains:
 
 ```env
 VITE_API_URL=http://localhost:8080
 ```
 
-### Vite dependency error
+### Vite dependency or cache error
 
-If you see a Vite dependency/cache error, stop the frontend and run:
+Stop the frontend and run:
 
 ```bash
 rm -rf node_modules/.vite
 npm run dev -- --force
 ```
 
-Also make sure React files do not contain imports such as:
+Also make sure React files do not import Vite directly:
 
 ```js
 import { preview } from "vite";
 ```
 
-Vite should not be imported directly into React page components.
+Vite should not be imported into React page components.
 
-### Generated itinerary disappears after refresh
+### Generated itinerary is unavailable
 
-The `/trips/itinerary` page currently receives the generated itinerary through React Router state.
-
-Refreshing that page clears the router state, so generate the itinerary again from the Home page.
+The generated itinerary is stored temporarily in browser session storage. It remains available after a page refresh but is cleared when the browser tab is closed. Generate a new itinerary from the Home page if needed.
 
 ## Backend
 
-The frontend communicates with the separate **My Travel Buddy Server** repository.
+This frontend communicates with the separate [My Travel Buddy Server](https://github.com/My-Travel-Buddy/Server) repository.
 
 The backend handles:
 
@@ -363,16 +361,3 @@ The backend handles:
 * Activities
 * Checklist items
 * Visa requirements
-
-Local backend URL:
-
-```text
-http://localhost:8080
-```
-
-## Team
-
-| Name              | Focus              |
-| ----------------- | ------------------ |
-| *Add team member* | *Add contribution* |
-| *Add team member* | *Add contribution* |

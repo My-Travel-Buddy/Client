@@ -1,0 +1,253 @@
+/* Application shell and shared theme */
+
+.flex.min-h-screen.flex-col {
+  background: var(--page);
+}
+
+main.mx-auto {
+  max-width: min(100% - 48px, 1400px);
+  padding: 32px 0 72px;
+}
+
+main.mx-auto:has(.home-hero) {
+  max-width: 100%;
+  padding: 0 0 40px;
+}
+
+header.border-b {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(16, 32, 58, 0.05);
+}
+
+header nav.mx-auto {
+  max-width: min(100% - 48px, 1400px);
+  gap: 4px;
+  padding: 14px 0;
+}
+
+header nav > a:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+header nav > a:first-child::before {
+  content: "";
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  background: var(--accent);
+  border-radius: 11px;
+  background-image: radial-gradient(circle at 50% 50%, #fff 3px, transparent 3.5px), radial-gradient(circle at 50% 50%, transparent 10px, #fff 10px, #fff 11.5px, transparent 12px);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), border-radius 0.28s ease, background-color 0.2s ease, box-shadow 0.28s ease;
+}
+
+header nav > a:first-child:hover::before {
+  transform: scale(1.1) rotate(-8deg);
+  border-radius: 14px;
+  background-color: var(--accent-strong);
+  box-shadow: 0 6px 16px rgba(14, 147, 132, 0.35);
+}
+
+header nav > a:first-child:active::before {
+  transform: scale(1.02) rotate(-4deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header nav > a:first-child::before,
+  header nav > a:first-child:hover::before {
+    transition: none;
+    transform: none;
+  }
+}
+
+header nav a:not(:first-child),
+header nav button {
+  position: relative;
+  padding: 8px 16px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--text);
+  border-radius: 8px;
+  transition: color 0.15s ease;
+}
+
+header nav a:not(:first-child):hover,
+header nav button:hover {
+  color: var(--text-h);
+}
+
+header nav a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+header nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -2px;
+  height: 2.5px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+header nav span.px-2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 14px 6px 8px;
+  margin-right: 2px;
+  color: var(--text-h);
+  font-size: 0.92rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+header nav span.px-2::before {
+  content: "";
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 50% 34%, #fff 0 5.5px, transparent 5.5px), radial-gradient(circle at 50% 108%, #fff 0 11px, transparent 11px), var(--accent);
+  border-radius: 50%;
+}
+
+@media (max-width: 700px) {
+  header nav span.px-2 {
+    padding: 5px 10px 5px 6px;
+    font-size: 0.85rem;
+  }
+
+  header nav span.px-2::before {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+header nav a.bg-\(--accent\) {
+  padding: 9px 20px;
+  color: #fff;
+  font-weight: 600;
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+header nav a.bg-\(--accent\)::after {
+  display: none;
+}
+
+header nav a.bg-\(--accent\):hover {
+  background: var(--accent-strong);
+}
+
+header nav a:not(:first-child):not(.bg-\(--accent\))::after,
+header nav button::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -2px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #e0559c);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.22s ease;
+}
+
+header nav a:not(:first-child):not(.bg-\(--accent\)):hover,
+header nav button:hover {
+  color: var(--accent);
+  background: rgba(16, 156, 139, 0.06);
+}
+
+header nav a:not(:first-child):not(.bg-\(--accent\)):hover::after,
+header nav button:hover::after,
+header nav a:not(:first-child):not(.bg-\(--accent\)):focus-visible::after,
+header nav button:focus-visible::after {
+  transform: scaleX(1);
+}
+
+header nav a[aria-current="page"]:not(.bg-\(--accent\))::after {
+  transform: scaleX(1);
+  background: linear-gradient(90deg, var(--accent), #e0559c);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header nav a::after,
+  header nav button::after {
+    transition: none;
+  }
+}
+
+main h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+main h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+main .bg-white.p-4,
+main .rounded-md.border {
+  padding: 22px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+main a.bg-white.p-4 h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+main a.bg-white.p-4 p {
+  margin: 4px 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+main .space-y-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  margin-bottom: 6px;
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  background: linear-gradient(var(--accent-bg), var(--accent-bg)) padding-box, linear-gradient(90deg, var(--accent), #e0559c) border-box;
+  border-radius: 999px;
+}
+
+.page-eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}

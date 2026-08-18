@@ -1,0 +1,425 @@
+/* Card motion, itinerary days, and checklist */
+
+main .space-y-4 > a::before,
+main .space-y-4 > div::before,
+.activity-card::before,
+.trip-card::before {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient( 90deg, var(--accent), #6fd3c2 55%, rgba(111, 211, 194, 0) );
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s ease;
+}
+
+main .space-y-4 > a:hover,
+main .space-y-4 > div:hover,
+.activity-card:hover,
+.trip-card:hover {
+  transform: translateY(-3px);
+  border-color: #cfe6e1;
+  box-shadow: var(--shadow-lg);
+}
+
+main .space-y-4 > a:hover::before,
+main .space-y-4 > div:hover::before,
+.activity-card:hover::before,
+.trip-card:hover::before {
+  transform: scaleX(1);
+}
+
+.trip-card:hover .trip-card-image {
+  transform: scale(1.05);
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trip-card:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.trip-card:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.trip-card:nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+.trip-card:nth-child(5) {
+  animation-delay: 0.16s;
+}
+
+.trip-card:nth-child(6) {
+  animation-delay: 0.2s;
+}
+
+.trip-card:nth-child(n + 7) {
+  animation-delay: 0.24s;
+}
+
+main .space-y-4 > :nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+main .space-y-4 > :nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+main .space-y-4 > :nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+main .space-y-4 > :nth-child(5) {
+  animation-delay: 0.16s;
+}
+
+main .space-y-4 > :nth-child(6) {
+  animation-delay: 0.2s;
+}
+
+main .space-y-4 > :nth-child(n + 7) {
+  animation-delay: 0.24s;
+}
+
+.activity-card:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.activity-card:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.activity-card:nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+.activity-card:nth-child(5) {
+  animation-delay: 0.16s;
+}
+
+.activity-card:nth-child(6) {
+  animation-delay: 0.2s;
+}
+
+.activity-card:nth-child(n + 7) {
+  animation-delay: 0.24s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main .space-y-4 > a,
+  main .space-y-4 > div,
+  .activity-card,
+  .trip-card,
+  main .space-y-4 > a:hover,
+  main .space-y-4 > div:hover,
+  .activity-card:hover,
+  .trip-card:hover,
+  .trip-card:hover .trip-card-image {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+
+  main .space-y-4 > a::before,
+  main .space-y-4 > div::before,
+  .activity-card::before,
+  .trip-card::before {
+    transition: none;
+  }
+}
+
+main .space-y-4:has(> .day-group) {
+  display: block;
+}
+
+.day-group {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.day-group + .day-group {
+  margin-top: 14px;
+}
+
+.day-group:hover,
+.day-group[open] {
+  border-color: transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient( 90deg, var(--accent), #e0559c, #f6a8d8, var(--accent) ) border-box;
+  background-size: 100% 100%, 300% 100%;
+  animation: border-slide 6s linear infinite;
+}
+
+@keyframes border-slide {
+  from {
+    background-position: 0 0, 0% 0;
+  }
+
+  to {
+    background-position: 0 0, 300% 0;
+  }
+}
+
+.day-group > summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.16s ease;
+}
+
+.day-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+.day-group > summary:hover {
+  background: #fbfdfd;
+}
+
+.day-group-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--text-h);
+  font-size: 1.18rem;
+  font-weight: 700;
+}
+
+.day-group-date {
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.day-group-meta {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+}
+
+.day-group > summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-left: 4px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform 0.2s ease;
+}
+
+.day-group[open] > summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.day-group[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.day-group-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  padding: 18px 22px 22px;
+}
+
+.day-group-body > div {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.day-group-body h4 {
+  margin: 0 0 10px;
+  color: var(--text-h);
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+.day-group-body p {
+  margin: 4px 0;
+  color: var(--text-muted);
+  font-size: 0.96rem;
+}
+
+@media (max-width: 700px) {
+  .day-group-body {
+    grid-template-columns: 1fr;
+  }
+
+  .day-group-meta {
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day-group:hover,
+  .day-group[open] {
+    animation: none;
+  }
+
+  .day-group > summary::after {
+    transition: none;
+  }
+}
+
+.form-field:focus-within label {
+  color: var(--accent);
+}
+
+.trip-form input::placeholder {
+  color: #9aa8b8;
+}
+
+.trip-form input:hover:not(:focus) {
+  border-color: #b7c5d3;
+  background: #fcfdfe;
+}
+
+.trip-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(16, 156, 139, 0.14);
+}
+
+.trip-form input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.45;
+  cursor: pointer;
+  transition: opacity 0.16s ease;
+}
+
+.trip-form input[type="date"]:hover::-webkit-calendar-picker-indicator,
+.trip-form input[type="date"]:focus::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+main .space-y-4 > a h2 {
+  margin-bottom: 14px;
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+}
+
+main .space-y-4 > a p:nth-of-type(1) {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 5px 14px;
+  color: var(--accent-strong);
+  font-size: 0.92rem;
+  font-weight: 600;
+  background: var(--accent-bg);
+  border-radius: 999px;
+}
+
+main .space-y-4 > a p:nth-of-type(2),
+main .space-y-4 > a p:nth-of-type(3) {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+section > h1.mt-4 ~ p {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 8px 0 0;
+  padding: 7px 15px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(90deg, var(--accent), #e0559c) border-box;
+  border-radius: 999px;
+}
+
+section > h1.mt-4 ~ p::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.activity-card::before,
+.trip-card::before,
+main .space-y-4 > a::before,
+main .space-y-4 > div::before {
+  background: linear-gradient( 90deg, #e0559c, #f6a8d8 55%, rgba(246, 168, 216, 0) );
+}
+
+.activity-card:hover,
+.trip-card:hover,
+main .space-y-4 > a:hover,
+main .space-y-4 > div:hover {
+  border-color: #f3c4de;
+}
+
+fieldset {
+  margin: 0;
+}
+
+legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 0;
+  color: var(--text-h);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+fieldset label {
+  display: block;
+}
+
+fieldset ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+fieldset li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-h);
+  font-size: 0.98rem;
+  cursor: pointer;
+}
+
+fieldset label:last-of-type li {
+  border-bottom: none;
+}
+
+fieldset li:hover {
+  color: var(--accent);
+}
+
+fieldset li:has(input:checked) {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
+}

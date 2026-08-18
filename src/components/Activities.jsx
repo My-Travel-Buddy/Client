@@ -1,13 +1,60 @@
-import TripCalendar from "./Calendar";
+import { useState } from "react";
+import ActivityEdit from "./ActivityEdit";
+import { deleteActivity } from "../api/client";
 
-function Activities({ trip }) {
-  console.log(trip.Activities);
+function Activities({ trip, setTrip }) {
+  // Is the "Add New Activity" pop-up open?
+  const [showForm, setShowForm] = useState(false);
+
+  async function handleDelete(activity) {
+    // Deleting cannot be undone, so ask first.
+    const confirmed = window.confirm(`Delete "${activity.title}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deleteActivity(trip.id, activity.id);
+
+      // Take it off the screen without reloading the trip.
+      setTrip({
+        ...trip,
+        Activities: trip.Activities.filter((item) => item.id !== activity.id),
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   return (
     <>
-      <div>Activities</div>
-      {trip.Activities.map((activity, index) => (
-        <div key={index}>
+      <div className="activities-head">
+        <div>Activities</div>
+
+        <button
+          type="button"
+          className="add-activity-button"
+          onClick={() => setShowForm(true)}
+        >
+          + Add Activity
+        </button>
+      </div>
+
+      {/* A named wrapper, so the CSS can target these cards by class instead
+          of guessing from the markup shape. */}
+      <div className="activities-grid">
+        {trip.Activities.map((activity, index) => (
+          <div className="activity-card" key={activity.id || index}>
+          <button
+            type="button"
+            className="delete-activity"
+            aria-label={`Delete ${activity.title}`}
+            onClick={() => handleDelete(activity)}
+          >
+            ×
+          </button>
+
           <ul>
             <li>
               {index + 1}. {activity.title}{" "}
@@ -21,13 +68,19 @@ function Activities({ trip }) {
                 minute: "2-digit",
               })}
             </li>
-            <li>
-                Cost: ${activity.estimatedCost}
-            </li>
-          </ul>
-          <br />
-        </div>
-      ))}
+              <li>Cost: ${activity.estimatedCost}</li>
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {showForm && (
+        <ActivityEdit
+          trip={trip}
+          setTrip={setTrip}
+          onClose={() => setShowForm(false)}
+        />
+      )}
     </>
   );
 }

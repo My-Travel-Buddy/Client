@@ -6,7 +6,7 @@ import { NavLink } from 'react-router';
 // Navbar takes `user` and `onLogout` as props from App. It doesn't fetch
 // anything or know how you logged in — it just renders what it's handed. A
 // component this simple is easy to reason about and easy to reuse.
-export default function Navbar({ user, onLogout }) {
+export default function Navbar({ user, onLogout, isLoading }) {
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded-md text-sm font-medium ${
       isActive ? 'text-(--accent)' : 'hover:text-(--text-h)'
@@ -24,10 +24,10 @@ export default function Navbar({ user, onLogout }) {
 
         {/* `end` makes "Home" active only on "/" exactly, not on every route. */}
         <NavLink to='/' end className={linkClass}>
-          Home
+          Discovery
         </NavLink>
         <NavLink to='/trips' className={linkClass}>
-          Trips
+          My Trips
         </NavLink>
 
         {/* Only show the protected link once someone is logged in. */}

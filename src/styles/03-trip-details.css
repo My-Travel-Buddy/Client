@@ -1,0 +1,348 @@
+/* Trip detail tabs, panels, and visa */
+
+.trip-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 26px 0 16px;
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.trip-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.trip-tab {
+  position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin: 0;
+  padding: 15px 24px;
+  color: var(--text-h);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  background: none;
+  border: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  transition: color 0.16s ease, background 0.16s ease;
+}
+
+.trip-tab::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #e0559c);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.22s ease;
+}
+
+.trip-tab:hover {
+  color: var(--accent);
+  background: rgba(16, 156, 139, 0.06);
+}
+
+.trip-tab:hover::after,
+.trip-tab:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.trip-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  color: var(--accent);
+}
+
+.trip-tab.active {
+  color: var(--accent);
+}
+
+.trip-tab.active::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 700px) {
+  .trip-tab {
+    padding: 13px 16px;
+    font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .trip-tab {
+    padding: 12px 12px;
+    font-size: 0.92rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-tab::after {
+    transition: none;
+  }
+}
+
+.tab-panel,
+.visa-panel,
+fieldset {
+  padding: 24px 26px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.tab-panel > div > div:first-child {
+  gap: 16px;
+}
+
+.tab-panel button {
+  padding: 8px 14px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: #f9fbfc;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.tab-panel button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.tab-panel > div {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 700px) {
+  .tab-panel,
+  .visa-panel,
+  fieldset {
+    padding: 18px;
+  }
+}
+
+.visa-panel h3 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.visa-intro {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.visa-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.visa-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visa-field label {
+  color: var(--text-h);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.visa-field select {
+  height: 46px;
+  padding: 0 12px;
+  color: var(--text-h);
+  font: inherit;
+  background: #f9fbfc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.visa-field select:focus {
+  background: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(16, 156, 139, 0.14);
+}
+
+.visa-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border-left: 4px solid;
+}
+
+.visa-banner strong {
+  font-size: 1.1rem;
+}
+
+.visa-banner span {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.visa-banner-green {
+  background: #ecfdf5;
+  border-left-color: #0e9384;
+  color: #05614f;
+}
+
+.visa-banner-yellow {
+  background: #fffbeb;
+  border-left-color: #d97706;
+  color: #92400e;
+}
+
+.visa-banner-red {
+  background: #fef3f2;
+  border-left-color: #c0392b;
+  color: #912018;
+}
+
+.visa-source {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  margin: -8px 0 20px;
+  border-radius: 10px;
+}
+
+.visa-source strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.visa-source p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.visa-source-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 7px;
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+}
+
+.visa-source-verified {
+  color: #05614f;
+  background: #ecfdf5;
+  border: 1px solid #a7e8d5;
+}
+
+.visa-source-verified .visa-source-badge {
+  background: var(--accent);
+}
+
+.visa-source-ai {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px dashed #f59e0b;
+}
+
+.visa-source-ai .visa-source-badge {
+  background: #d97706;
+}
+
+.visa-registration {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  margin: -8px 0 20px;
+  color: #92400e;
+  font-size: 0.95rem;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+}
+
+.visa-registration a {
+  color: #92400e;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.visa-facts {
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+
+.visa-facts li {
+  color: var(--text-h);
+  font-size: 0.95rem;
+}
+
+.visa-facts span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.visa-embassy {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.visa-embassy:hover {
+  text-decoration: underline;
+}
+
+.visa-note {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+}
+
+.visa-error {
+  margin: 0 0 14px;
+  color: #c0392b;
+}
+
+@media (max-width: 700px) {
+  .visa-controls,
+  .visa-facts {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { request } from "../api/client";
 
-export default function Trips() {
+export default function Trips({ user }) {
+  // The name for the greeting. `user` is null for a moment while App checks
+  // the login cookie, and stays null when nobody is logged in.
+  const name = user?.username || user?.name || user?.email || "traveler";
+
   // Store the saved trips returned by the backend.
   const [trips, setTrips] = useState([]);
 
@@ -43,17 +47,37 @@ export default function Trips() {
 
   return (
   <>
-      <div>
-      <h2>
-          <Link to='/'>
-            + Plan New Trip
-          </Link>
-      </h2>
-    </div>
+      <div className="trips-header">
+        <div>
+          <h1>Welcome back, {name}! 👋</h1>
+
+          <p>Your upcoming travel plans, customized itineraries, and checklist.</p>
+        </div>
+
+        <Link to="/" className="plan-trip-button">
+          + Plan a New Trip
+        </Link>
+      </div>
+
+      <h2 className="trips-section-title">My Upcoming Itineraries</h2>
+
     <section className='text-center'>
-      {/* Show a message if the user has no saved trips. */}
+      {/* Show an empty state if the user has no saved trips. */}
       {trips.length === 0 ? (
-        <p>No saved trips yet.</p>
+        <div className="trips-empty">
+          <div className="trips-empty-icon">🧭</div>
+
+          <h3>No trips saved yet</h3>
+
+          <p>
+            Generate an itinerary from the home page and save it — it will
+            show up here.
+          </p>
+
+          <Link to="/" className="plan-trip-button">
+            Plan your first trip
+          </Link>
+        </div>
       ) : (
         <div className="space-y-4">
 

@@ -3,21 +3,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips";
-import { getVisaRequirements } from "../api/client";
-import heroImage from "../assets/hero.png";
-import heroFuji from "../assets/heroes/japan-mount-fuji-hero.png";
-import heroTokyo from "../assets/japan/tokyo.jpg";
-import heroMarrakech from "../assets/morocco/marrakech.jpg";
-import heroBarcelona from "../assets/spain/barcelona.jpg";
 import { generateItinerary } from "../api/client";
 
-// Every photo the hero can show. Add a file here and it joins the rotation.
-const HERO_IMAGES = [
-  heroImage,
-  heroFuji,
-  heroTokyo,
-  heroMarrakech,
-  heroBarcelona,
+// To support the cycling hero photos, I load all desktop WebP images
+// as URLs, sort them by filename, and store them in an array.
+// The hero rotation logic then cycles through this array.
+const HERO_IMAGES = Object.entries(
+  import.meta.glob("../assets/travel-auth-backgrounds/desktop-webp/*.webp", {
+    eager: true, //loads the images immediately.
+    query: "?url", //returns each image’s browser-ready URL.
+    import: "default", //returns only the default exported URL.
+  }),
+)
+  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
+  .map(([, url]) => url);
+
+// What the traveller can pick from. The label is what gets sent to Gemini,
+// so it doubles as the wording of the request.
+const INTERESTS = [
+  { label: "Culture & History", icon: "🏛️" },
+  { label: "Food & Culinary", icon: "🍜" },
+  { label: "Nature & Outdoors", icon: "🏞️" },
+  { label: "Shopping", icon: "🛍️" },
+  { label: "Cozy Cafes", icon: "☕" },
+  { label: "Art & Architecture", icon: "🎨" },
+  { label: "Photography hotspots", icon: "📷" },
+  { label: "Nightlife", icon: "🌃" },
 ];
 
 export default function HomePage() {
@@ -38,15 +49,6 @@ export default function HomePage() {
     interests: [],
   });
 
-  const [visaInfo, setVisaInfo] = useState(null);
-  async function handleVisaCheck() {
-    const data = await getVisaRequirements("US", "CN");
-    setVisaInfo(data);
-  }
-
-  // Store the itinerary returned by Gemini.
-  const [itinerary, setItinerary] = useState(null);
-
   // Used while Gemini is generating the itinerary.
   const [loading, setLoading] = useState(false);
 
@@ -61,7 +63,7 @@ export default function HomePage() {
     });
   }
 
-  // the function that validate the interest field
+  // Add or remove an interest when the user clicks it.
   function handleInterestClick(interest) {
     setFormData((previewsFormData) => {
       const isSelected = previewsFormData.interests.includes(interest);
@@ -94,10 +96,6 @@ export default function HomePage() {
 
       const data = await generateItinerary(tripData);
       console.log("AI RESPONSE:", data);
-
-      setItinerary(data);
-      console.log(data);
-
       navigate("/trips/itinerary", {
         state: { itinerary: { ...tripData, ...data } },
       });
@@ -136,6 +134,7 @@ export default function HomePage() {
             <input
               id="destination"
               name="destination"
+              required
               placeholder="Where do you want to go?"
               value={formData.destination}
               onChange={handleChange}
@@ -150,6 +149,7 @@ export default function HomePage() {
                 id="startDate"
                 name="startDate"
                 type="date"
+                required
                 value={formData.startDate}
                 onChange={handleChange}
               />
@@ -158,6 +158,7 @@ export default function HomePage() {
                 id="endDate"
                 name="endDate"
                 type="date"
+                required
                 value={formData.endDate}
                 onChange={handleChange}
               />
@@ -167,38 +168,43 @@ export default function HomePage() {
           <div className="form-field budget-field">
             <label htmlFor="budget">BUDGET ESTIMATE</label>
 
+            {/* Match backend budget rules: required, positive, two decimals,
+                and within DECIMAL(10,2). Server validation remains the final guard. */}
+
             <input
               id="budget"
               name="budget"
-              placeholder="0-100000"
+              type="number"
+              min="1"
+              max="99999999"
+              step="0.01"
+              required
+              placeholder="e.g. 2500"
               value={formData.budget}
               onChange={handleChange}
             />
           </div>
 
           <div className="interests-section">
-            <span className="interests-label">INTERESTS:</span>
+            <span className="interests-label">Interests &amp; Activities</span>
 
             <div className="interest-options">
-              {[
-                "Food",
-                "Sightseeing",
-                "Culture",
-                "Adventure",
-                "Shopping",
-                "Transportation",
-                "Entertainment",
-                "Other",
-              ].map((interest) => (
+              {INTERESTS.map((interest) => (
                 <button
-                  key={interest}
+                  key={interest.label}
                   type="button"
-                  onClick={() => handleInterestClick(interest)}
+                  onClick={() => handleInterestClick(interest.label)}
                   className={`interest-pill ${
-                    formData.interests.includes(interest) ? "selected" : ""
+                    formData.interests.includes(interest.label)
+                      ? "selected"
+                      : ""
                   }`}
                 >
-                  {interest}
+                  <span className="interest-icon" aria-hidden="true">
+                    {interest.icon}
+                  </span>
+
+                  {interest.label}
                 </button>
               ))}
             </div>
@@ -213,7 +219,7 @@ export default function HomePage() {
 
         <section className="popular-section">
           <h2>Popular Destinations</h2>
-          <RenderingTrips />
+          <RenderingTrips setFormData={setFormData} />
         </section>
       </main>
     </>

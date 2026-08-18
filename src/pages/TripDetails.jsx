@@ -3,7 +3,22 @@ import { useParams, Link } from "react-router";
 import axios from "axios";
 import Activities from "../components/Activities";
 import Checklist from "../components/Checklist";
+import Documents from "../components/Documents";
 import TripCalendar from "../components/Calendar";
+
+// The tabs on this page, in order. Each one is both the button label and the
+// value stored in `activeSection`.
+const SECTIONS = [
+  "Overview",
+  "Itinerary",
+  "Documents",
+  "Checklist",
+  "Activities",
+];
+
+// The API base URL never changes while the app is running, so it lives
+// outside the component.
+const BACKEND_API = import.meta.env.VITE_API_URL;
 
 // Shows one task. The id comes from the URL, e.g. /tasks/3 -> id === "3".
 export default function TripDetails() {
@@ -12,8 +27,6 @@ export default function TripDetails() {
   const [trip, setTrip] = useState(null);
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("Overview");
-
-  const BACKEND_API = import.meta.env.VITE_API_URL;
 
   // Fetch whenever the id in the URL changes. The `active` flag ignores a
   // response that arrives after we've already navigated away.
@@ -57,51 +70,35 @@ export default function TripDetails() {
       <p>
         Budget: ${trip.budget}
       </p>
-      <div>
-        <button
-          type="button"
-          className="mr-3"
-          onClick={() => setActiveSection("Overview")}
-        >
-          Overview
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => setActiveSection("Itinerary")}
-        >
-          Itinerary
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => setActiveSection("Documents")}
-        >
-          Documents
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => setActiveSection("Checklist")}
-        >
-          Checklist
-        </button>
-        <button
-          type="button"
-          className="m-3"
-          onClick={() => {
-            setActiveSection("Activities");
-          }}
-        >
-          Activities
-        </button>
+      <div className="trip-tabs" role="tablist" aria-label="Trip sections">
+        {SECTIONS.map((section) => (
+          <button
+            key={section}
+            type="button"
+            role="tab"
+            aria-selected={activeSection === section}
+            className={`trip-tab ${activeSection === section ? "active" : ""}`}
+            onClick={() => setActiveSection(section)}
+          >
+            {section}
+          </button>
+        ))}
       </div>
 
       {activeSection === 'Overview'}
-      {activeSection === 'Itinerary' && <TripCalendar tripId={trip.id} />}
-      {activeSection === 'Documents'}
+
+      {/* The calendar brings no card of its own, so it gets one here — that
+          way Itinerary, Documents and Checklist all sit on the same panel. */}
+      {activeSection === 'Itinerary' && (
+        <div className="tab-panel">
+          <TripCalendar tripId={trip.id} />
+        </div>
+      )}
+      {activeSection === 'Documents' && <Documents trip={trip} />}
       {activeSection === 'Checklist' && <Checklist trip={trip} setTrip={setTrip} />}
-      {activeSection === "Activities" && <Activities trip={trip} />}
+      {activeSection === "Activities" && (
+        <Activities trip={trip} setTrip={setTrip} />
+      )}
     </section>
   );
 }

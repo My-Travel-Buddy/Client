@@ -41,18 +41,16 @@ function App() {
     logout: auth0Logout,
   } = useAuth0();
 
-  // On a page refresh, THREE things can be in flight at once, and
-  // ProtectedRoute must not redirect while any of them is still running —
-  // otherwise a logged-in user gets bounced to /login every time they hit F5:
+  // True while we still don't know who (if anyone) is logged in. Three things
+  // can be in flight at once on a refresh:
   //
   //   1. our own cookie check (GET /auth/me)
   //   2. Auth0's SDK restoring its session from scratch
   //   3. for Auth0 users, fetching their row from OUR database
   //
-  // The third clause is the subtle one. An Auth0 user has no cookie, so step 1
-  // finishes almost instantly with user === null. Without waiting for the sync
-  // below, there'd be a window where nothing is "loading" but nobody is logged
-  // in either — and that window is exactly when the redirect fires.
+  // The navbar uses this to stay quiet until the answer is known, instead of
+  // flashing "Log in / Sign up" at someone who is already logged in. A route
+  // guard would need it too, so it doesn't redirect mid-check.
   const isLoading =
     isCheckingSession || isAuth0Loading || (isAuth0User && !user && !authError);
 
@@ -133,7 +131,12 @@ function App() {
       {/* Every route below renders inside Layout (navbar + page slot). */}
       <Route
         element={
-          <Layout user={user} onLogout={handleLogout} authError={authError} />
+          <Layout
+            user={user}
+            onLogout={handleLogout}
+            authError={authError}
+            isLoading={isLoading}
+          />
         }
       >
         <Route path="/" element={<HomePage />} />
@@ -167,7 +170,17 @@ function App() {
           path="/protected"
           element={
             <ProtectedRoute user={user} isLoading={isLoading}>
-              <ProtectedPage user={user} />
+              <Trips user={user} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* One trip is private for the same reason. */}
+        <Route
+          path="/trips/:id"
+          element={
+            <ProtectedRoute user={user} isLoading={isLoading}>
+              <TripDetails />
             </ProtectedRoute>
           }
         />
