@@ -42,6 +42,14 @@ const interests = ["Adventure", "Culture", "Food","Relaxation", "Nightlife"];
             image:"https://images.unsplash.com/photo-1662434449168-35f32702b665?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJhbmZmfGVufDB8fDB8fHww"
 
         },
+        {
+           id:"zanzibar",
+            destination: "Zanzibar, Tanzanie",
+            interest: " ",
+            budget:1200,
+            season: "Summer",
+            image:"https://media.istockphoto.com/id/2213429408/photo/aerial-view-of-the-boats-on-tropical-sea-coast-with-white-sandy-beach-on-summer-sunny-day.jpg?s=612x612&w=0&k=20&c=kPQV64CX9LRDISFacDaR0i5lq-LcvqM6eElvQr6j5dg="
+        }
     ]
 
 function InterestTag({label, active, onClick }){
