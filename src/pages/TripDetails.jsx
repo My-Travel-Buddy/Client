@@ -4,7 +4,7 @@ import axios from "axios";
 import Activities from "../components/Activities";
 import Checklist from "../components/Checklist";
 import TripCalendar from "../components/Calendar";
-
+import Overview from "../components/overview";
 // Shows one task. The id comes from the URL, e.g. /tasks/3 -> id === "3".
 export default function TripDetails() {
   const { id } = useParams();
@@ -97,7 +97,7 @@ export default function TripDetails() {
         </button>
       </div>
 
-      {activeSection === 'Overview'}
+      {activeSection === 'Overview' && <Overview trip={trip}/>}
       {activeSection === 'Itinerary' && <TripCalendar tripId={trip.id} />}
       {activeSection === 'Documents'}
       {activeSection === 'Checklist' && <Checklist trip={trip} setTrip={setTrip} />}
