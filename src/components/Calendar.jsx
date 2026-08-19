@@ -26,6 +26,7 @@ export default function TripCalendar({ tripId }) {
   const [currentMonth, setCurrentMonth] = useState("");
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [editActivity, setEditActivity] = useState(false);
+
   const [editActivityForm, setEditActivityForm] = useState({
     id: "",
     title: "",
@@ -34,6 +35,7 @@ export default function TripCalendar({ tripId }) {
     estimatedCost: "",
     notes: "",
   });
+
   const [activityForm, setActivityForm] = useState({
     title: "",
     category: "",
@@ -87,7 +89,7 @@ export default function TripCalendar({ tripId }) {
         date.toLocaleDateString("en-US", {
           month: "long",
           year: "numeric",
-        }),
+        })
       );
     } catch (error) {
       console.error("Error updating month:", error);
@@ -134,6 +136,7 @@ export default function TripCalendar({ tripId }) {
         estimatedCost: "",
         notes: "",
       });
+
       setShowAddActivity(true);
     });
 
@@ -144,13 +147,15 @@ export default function TripCalendar({ tripId }) {
   }, []);
 
   const getActivities = async () => {
-    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+    const BASE_URL =
+      import.meta.env.VITE_API_URL || "http://localhost:8080";
+
     try {
       const response = await fetch(
         `${BACKEND_API}/trips/${tripId}/activities`,
         {
           credentials: "include",
-        },
+        }
       );
 
       if (!response.ok) {
@@ -159,7 +164,7 @@ export default function TripCalendar({ tripId }) {
 
       const data = await response.json();
 
-      setLoadError(""); // ADDED: a later success clears an earlier failure.
+      setLoadError("");
 
       console.log("Activities from database:", data);
 
@@ -173,7 +178,9 @@ export default function TripCalendar({ tripId }) {
 
           start: activity.dateTime,
 
-          end: new Date(new Date(activity.dateTime).getTime() + 60 * 60 * 1000),
+          end: new Date(
+            new Date(activity.dateTime).getTime() + 60 * 60 * 1000
+          ),
 
           body: activity.notes || "",
 
@@ -200,11 +207,9 @@ export default function TripCalendar({ tripId }) {
     } catch (error) {
       console.error("Error fetching activities:", error);
 
-      // ADDED: surface it. An empty calendar and a broken calendar look
-      // identical otherwise.
       setLoadError(
         "Could not load this trip's activities. Check that the API is running " +
-          `at ${BACKEND_API}.`,
+          `at ${BACKEND_API}.`
       );
     }
   };
@@ -216,8 +221,11 @@ export default function TripCalendar({ tripId }) {
   }, [tripId]);
 
   async function addActivities() {
-    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+    const BASE_URL =
+      import.meta.env.VITE_API_URL || "http://localhost:8080";
+
     console.log("Sending activity:", activityForm);
+
     const response = await fetch(
       `${BACKEND_API}/trips/${tripId}/activities`,
       {
@@ -227,20 +235,22 @@ export default function TripCalendar({ tripId }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(activityForm),
-      },
-      body: JSON.stringify(activityForm),
-    });
+      }
+    );
 
     if (!response.ok) {
       alert("Failed to add activity.");
       console.log(await response.text());
       return;
     }
+
     await getActivities();
   }
 
   async function editActivities() {
-    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+    const BASE_URL =
+      import.meta.env.VITE_API_URL || "http://localhost:8080";
+
     const response = await fetch(
       `${BACKEND_API}/trips/${tripId}/activities/${editActivityForm.id}`,
       {
@@ -250,7 +260,7 @@ export default function TripCalendar({ tripId }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editActivityForm),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -258,20 +268,24 @@ export default function TripCalendar({ tripId }) {
       console.log(await response.text());
       return;
     }
+
     const updatedActivity = await response.json();
 
     setEditActivity(false);
     await getActivities();
     setSelectedActivity(updatedActivity);
   }
+
   async function deleteActivities() {
-    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+    const BASE_URL =
+      import.meta.env.VITE_API_URL || "http://localhost:8080";
+
     const response = await fetch(
       `${BACKEND_API}/trips/${tripId}/activities/${selectedActivity.id}`,
       {
         method: "DELETE",
         credentials: "include",
-      },
+      }
     );
 
     if (!response.ok) {
@@ -279,6 +293,7 @@ export default function TripCalendar({ tripId }) {
       console.log(await response.text());
       return;
     }
+
     alert("You deleted this activity.");
     setEditActivity(false);
     setSelectedActivity(null);
@@ -294,6 +309,7 @@ export default function TripCalendar({ tripId }) {
       estimatedCost: selectedActivity.estimatedCost,
       notes: selectedActivity.notes,
     });
+
     setSelectedActivity(null);
     setEditActivity(true);
   }
@@ -332,7 +348,6 @@ export default function TripCalendar({ tripId }) {
       </div>
 
       {loadError && <p className="calendar-error">{loadError}</p>}
-
 
       <div
         ref={calendarElement}
@@ -390,12 +405,16 @@ export default function TripCalendar({ tripId }) {
               <>
                 <p>
                   <strong>Date:</strong>{" "}
-                  {new Date(selectedActivity.dateTime).toLocaleDateString()}
+                  {new Date(
+                    selectedActivity.dateTime
+                  ).toLocaleDateString()}
                 </p>
 
                 <p>
                   <strong>Time:</strong>{" "}
-                  {new Date(selectedActivity.dateTime).toLocaleTimeString([], {
+                  {new Date(
+                    selectedActivity.dateTime
+                  ).toLocaleTimeString([], {
                     hour: "numeric",
                     minute: "2-digit",
                   })}
@@ -416,6 +435,7 @@ export default function TripCalendar({ tripId }) {
                 <p>{selectedActivity.notes}</p>
               </div>
             )}
+
             <button
               onClick={() => {
                 setActivityForm({
@@ -429,6 +449,7 @@ export default function TripCalendar({ tripId }) {
                   estimatedCost: "",
                   notes: "",
                 });
+
                 setSelectedActivity(null);
                 setShowAddActivity(true);
               }}
@@ -450,8 +471,12 @@ export default function TripCalendar({ tripId }) {
                 fontSize: "15px",
                 cursor: "pointer",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "red")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "black")}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.color = "red")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = "black")
+              }
             >
               Delete
             </button>
@@ -470,6 +495,7 @@ export default function TripCalendar({ tripId }) {
           </div>
         </div>
       )}
+
       {editActivity && (
         <div
           style={{
@@ -507,6 +533,7 @@ export default function TripCalendar({ tripId }) {
             >
               ×
             </button>
+
             <h2>Edit activity</h2>
 
             <input
@@ -520,6 +547,7 @@ export default function TripCalendar({ tripId }) {
                 })
               }
             />
+
             <select
               value={editActivityForm.category}
               onChange={(e) =>
@@ -530,12 +558,14 @@ export default function TripCalendar({ tripId }) {
               }
             >
               <option value="">select a category</option>
+
               {category.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
               ))}
             </select>
+
             <input
               type="datetime-local"
               value={editActivityForm.dateTime}
@@ -546,6 +576,7 @@ export default function TripCalendar({ tripId }) {
                 })
               }
             />
+
             <input
               type="number"
               placeholder="Estimated cost"
@@ -557,6 +588,7 @@ export default function TripCalendar({ tripId }) {
                 })
               }
             />
+
             <input
               type="text"
               placeholder="notes..."
@@ -580,6 +612,7 @@ export default function TripCalendar({ tripId }) {
             >
               Confirm edits
             </button>
+
             <button
               onClick={() => setEditActivity(false)}
               style={{
@@ -646,6 +679,7 @@ export default function TripCalendar({ tripId }) {
                 })
               }
             />
+
             <select
               value={activityForm.category}
               onChange={(e) =>
@@ -656,12 +690,14 @@ export default function TripCalendar({ tripId }) {
               }
             >
               <option value="">select a category</option>
+
               {category.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
               ))}
             </select>
+
             <input
               type="datetime-local"
               value={activityForm.dateTime}
@@ -672,6 +708,7 @@ export default function TripCalendar({ tripId }) {
                 })
               }
             />
+
             <input
               type="number"
               placeholder="Estimated cost"
@@ -683,6 +720,7 @@ export default function TripCalendar({ tripId }) {
                 })
               }
             />
+
             <input
               type="text"
               placeholder="notes..."
@@ -706,6 +744,7 @@ export default function TripCalendar({ tripId }) {
             >
               Add Activity
             </button>
+
             <button
               onClick={() => setShowAddActivity(false)}
               style={{

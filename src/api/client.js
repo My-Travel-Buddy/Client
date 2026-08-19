@@ -1,4 +1,4 @@
-// api/client.js
+ // api/client.js
 
 // Handles requests from the frontend to the backend.
 // request() keeps the shared fetch setup in one place.
@@ -146,6 +146,7 @@ export async function saveItinerary(itinerary) {
       completed: item.completed,
     });
   }
+}
 
 // ADDED: toggle or edit one checklist item.
 // Note the unusual path shape — the item id sits BETWEEN the trip id and the
