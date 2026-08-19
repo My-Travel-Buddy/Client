@@ -1,70 +1,70 @@
-import { NavLink } from 'react-router';
+import { NavLink } from "react-router";
 
-// NavLink is like an <a> tag but for client-side routing: it navigates without
-// a full page reload, and it tells us when its route is active so we can style it.
-//
-// Navbar takes `user` and `onLogout` as props from App. It doesn't fetch
-// anything or know how you logged in — it just renders what it's handed. A
-// component this simple is easy to reason about and easy to reuse.
+// NavLink changes pages without reloading the whole app.
+// It also tells us which link is currently active.
+
+// Navbar receives the user information and logout function from App.
 
 // ---------- REMOVED in commit 373b5d4 ----------
 // export default function Navbar({ user, onLogout }) {
 // ---------- end removed ----------
 export default function Navbar({ user, onLogout, isLoading }) {
+  // Style the active navigation link differently.
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded-md text-sm font-medium ${
-      isActive ? 'text-(--accent)' : 'hover:text-(--text-h)'
+      isActive ? "text-(--accent)" : "hover:text-(--text-h)"
     }`;
 
   return (
-    <header className='border-b border-(--border)'>
-      <nav className='mx-auto flex max-w-3xl items-center gap-2 px-4 py-3'>
+    <header className="border-b border-(--border)">
+      <nav className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3">
         <NavLink
-          to='/'
-          className='mr-auto text-lg font-semibold text-(--text-h)'
+          to="/"
+          className="mr-auto text-lg font-semibold text-(--text-h)"
         >
-            My travel buddy
+          My travel buddy
         </NavLink>
 
-        {/* `end` makes "Home" active only on "/" exactly, not on every route. */}
-        <NavLink to='/' end className={linkClass}>
+        {/* Keep Discovery active only on the home page. */}
+        <NavLink to="/" end className={linkClass}>
           Discovery
         </NavLink>
-        <NavLink to='/trips' className={linkClass}>
+
+        <NavLink to="/trips" className={linkClass}>
           My Trips
         </NavLink>
 
-        {/* Only show the protected link once someone is logged in. */}
+        {/* Show this link only when the user is logged in. */}
         {/* {user && (
           <NavLink to='/protected' className={linkClass}>
             Protected
           </NavLink>
         )} */}
 
-        {/* Auth controls: your name + Log out, or the Log in / Sign up pair. */}
+        {/* Show logout options when logged in, otherwise show login and signup. */}
         {user ? (
           <>
-            <span className='px-2 text-sm'>
-              {/* ADDED: the name to show. Our own users always have a
-                  username; Auth0 users may only have a name or an email,
-                  so fall back through all three. */}
+            <span className="px-2 text-sm">
+              {/* Show the username, name, or email. */}
               {user.username || user.name || user.email}
             </span>
+
             <button
               onClick={onLogout}
-              className='rounded-md px-3 py-2 text-sm font-medium hover:text-(--text-h)'
+              className="rounded-md px-3 py-2 text-sm font-medium hover:text-(--text-h)"
             >
               Log out
             </button>
           </>
         ) : (
           <>
-            <NavLink to='/login' className={linkClass}>
+            <NavLink to="/login" className={linkClass}>
               Log in
             </NavLink>
+
             <NavLink
-              to='/signup'
-              className='rounded-md bg-(--accent) px-3 py-2 text-sm font-medium text-white'
+              to="/signup"
+              className="rounded-md bg-(--accent) px-3 py-2 text-sm font-medium text-white"
             >
               Sign up
             </NavLink>
@@ -74,15 +74,3 @@ export default function Navbar({ user, onLogout, isLoading }) {
     </header>
   );
 }
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-             Home
-   ---------- removed block ----------
-             Trips
-   ============================================================ */

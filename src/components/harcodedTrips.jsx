@@ -1,3 +1,4 @@
+// Sample trips shown as quick options for the user.
 const trips = [
   {
     id: "kyoto",
@@ -44,8 +45,18 @@ const trips = [
     image:
       "https://images.unsplash.com/photo-1662434449168-35f32702b665?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGJhbmZmfGVufDB8fDB8fHww",
   },
+  {
+    id: "zanzibar",
+    destination: "Zanzibar, Tanzanie",
+    interest: " ",
+    budget: 1200,
+    season: "Summer",
+    image:
+      "https://media.istockphoto.com/id/2213429408/photo/aerial-view-of-the-boats-on-tropical-sea-coast-with-white-sandy-beach-on-summer-sunny-day.jpg?s=612x612&w=0&k=20&c=kPQV64CX9LRDISFacDaR0i5lq-LcvqM6eElvQr6j5dg=",
+  },
 ];
 
+// Shows one trip card.
 function TripCard({ trip, selected, onClick }) {
 
   return (
@@ -53,23 +64,33 @@ function TripCard({ trip, selected, onClick }) {
       className={`trip-card ${selected ? "selected" : ""}`}
       onClick={onClick}
     >
+      {/* Show the trip image as the card background. */}
       <div
         className="trip-card-image"
         style={{ backgroundImage: `URL(${trip.image})` }}
       />
+
       <div className="trip-card-body">
         <div className="trip-card-top">
+          {/* Show only the city name. */}
           <h3>{trip.destination.split(",")[0]}</h3>
+
+          {/* Show the best season for the trip. */}
           <span className="trip-card-season">{trip.season}</span>
         </div>
+
+        {/* Show the estimated trip budget. */}
         <p className="trip-card-price">Est:${trip.budget}</p>
       </div>
     </div>
   );
 }
+
 export default function RenderingTrips({ setFormData }) {
+  // No trip is selected by default.
   const selectedTrip = null;
 
+  // Fill the main trip form when a trip card is clicked.
   function handleOnClick(idx) {
     setFormData({
       destination: trips[idx].destination,
@@ -83,7 +104,9 @@ export default function RenderingTrips({ setFormData }) {
   return (
     <div className="trips-page">
       <br />
+
       <div className="trips-grid">
+        {/* Create one card for each trip. */}
         {trips.map((trip, idx) => (
           <TripCard
             key={idx}

@@ -21,8 +21,7 @@ import {
 } from "../lib/tripDates";
 import Icon from "../components/Icon";
 
-// The tabs on this page, in order. Each one is both the button label and the
-// value stored in `activeSection`.
+// List of tabs shown on the trip details page.
 const SECTIONS = [
   "Overview",
   "Itinerary",
@@ -31,8 +30,7 @@ const SECTIONS = [
   "Activities",
 ];
 
-// The API base URL never changes while the app is running, so it lives
-// outside the component.
+// Backend API URL.
 const BACKEND_API = import.meta.env.VITE_API_URL;
 
 export default function TripDetails() {

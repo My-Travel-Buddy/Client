@@ -107,6 +107,7 @@ function Activities({ trip, setTrip }) {
     }
 
     try {
+      // Delete the activity from the database.
       await deleteActivity(trip.id, activity.id);
 
       // Remove the deleted activity from the screen without reloading.

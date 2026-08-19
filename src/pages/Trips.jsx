@@ -40,27 +40,26 @@ const GROUPS = [
 ];
 
 export default function Trips({ user }) {
-  // The name for the greeting. `user` is null for a moment while App checks
-  // the login cookie, and stays null when nobody is logged in.
+  // Get the user's name for the greeting.
   const name = user?.username || user?.name || user?.email || "traveler";
 
-  // Store the saved trips returned by the backend.
+  // Store the saved trips.
   const [trips, setTrips] = useState([]);
 
-  // Track whether the trips are still loading.
+  // Track whether trips are loading.
   const [loading, setLoading] = useState(true);
 
-  // Store an error message if the request fails.
+  // Store an error message.
   const [error, setError] = useState("");
 
-  // Load all saved trips when this page first opens.
+  // Load saved trips when the page opens.
   useEffect(() => {
     async function getTrips() {
       try {
-        // client.js sends GET /trips to the backend.
+        // Get all saved trips from the backend.
         const data = await request("/trips");
 
-        // The backend returns an array of saved trips.
+        // Save the trips in state.
         setTrips(data);
       } catch (error) {
         setError(error.message);
@@ -94,7 +93,7 @@ export default function Trips({ user }) {
     );
   }
 
-  // Show an error if the request failed.
+  // Show an error message.
   if (error) {
     return (
       <div className="trips-error">
@@ -175,7 +174,7 @@ export default function Trips({ user }) {
         <div className="trips-empty">
           <div className="trips-empty-icon">🧭</div>
 
-          <h3>No trips saved yet</h3>
+            <h3>No trips saved yet</h3>
 
           <p>
             Generate an itinerary from the home page and save it — it will show

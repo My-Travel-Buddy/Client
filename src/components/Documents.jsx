@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { getVisaRequirements, getVisaCountries } from "../api/client";
 
-// Everyday shorthand the API's official names do not cover. The country LIST
-// still comes from the API — these are just the nicknames people type.
+// Common country names people may type.
 const ALIASES = {
   usa: "US",
   "u.s.": "US",
@@ -24,54 +23,57 @@ const ALIASES = {
   turkiye: "TR",
 };
 
-// The trip destination is free text like "Paris, France", so we look for a
-// country name inside it. Returns "" when we cannot tell.
+// Find the country code from the trip destination.
 function findCountryCode(destination, countries) {
   const text = String(destination || "").toLowerCase();
 
-  // Longest name first, so "Dominican Republic" wins over "Dominica".
+  // Check longer country names first.
   const sorted = [...countries].sort((a, b) => b.name.length - a.name.length);
 
   const match = sorted.find((country) =>
     text.includes(country.name.toLowerCase()),
   );
 
+  // Return the country code if a match is found.
   if (match) {
     return match.code;
   }
 
-  // No official name in the text — try the nicknames. Longest first again, so
-  // "united states" is tested before "usa".
+  // If no official country name matches, try common names.
   const aliases = Object.keys(ALIASES).sort((a, b) => b.length - a.length);
 
   const alias = aliases.find((word) => text.includes(word));
 
-  // Only accept it if the API actually offers that country.
+  // Make sure the country exists in the API list.
   if (alias && countries.some((country) => country.code === ALIASES[alias])) {
     return ALIASES[alias];
   }
 
+  // Return an empty value if no country is found.
   return "";
 }
 
 function Documents({ trip }) {
-  // The two lists come from the API: countries that issue passports, and
-  // places you can travel to. They are not the same list — Bermuda and Hong
-  // Kong are destinations but do not appear under passports.
+  // Store the passport and destination country lists.
   const [passports, setPassports] = useState([]);
   const [destinations, setDestinations] = useState([]);
 
-  // Which passport the traveller holds. They can change it.
+  // Store the selected passport country.
   const [passportCode, setPassportCode] = useState("US");
 
-  // Where they are going — filled in from the trip once the lists arrive.
+  // Store the selected destination country.
   const [destinationCode, setDestinationCode] = useState("");
 
+  // Store the visa information.
   const [visa, setVisa] = useState(null);
+
+  // Track whether visa information is loading.
   const [loading, setLoading] = useState(false);
+
+  // Store an error message if something goes wrong.
   const [message, setMessage] = useState("");
 
-  // Load the country lists once, then guess this trip's destination.
+  // Load the country lists and find the trip destination.
   useEffect(() => {
     async function loadCountries() {
       try {
@@ -80,6 +82,7 @@ function Documents({ trip }) {
         setPassports(data.passports || []);
         setDestinations(data.destinations || []);
 
+        // Try to match the trip destination to a country code.
         setDestinationCode(
           findCountryCode(trip.destination, data.destinations || []),
         );
@@ -91,9 +94,10 @@ function Documents({ trip }) {
     loadCountries();
   }, [trip.destination]);
 
-  // Ask the backend again whenever either country changes.
+  // Get visa information when the passport or destination changes.
   useEffect(() => {
     async function loadVisa() {
+      // Do not make the request until a destination is selected.
       if (!destinationCode) {
         return;
       }
@@ -103,6 +107,7 @@ function Documents({ trip }) {
 
       try {
         const data = await getVisaRequirements(passportCode, destinationCode);
+
         setVisa(data);
       } catch (error) {
         setMessage(error.message);
@@ -115,16 +120,16 @@ function Documents({ trip }) {
     loadVisa();
   }, [passportCode, destinationCode]);
 
-  // Shortcuts so the JSX below stays readable.
+  // Get the main visa rule from the response.
   const rule = visa?.data?.visa_rules?.primary_rule;
+
+  // Get the destination information.
   const country = visa?.data?.destination;
 
-  // Some countries also require a form on arrival (China's arrival card, for
-  // example). It is only in the response when it applies.
+  // Get any extra registration requirements.
   const registration = visa?.data?.mandatory_registration;
 
-  // "visa-api" = the visa-data service. "gemini" = an AI fallback used when
-  // the visa API is out of quota or down. The user must be told which.
+  // Check if the visa information came from Gemini.
   const fromGemini = visa?.source === "gemini";
 
   return (
@@ -145,6 +150,7 @@ function Documents({ trip }) {
             value={passportCode}
             onChange={(event) => setPassportCode(event.target.value)}
           >
+            {/* Show all available passport countries. */}
             {passports.map((item) => (
               <option key={item.code} value={item.code}>
                 {item.name}
@@ -163,6 +169,7 @@ function Documents({ trip }) {
           >
             <option value="">Choose a country</option>
 
+            {/* Show all available destination countries. */}
             {destinations.map((item) => (
               <option key={item.code} value={item.code}>
                 {item.name}
@@ -172,7 +179,7 @@ function Documents({ trip }) {
         </div>
       </div>
 
-      {/* We could not read a country out of "Paris, France" style text. */}
+      {/* Ask the user to choose a country if we could not find one. */}
       {!destinationCode && (
         <p className="visa-note">
           We could not tell which country "{trip.destination}" is in. Pick a
@@ -180,20 +187,22 @@ function Documents({ trip }) {
         </p>
       )}
 
+      {/* Show while visa information is loading. */}
       {loading && <p className="visa-note">Checking visa rules...</p>}
 
+      {/* Show an error message if the request fails. */}
       {message && <p className="visa-error">{message}</p>}
 
       {rule && !loading && (
         <>
-          {/* The API sends a colour: green, yellow or red. */}
+          {/* Show the main visa requirement. */}
           <div className={`visa-banner visa-banner-${rule.color}`}>
             <strong>{rule.name}</strong>
+
             {rule.duration && <span>Stay up to {rule.duration}</span>}
           </div>
 
-          {/* Always say where the answer came from — the licensed data service
-              or the AI fallback. The two read very differently on purpose. */}
+          {/* Show whether the information came from the visa API or Gemini. */}
           <div
             className={`visa-source ${
               fromGemini ? "visa-source-ai" : "visa-source-verified"
@@ -216,7 +225,7 @@ function Documents({ trip }) {
             </div>
           </div>
 
-          {/* Extra paperwork the destination requires on top of the visa. */}
+          {/* Show extra forms or registration requirements if needed. */}
           {registration && (
             <div className="visa-registration">
               <strong>Also required: {registration.name}</strong>
@@ -229,25 +238,31 @@ function Documents({ trip }) {
             </div>
           )}
 
+          {/* Show basic information about the destination. */}
           <ul className="visa-facts">
             <li>
               <span>Capital</span> {country?.capital}
             </li>
+
             <li>
               <span>Currency</span> {country?.currency} (
               {country?.currency_code})
             </li>
+
             <li>
               <span>Passport validity</span> {country?.passport_validity}
             </li>
+
             <li>
               <span>Phone code</span> {country?.phone_code}
             </li>
+
             <li>
               <span>Time zone</span> UTC {country?.timezone}
             </li>
           </ul>
 
+          {/* Show the embassy link if one is available. */}
           {country?.embassy_url && (
             <a
               className="visa-embassy"
@@ -265,13 +280,3 @@ function Documents({ trip }) {
 }
 
 export default Documents;
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-   //need the api
-   ============================================================ */

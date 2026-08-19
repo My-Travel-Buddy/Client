@@ -4,31 +4,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import RenderingTrips from "../components/harcodedTrips";
 
-// ---------- REMOVED in commit 373b5d4 ----------
-// import { getVisaRequirements } from "../api/client";
-// import heroImage from "../assets/hero.png";
-// import heroFuji from "../assets/heroes/japan-mount-fuji-hero.png";
-// import heroTokyo from "../assets/japan/tokyo.jpg";
-// import heroMarrakech from "../assets/morocco/marrakech.jpg";
-// import heroBarcelona from "../assets/spain/barcelona.jpg";
-// ---------- end removed ----------
 import { generateItinerary } from "../api/client";
 
-// To support the cycling hero photos, I load all desktop WebP images
-// as URLs, sort them by filename, and store them in an array.
-// The hero rotation logic then cycles through this array.
+// Load all hero images and put them in an array.
 const HERO_IMAGES = Object.entries(
   import.meta.glob("../assets/travel-auth-backgrounds/desktop-webp/*.webp", {
-    eager: true, //loads the images immediately.
-    query: "?url", //returns each image’s browser-ready URL.
-    import: "default", //returns only the default exported URL.
+    eager: true, // Load the images right away.
+    query: "?url", // Get the image URL.
+    import: "default", // Get the default image URL.
   }),
 )
   .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
   .map(([, url]) => url);
 
-// What the traveller can pick from. The label is what gets sent to Gemini,
-// so it doubles as the wording of the request.
+// Interests the user can choose.
 const INTERESTS = [
   { label: "Culture & History", icon: "🏛️" },
   { label: "Food & Culinary", icon: "🍜" },
@@ -43,8 +32,7 @@ const INTERESTS = [
 export default function HomePage() {
   const navigate = useNavigate();
 
-  // Pick a random hero image when the page loads.
-  // useState keeps the same image while the user fills out the form.
+  // Pick one random hero image when the page loads.
   const [hero] = useState(
     () => HERO_IMAGES[Math.floor(Math.random() * HERO_IMAGES.length)],
   );
@@ -58,13 +46,13 @@ export default function HomePage() {
     interests: [],
   });
 
-  // Used while Gemini is generating the itinerary.
+  // Track when the itinerary is being generated.
   const [loading, setLoading] = useState(false);
 
-  // Show success or error messages.
+  // Store a message or error.
   const [message, setMessage] = useState("");
 
-  // Update the correct form field when the user types.
+  // Update the form field the user changes.
   function handleChange(event) {
     setFormData({
       ...formData,
@@ -72,7 +60,7 @@ export default function HomePage() {
     });
   }
 
-  // Add or remove an interest when the user clicks it.
+  // Add or remove an interest.
   function handleInterestClick(interest) {
     setFormData((previewsFormData) => {
       const isSelected = previewsFormData.interests.includes(interest);
@@ -86,7 +74,7 @@ export default function HomePage() {
     });
   }
 
-  // Generate the itinerary.
+  // Generate the trip itinerary.
   async function handleGenerate(event) {
     event.preventDefault();
 
@@ -106,12 +94,12 @@ export default function HomePage() {
       const data = await generateItinerary(tripData);
       console.log("AI RESPONSE:", data);
 
-  // ---------- REMOVED in commit 373b5d4 ----------
-  //
-  //       setItinerary(data);
-  //       console.log(data);
-  //
-  // ---------- end removed ----------
+      // ---------- REMOVED in commit 373b5d4 ----------
+      //
+      //       setItinerary(data);
+      //       console.log(data);
+      //
+      // ---------- end removed ----------
       navigate("/trips/itinerary", {
         state: { itinerary: { ...tripData, ...data } },
       });
@@ -184,8 +172,7 @@ export default function HomePage() {
           <div className="form-field budget-field">
             <label htmlFor="budget">BUDGET ESTIMATE</label>
 
-            {/* Match backend budget rules: required, positive, two decimals,
-                and within DECIMAL(10,2). Server validation remains the final guard. */}
+            {/* Keep the budget inside the allowed range. */}
 
             <input
               id="budget"
@@ -241,56 +228,3 @@ export default function HomePage() {
     </>
   );
 }
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-   // Every photo the hero can show. Add a file here and it joins the rotation.
-   const HERO_IMAGES = [
-     heroImage,
-     heroFuji,
-     heroTokyo,
-     heroMarrakech,
-     heroBarcelona,
-   ---------- removed block ----------
-     const [visaInfo, setVisaInfo] = useState(null);
-     async function handleVisaCheck() {
-       const data = await getVisaRequirements("US", "CN");
-       setVisaInfo(data);
-     }
-   
-     // Store the itinerary returned by Gemini.
-     const [itinerary, setItinerary] = useState(null);
-   
-   ---------- removed block ----------
-     // the function that validate the interest field
-   ---------- removed block ----------
-                 placeholder="0-100000"
-   ---------- removed block ----------
-               <span className="interests-label">INTERESTS:</span>
-   ---------- removed block ----------
-                 {[
-                   "Food",
-                   "Sightseeing",
-                   "Culture",
-                   "Adventure",
-                   "Shopping",
-                   "Transportation",
-                   "Entertainment",
-                   "Other",
-                 ].map((interest) => (
-   ---------- removed block ----------
-                     key={interest}
-   ---------- removed block ----------
-                     onClick={() => handleInterestClick(interest)}
-   ---------- removed block ----------
-                       formData.interests.includes(interest) ? "selected" : ""
-   ---------- removed block ----------
-                     {interest}
-   ---------- removed block ----------
-             <RenderingTrips />
-   ============================================================ */

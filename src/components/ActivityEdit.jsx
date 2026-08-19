@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createActivity } from "../api/client";
 
-// These must match the categories the backend allows.
+// These categories must match the ones allowed by the backend.
 const CATEGORIES = [
   "Food",
   "Sightseeing",
@@ -41,41 +41,52 @@ function ActivityEdit({
     notes: "",
   });
 
+  // Stores an error message if something goes wrong.
   const [message, setMessage] = useState("");
+
+  // Tracks whether the activity is currently being saved.
   const [saving, setSaving] = useState(false);
 
-  // `name` on the input tells us which key to change.
+  // Update the form field that the user changes.
   function handleChange(event) {
-    setForm({ ...form, [event.target.name]: event.target.value });
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value,
+    });
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+
     setSaving(true);
     setMessage("");
 
     try {
-      // The form has separate date and time boxes, but the database keeps
-      // one dateTime, so we join them: "2026-08-15" + "T" + "12:30".
+      // Combine the date and time into one dateTime value.
       const dateTime = new Date(`${form.date}T${form.time}`).toISOString();
 
+      // Send the new activity to the backend.
       const savedActivity = await createActivity(trip.id, {
         title: form.title,
         category: form.category,
         dateTime,
-        // Inputs always give strings, and the column is a number.
+
+        // Convert the cost from text to a number.
         estimatedCost: Number(form.estimatedCost || 0),
+
         notes: form.notes,
       });
 
-      // Add it to the list on screen without reloading the trip.
+      // Add the saved activity to the page immediately.
       setTrip({
         ...trip,
         Activities: [...(trip.Activities || []), savedActivity],
       });
 
+      // Close the form after saving.
       onClose();
     } catch (error) {
+      // Show the error if saving fails.
       setMessage(error.message);
     }
 
@@ -88,6 +99,7 @@ function ActivityEdit({
         <div className="modal-head">
           <h3>{defaultDate ? "Add Activity to This Day" : "Add New Activity"}</h3>
 
+          {/* Close the form. */}
           <button type="button" className="modal-close" onClick={onClose}>
             ×
           </button>
@@ -116,6 +128,7 @@ function ActivityEdit({
               value={form.category}
               onChange={handleChange}
             >
+              {/* Create one option for each allowed category. */}
               {CATEGORIES.map((category) => (
                 <option key={category}>{category}</option>
               ))}
@@ -150,6 +163,9 @@ function ActivityEdit({
               min={minDate}
               max={maxDate}
               onChange={handleChange}
+              // Keep the activity date inside the trip dates.
+              min={minDate}
+              max={maxDate}
               required
             />
           </div>
@@ -181,6 +197,7 @@ function ActivityEdit({
           />
         </div>
 
+        {/* Show an error message if saving fails. */}
         {message && <p className="modal-error">{message}</p>}
 
         <div className="modal-actions">
@@ -188,6 +205,7 @@ function ActivityEdit({
             Cancel
           </button>
 
+          {/* Disable the button while the activity is saving. */}
           <button type="submit" className="modal-save" disabled={saving}>
             {saving ? "Saving..." : "Save Activity"}
           </button>

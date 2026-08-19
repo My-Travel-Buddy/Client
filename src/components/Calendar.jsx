@@ -21,6 +21,7 @@ const calendars = [
 const BACKEND_API = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export default function TripCalendar({ tripId }) {
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("");
   const [showAddActivity, setShowAddActivity] = useState(false);
@@ -53,18 +54,18 @@ export default function TripCalendar({ tripId }) {
   ];
 
   // ---------- REMOVED in commit 373b5d4 ----------
-  //   const handleOpenAddActivity = () => {
-  //     setActivityForm({
-  //       title: "",
-  //       category: "",
-  //       dateTime: "",
-  //       estimatedCost: "",
-  //       notes: "",
-  //     });
-  //
-  //     setShowAddActivity(true);
-  //   };
-  //
+  const handleOpenAddActivity = () => {
+    setActivityForm({
+      title: "",
+      category: "",
+      dateTime: "",
+      estimatedCost: "",
+      notes: "",
+    });
+
+    setShowAddActivity(true);
+  };
+
   // ---------- end removed ----------
   // ADDED: a load failure used to go only to console.error, so a calendar that
   // could not reach the API looked exactly like a trip with no activities.
@@ -143,6 +144,7 @@ export default function TripCalendar({ tripId }) {
   }, []);
 
   const getActivities = async () => {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     try {
       const response = await fetch(
         `${BACKEND_API}/trips/${tripId}/activities`,
@@ -214,6 +216,7 @@ export default function TripCalendar({ tripId }) {
   }, [tripId]);
 
   async function addActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     console.log("Sending activity:", activityForm);
     const response = await fetch(
       `${BACKEND_API}/trips/${tripId}/activities`,
@@ -225,7 +228,8 @@ export default function TripCalendar({ tripId }) {
         },
         body: JSON.stringify(activityForm),
       },
-    );
+      body: JSON.stringify(activityForm),
+    });
 
     if (!response.ok) {
       alert("Failed to add activity.");
@@ -236,6 +240,7 @@ export default function TripCalendar({ tripId }) {
   }
 
   async function editActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
       `${BACKEND_API}/trips/${tripId}/activities/${editActivityForm.id}`,
       {
@@ -260,6 +265,7 @@ export default function TripCalendar({ tripId }) {
     setSelectedActivity(updatedActivity);
   }
   async function deleteActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
       `${BACKEND_API}/trips/${tripId}/activities/${selectedActivity.id}`,
       {
@@ -717,17 +723,3 @@ export default function TripCalendar({ tripId }) {
     </div>
   );
 }
-
-/* ============================================================
-   REMOVED in commit 373b5d4.
-   Kept here rather than inline: these came out of JSX markup,
-   where a // line would RENDER ON THE PAGE instead of being a
-   comment. Listed so nothing is missing.
-   ============================================================
-   ---------- removed block ----------
-     useEffect(() => {
-       if (tripId) {
-         getActivities();
-       }
-     }, [tripId]);
-   ============================================================ */
