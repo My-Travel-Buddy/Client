@@ -11,6 +11,15 @@ const calendars = [
   },
 ];
 
+// ADDED: the backend address, read from the environment like the rest of the
+// app does (see src/api/client.js).
+//
+// All four fetches below used to hardcode "http://localhost:8080". That breaks
+// twice over: the moment the API runs on any other port the calendar silently
+// loads nothing, and a deployed build would ask the VISITOR's own machine for
+// the data. The fallback keeps the old behaviour when the variable is unset.
+const BACKEND_API = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 export default function TripCalendar({ tripId }) {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("");
@@ -57,6 +66,11 @@ export default function TripCalendar({ tripId }) {
   //   };
   //
   // ---------- end removed ----------
+  // ADDED: a load failure used to go only to console.error, so a calendar that
+  // could not reach the API looked exactly like a trip with no activities.
+  // This makes the difference visible.
+  const [loadError, setLoadError] = useState("");
+
   const calendarElement = useRef(null);
   const calendarInstance = useRef(null);
 
@@ -131,7 +145,7 @@ export default function TripCalendar({ tripId }) {
   const getActivities = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/trips/${tripId}/activities`,
+        `${BACKEND_API}/trips/${tripId}/activities`,
         {
           credentials: "include",
         },
@@ -142,6 +156,8 @@ export default function TripCalendar({ tripId }) {
       }
 
       const data = await response.json();
+
+      setLoadError(""); // ADDED: a later success clears an earlier failure.
 
       console.log("Activities from database:", data);
 
@@ -181,6 +197,13 @@ export default function TripCalendar({ tripId }) {
       }
     } catch (error) {
       console.error("Error fetching activities:", error);
+
+      // ADDED: surface it. An empty calendar and a broken calendar look
+      // identical otherwise.
+      setLoadError(
+        "Could not load this trip's activities. Check that the API is running " +
+          `at ${BACKEND_API}.`,
+      );
     }
   };
 
@@ -193,7 +216,7 @@ export default function TripCalendar({ tripId }) {
   async function addActivities() {
     console.log("Sending activity:", activityForm);
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities`,
+      `${BACKEND_API}/trips/${tripId}/activities`,
       {
         method: "POST",
         credentials: "include",
@@ -214,7 +237,7 @@ export default function TripCalendar({ tripId }) {
 
   async function editActivities() {
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities/${editActivityForm.id}`,
+      `${BACKEND_API}/trips/${tripId}/activities/${editActivityForm.id}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -238,7 +261,7 @@ export default function TripCalendar({ tripId }) {
   }
   async function deleteActivities() {
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities/${selectedActivity.id}`,
+      `${BACKEND_API}/trips/${tripId}/activities/${selectedActivity.id}`,
       {
         method: "DELETE",
         credentials: "include",
@@ -301,6 +324,9 @@ export default function TripCalendar({ tripId }) {
 
         <button onClick={handleNextMonth}>Next</button>
       </div>
+
+      {loadError && <p className="calendar-error">{loadError}</p>}
+
 
       <div
         ref={calendarElement}

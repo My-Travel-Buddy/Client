@@ -147,3 +147,25 @@ export async function saveItinerary(itinerary) {
       });
     }
   }
+
+// ADDED: toggle or edit one checklist item.
+// Note the unusual path shape — the item id sits BETWEEN the trip id and the
+// word "checklist" (see Server/routes/checklist.routes.js). It is inconsistent
+// with the other routes, but changing a shared route is a team decision, so
+// the client matches the server as it stands.
+export function updateChecklistItem(tripId, itemId, changes) {
+  return request(`/trips/${tripId}/${itemId}/checklist/edit`, {
+    method: "PATCH",
+    body: JSON.stringify(changes),
+  });
+}
+
+// ADDED: delete one checklist item.
+// The server route is DELETE /trips/:id/checklist/delete, where :id is the
+// CHECKLIST ITEM id, not the trip id. The answer is 204 with no body, so
+// request() resolves to null.
+export function deleteChecklistItem(itemId) {
+  return request(`/trips/${itemId}/checklist/delete`, {
+    method: "DELETE",
+  });
+}

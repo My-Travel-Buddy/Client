@@ -352,3 +352,168 @@ main .space-y-4 > div,
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   animation: card-in 0.32s ease backwards;
 }
+
+/* ----------------------------------------------------------------------
+   Checklist — delete button, empty state, error
+   The checklist card itself is styled in 05-itinerary.css and shared with
+   the Confirmation page; these are the parts only the saved-trip version
+   needs, because that one can add and remove items.
+   ---------------------------------------------------------------------- */
+
+.checklist-items li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checklist-items li > label {
+  flex: 1;
+}
+
+.checklist-delete {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.16s ease,
+    color 0.16s ease,
+    background 0.16s ease;
+}
+
+/* Revealed on hover so the list stays calm, but always reachable by keyboard
+   — opacity 0 would otherwise hide a control a keyboard user has focused. */
+.checklist-items li:hover .checklist-delete,
+.checklist-delete:focus-visible {
+  opacity: 1;
+}
+
+.checklist-delete:hover {
+  color: #b42318;
+  background: #fef3f2;
+}
+
+.checklist-delete:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.checklist-empty {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.checklist-error {
+  margin: 10px 0 0;
+  color: #b42318;
+  font-size: 0.92rem;
+}
+
+/* Touch screens have no hover, so the delete button must always be visible. */
+@media (hover: none) {
+  .checklist-delete {
+    opacity: 1;
+  }
+}
+
+/* ----------------------------------------------------------------------
+   Overview tab
+   ---------------------------------------------------------------------- */
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.overview-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.overview-stat-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.overview-stat-value {
+  color: var(--text-h);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.overview-budget {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.overview-budget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.overview-badge {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.overview-badge.under {
+  color: #067647;
+  background: #ecfdf3;
+}
+
+.overview-badge.over {
+  color: #b42318;
+  background: #fef3f2;
+}
+
+.overview-bar {
+  height: 10px;
+  overflow: hidden;
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.overview-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.overview-bar-fill.over {
+  background: #d92d20;
+}
+
+.overview-hint {
+  margin: 18px 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}

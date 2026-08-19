@@ -373,3 +373,16 @@ button.bg-green-600 {
 button.bg-green-600:hover {
   background: var(--accent-strong);
 }
+
+/* The calendar loads its own activities. When that fails it now says so,
+   instead of rendering an empty month that looks like a trip with nothing
+   planned. */
+.calendar-error {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  color: #b42318;
+  font-size: 0.95rem;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  border-radius: 10px;
+}
