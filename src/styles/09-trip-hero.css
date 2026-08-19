@@ -1,0 +1,939 @@
+/* ==========================================================================
+   Trip page — photo hero, Overview dashboard, activity cards
+   ==========================================================================
+
+   Loaded LAST (see App.css) so the rules here win over the earlier, plainer
+   versions of .overview-* in 04-trip-pages.css without those having to be
+   deleted — the old file stays readable as the "before".
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Category tints
+   One place per colour. Used by the activity chips and by the Overview spend
+   bars, so a Food activity is the same amber in both.
+   -------------------------------------------------------------------------- */
+
+.tint-teal {
+  --tint-fg: #06695d;
+  --tint-bg: #d3f6ec;
+  --tint-solid: #0e9384;
+}
+.tint-sky {
+  --tint-fg: #0b5a86;
+  --tint-bg: #dcf1fd;
+  --tint-solid: #1289c4;
+}
+.tint-violet {
+  --tint-fg: #5b3ba8;
+  --tint-bg: #eae4fd;
+  --tint-solid: #7c5cd6;
+}
+.tint-amber {
+  --tint-fg: #92400e;
+  --tint-bg: #fdf0d5;
+  --tint-solid: #dd9418;
+}
+.tint-pink {
+  --tint-fg: #9d2a63;
+  --tint-bg: #fce4f0;
+  --tint-solid: #e0559c;
+}
+.tint-green {
+  --tint-fg: #276a3c;
+  --tint-bg: #dcf5e3;
+  --tint-solid: #3d9a58;
+}
+.tint-slate {
+  --tint-fg: #44546b;
+  --tint-bg: #eaeff5;
+  --tint-solid: #7b8aa0;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.trip-page {
+  padding-top: 4px;
+}
+
+.trip-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  min-height: 300px;
+  padding: 30px 34px 28px;
+  overflow: hidden;
+  background-color: #10203a;
+  background-position: center 55%;
+  background-size: cover;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Without this the white text sits on an unknown photo — sometimes on a bright
+   sky, where it disappears entirely. The gradient is heaviest at the bottom
+   because that is where the text is. */
+.trip-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      to top,
+      rgba(9, 20, 38, 0.92) 0%,
+      rgba(9, 20, 38, 0.72) 34%,
+      rgba(9, 20, 38, 0.28) 68%,
+      rgba(9, 20, 38, 0.15) 100%
+    );
+}
+
+.trip-hero-content {
+  position: relative;
+  width: 100%;
+}
+
+.trip-hero-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 6px 14px;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.trip-hero-back:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateX(-2px);
+}
+
+.trip-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 10px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+
+.trip-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.trip-status-upcoming {
+  color: #b9f4e6;
+  background: rgba(14, 147, 132, 0.35);
+  border: 1px solid rgba(185, 244, 230, 0.4);
+}
+
+/* The one state worth animating: the trip is happening right now. */
+.trip-status-active {
+  color: #ffe0ac;
+  background: rgba(221, 148, 24, 0.34);
+  border: 1px solid rgba(255, 224, 172, 0.45);
+}
+
+.trip-status-active::before {
+  animation: trip-pulse 1.8s ease-in-out infinite;
+}
+
+.trip-status-past,
+.trip-status-neutral {
+  color: #d6dfeb;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+@keyframes trip-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-status-active::before {
+    animation: none;
+  }
+}
+
+.trip-hero-title {
+  margin: 12px 0 20px;
+  color: #fff;
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 20px rgba(9, 20, 38, 0.5);
+}
+
+/* A definition list, not four floating pills: these ARE label/value pairs,
+   and saying so in the markup is free. */
+.trip-hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0;
+  padding: 16px 4px 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.trip-hero-fact {
+  padding-right: 30px;
+  margin-right: 30px;
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.trip-hero-fact:last-child {
+  padding-right: 0;
+  margin-right: 0;
+  border-right: none;
+}
+
+.trip-hero-fact dt {
+  margin: 0 0 3px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.trip-hero-fact dd {
+  margin: 0;
+  color: #fff;
+  font-size: 1.06rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .trip-hero {
+    min-height: 250px;
+    padding: 22px 20px 20px;
+    border-radius: 16px;
+  }
+
+  .trip-hero-facts {
+    gap: 14px 0;
+  }
+
+  .trip-hero-fact {
+    padding-right: 18px;
+    margin-right: 18px;
+  }
+
+  .trip-hero-fact dd {
+    font-size: 0.96rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Loading skeleton — the shape of the page, before the page
+   -------------------------------------------------------------------------- */
+
+.trip-hero-skeleton,
+.trip-skeleton-tabs,
+.trip-skeleton-panel {
+  background: linear-gradient(100deg, #e9eef4 30%, #f4f7fa 50%, #e9eef4 70%);
+  background-size: 220% 100%;
+  animation: trip-shimmer 1.3s linear infinite;
+}
+
+.trip-skeleton-tabs {
+  height: 52px;
+  margin: 26px 0 16px;
+  border-radius: 10px;
+}
+
+.trip-skeleton-panel {
+  height: 280px;
+  border-radius: var(--radius);
+}
+
+@keyframes trip-shimmer {
+  from {
+    background-position: 180% 0;
+  }
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-hero-skeleton,
+  .trip-skeleton-tabs,
+  .trip-skeleton-panel {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Overview
+   Two columns: the figures on the left, the "what now?" panels on the right.
+   The single-column version was one short card on a tall empty page.
+   -------------------------------------------------------------------------- */
+
+/* Stats, then the budget, then two columns. The first two run full width
+   because they answer "how big is this trip?" and "can I afford it?" — the
+   questions asked before any of the detail below matters. */
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.overview-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 20px;
+  /* No `align-items: start`. Grid items stretch by default, so each column
+     fills the row's full height and the two columns end level. With `start`
+     each column stopped at its own content and the bottoms disagreed. */
+}
+
+/* The left card grows to the height of the whole right column — "Next up"
+   plus "Checklist" plus the gap between them. */
+.overview-main > .overview-card {
+  flex: 1;
+}
+
+/* The right column deliberately does NOT do this. Its cards keep their
+   content height, so Checklist stays compact instead of being padded out to
+   match "Next up". Only the column as a whole is stretched, not the cards
+   inside it — which is what keeps the 20px gap between them constant. */
+
+.overview-main,
+.overview-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+@media (max-width: 940px) {
+  .overview-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Over budget is a warning, so it looks like one — a red rail down the side
+   rather than only a small red pill in the corner. */
+.overview-budget.is-over {
+  border-color: #f5c7c2;
+  border-left: 4px solid #d92d20;
+  background: linear-gradient(180deg, #fef6f5, var(--surface) 70%);
+}
+
+/* The trip's position in time: one line at the top of the "Next up" card,
+   where it used to be a card of its own holding a single short phrase. */
+.status-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -4px 0 14px;
+  padding: 7px 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  border-radius: 9px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-strip.status-upcoming {
+  color: var(--accent-strong);
+  background: var(--accent-bg);
+}
+
+.status-strip.status-active {
+  color: #92400e;
+  background: #fdf0d5;
+}
+
+.status-strip.status-active .status-dot {
+  animation: trip-pulse 1.8s ease-in-out infinite;
+}
+
+.status-strip.status-past,
+.status-strip.status-neutral {
+  color: var(--text-muted);
+  background: #eef2f7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-strip.status-active .status-dot {
+    animation: none;
+  }
+}
+
+.overview-card {
+  padding: 22px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.overview-card-title {
+  margin: 0 0 16px;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.overview-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.overview-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.overview-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.overview-stat-icon {
+  margin-bottom: 6px;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.overview-stat-label {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.overview-stat-value {
+  color: var(--text-h);
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.overview-budget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.overview-bar {
+  height: 10px;
+  overflow: hidden;
+  background: #eef2f7;
+  border-radius: 999px;
+}
+
+.overview-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #4fc4b0);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.overview-bar-fill.over {
+  background: linear-gradient(90deg, #d92d20, #f0705f);
+}
+
+/* ---- spend by category ---- */
+
+.spend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spend-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.9fr) minmax(0, 2fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.spend-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-h);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.spend-track {
+  height: 9px;
+  overflow: hidden;
+  background: #eef2f7;
+  border-radius: 999px;
+}
+
+.spend-fill {
+  display: block;
+  height: 100%;
+  background: var(--tint-solid, var(--accent));
+  border-radius: 999px;
+  animation: spend-grow 0.5s ease backwards;
+}
+
+@keyframes spend-grow {
+  from {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+}
+
+.spend-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--text-h);
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.spend-value small {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+@media (max-width: 520px) {
+  .spend-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .spend-track {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- next up ---- */
+
+.next-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.next-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 8px;
+  margin: 0 -8px;
+  border-radius: 10px;
+  transition: background 0.14s ease;
+}
+
+.next-item:hover {
+  background: #f7fafc;
+}
+
+.next-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  background: var(--tint-bg, #eaeff5);
+  border-radius: 10px;
+}
+
+.next-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.next-body strong {
+  overflow: hidden;
+  color: var(--text-h);
+  font-size: 0.94rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.next-body small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.next-cost {
+  flex: none;
+  color: var(--text-h);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.checklist-progress {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.open-list {
+  margin: 12px 0 0;
+  padding: 0 0 0 4px;
+  list-style: none;
+}
+
+.open-list li {
+  position: relative;
+  padding: 4px 0 4px 20px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.open-list li::before {
+  content: "";
+  position: absolute;
+  top: 11px;
+  left: 2px;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid #c8d3e0;
+  border-radius: 3px;
+}
+
+.overview-link {
+  margin-top: 14px;
+  padding: 0;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.overview-link:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Activities tab
+   -------------------------------------------------------------------------- */
+
+.activities-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.activities-head-text h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.activities-head-text p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.activities-empty {
+  padding: 54px 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed #d8e2ec;
+  border-radius: var(--radius);
+}
+
+.activities-empty > span {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 2.4rem;
+}
+
+.activities-empty h3 {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.activities-empty p {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+}
+
+.activity-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 0;
+  padding: 18px 20px 16px;
+}
+
+.activity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  color: var(--tint-fg, var(--text));
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: var(--tint-bg, #eaeff5);
+  border-radius: 999px;
+}
+
+.activity-title {
+  margin: 12px 0 0;
+  padding-right: 22px;
+  color: var(--text-h);
+  font-size: 1.06rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.activity-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.activity-time {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.activity-cost {
+  flex: none;
+  color: var(--text-h);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.activity-notes {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Icons
+   Inline SVG that inherits the surrounding text colour — see Icon.jsx.
+   -------------------------------------------------------------------------- */
+
+.icon {
+  display: block;
+  flex: none;
+}
+
+.overview-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 10px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-radius: 10px;
+}
+
+.spend-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--tint-fg, var(--text));
+  background: var(--tint-bg, #eaeff5);
+  border-radius: 7px;
+}
+
+.next-icon {
+  color: var(--tint-fg, var(--text));
+}
+
+.activity-chip .icon {
+  margin-left: -2px;
+}
+
+.activities-empty .icon {
+  margin: 0 auto 14px;
+  color: #c2cede;
+}
+
+/* --------------------------------------------------------------------------
+   Equal-height activity cards
+   The grid was `align-items: start`, so each card stopped at its own content
+   and every row came out ragged — the clearest sign that a layout was never
+   looked at. Cards now fill the row, and the time/cost line is pushed to the
+   bottom so those figures line up across the whole row.
+   -------------------------------------------------------------------------- */
+
+.activities-grid {
+  align-items: stretch;
+}
+
+.activities-grid > .activity-card {
+  height: 100%;
+}
+
+.activity-meta {
+  margin-top: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Activities grouped by day
+   A flat grid of cards, each stamped with its own date, forces the reader to
+   parse eighteen dates and rebuild the week from them. The day heading answers
+   "which day is this?" once, for every card underneath it.
+
+   The .day-group shell is shared with the Confirmation page (05-itinerary.css).
+   Only the parts specific to this tab live here — the body holds a card grid
+   and an add button, where Confirmation's holds a plain list.
+   -------------------------------------------------------------------------- */
+
+.day-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* The shared rule lays the body out as a grid of cards. Here the body has two
+   children of its own — the grid, and the add button — so it stacks instead. */
+.activities-day > .day-group-body {
+  display: block;
+  padding: 18px 22px 20px;
+}
+
+/* …and the shared "every direct div is a card" rule must not fire on the grid
+   wrapper, or the cards end up inside a second card. */
+.activities-day > .day-group-body > div {
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.activities-day .activities-grid {
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  gap: 14px;
+}
+
+/* Nested one level deeper than the standalone cards were, so they carry less
+   weight — the day panel is the raised surface now, not each card. */
+.activities-day .activity-card {
+  padding: 15px 17px 13px;
+  box-shadow: none;
+}
+
+.day-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  font-style: italic;
+}
+
+.add-activity-day {
+  margin-top: 16px;
+  padding: 9px 16px;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: none;
+  border: 1px dashed #b6d9d2;
+  border-radius: 10px;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.add-activity-day:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+/* An activity dated outside the trip is a mistake worth seeing, not hiding. */
+.day-outside > summary {
+  background: #fffbeb;
+}
+
+.day-outside .day-group-title {
+  color: #92400e;
+}
+
+@media (max-width: 700px) {
+  .activities-day > .day-group-body {
+    padding: 16px;
+  }
+
+  .activities-day .activities-grid {
+    grid-template-columns: 1fr;
+  }
+}

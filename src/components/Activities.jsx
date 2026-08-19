@@ -1,93 +1,91 @@
 import { useMemo, useState } from "react";
 import ActivityEdit from "./ActivityEdit";
 import { deleteActivity } from "../api/client";
+import { getCategoryStyle } from "../lib/categories";
+import Icon from "./Icon";
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 function Activities({ trip, setTrip }) {
-  // Stores the date of the day where we want to add an activity.
-  // null means the add form is closed.
+  // Stores which Add Activity form is open.
+  // null = closed, "new" = blank date, or a date = prefill that day.
   const [addingFor, setAddingFor] = useState(null);
 
-  // Create a list of all the days in the trip.
-  // This makes sure empty days are still shown.
-  const days = useMemo(() => {
-    // Get the trip start and end dates.
-    const startKey = trip.date_Range?.[0]?.value?.slice(0, 10);
-    const endKey = trip.date_Range?.[1]?.value?.slice(0, 10);
+  const activities = trip.Activities || [];
 
+  const total = activities.reduce(
+    (sum, activity) => sum + Number(activity.estimatedCost || 0),
+    0,
+  );
+
+  const startKey = trip.date_Range?.[0]?.value?.slice(0, 10);
+  const endKey = trip.date_Range?.[1]?.value?.slice(0, 10);
+
+  // Build the day list from the trip dates, not from the activities.
+  // This keeps Day 1, Day 2, Day 3, etc. correct even when a day is empty.
+  const days = useMemo(() => {
     // Group activities by date.
     const buckets = new Map();
 
+    // Use trip.Activities directly so useMemo only recalculates when it changes.
     for (const activity of trip.Activities || []) {
-      // Get only the date part of the activity.
       const key = activity.dateTime
         ? String(activity.dateTime).slice(0, 10)
         : "unscheduled";
 
-      // Create an empty list for this date if needed.
       if (!buckets.has(key)) {
         buckets.set(key, []);
       }
 
-      // Add the activity to its date.
       buckets.get(key).push(activity);
     }
 
-    // Create all the dates between the trip start and end date.
+    // Create every day from the trip start date to the end date.
+    // Date.UTC prevents timezone changes from shifting the day.
     const dayKeys = [];
 
     if (startKey && endKey) {
       const [sy, sm, sd] = startKey.split("-").map(Number);
       const [ey, em, ed] = endKey.split("-").map(Number);
-
       let cursor = Date.UTC(sy, sm - 1, sd);
       const last = Date.UTC(ey, em - 1, ed);
 
-      // Add each trip date to the list.
-      // The 370 limit prevents an invalid date range from looping forever.
+      // Safety check so a bad date range cannot create an endless loop.
       while (cursor <= last && dayKeys.length < 370) {
         dayKeys.push(new Date(cursor).toISOString().slice(0, 10));
-        cursor += 24 * 60 * 60 * 1000;
+        cursor += MS_PER_DAY;
       }
     }
 
-    // Build the information we need for one day.
     const build = (key, dayNumber) => {
-      const activities = buckets.get(key) || [];
+      const dayActivities = buckets.get(key) || [];
 
       return {
         key,
         dayNumber,
-
-        // Sort activities by time.
-        activities: [...activities].sort((a, b) =>
+        activities: [...dayActivities].sort((a, b) =>
           String(a.dateTime).localeCompare(String(b.dateTime)),
         ),
-
-        // Add the cost of all activities for this day.
-        total: activities.reduce(
+        total: dayActivities.reduce(
           (sum, activity) => sum + Number(activity.estimatedCost || 0),
           0,
         ),
-
-        // Create a readable date like "Wed, Aug 19".
         label:
           key === "unscheduled"
             ? "No date set"
-            : new Date(`${key}T00:00:00`).toLocaleDateString([], {
-                weekday: "short",
+            : new Date(`${key}T00:00:00Z`).toLocaleDateString(undefined, {
+                timeZone: "UTC",
+                weekday: "long",
                 month: "short",
                 day: "numeric",
               }),
-
         outsideTrip: false,
       };
     };
 
-    // Build all the normal days inside the trip.
     const inTrip = dayKeys.map((key, index) => build(key, index + 1));
 
-    // Find activities that have a date outside the trip.
-    // We still show them so the user knows they exist.
+    // Keep activities outside the trip dates visible so they can be noticed and fixed.
     const strays = [...buckets.keys()]
       .filter((key) => !dayKeys.includes(key))
       .sort((a, b) => {
@@ -97,9 +95,8 @@ function Activities({ trip, setTrip }) {
       })
       .map((key) => ({ ...build(key, null), outsideTrip: true }));
 
-    // Return the normal trip days first, then outside activities.
     return [...inTrip, ...strays];
-  }, [trip.Activities, trip.date_Range]);
+  }, [trip.Activities, startKey, endKey]);
 
   async function handleDelete(activity) {
     // Ask the user before deleting the activity.
@@ -113,7 +110,7 @@ function Activities({ trip, setTrip }) {
       // Delete the activity from the database.
       await deleteActivity(trip.id, activity.id);
 
-      // Remove the deleted activity from the page.
+      // Remove the deleted activity from the screen without reloading.
       setTrip({
         ...trip,
         Activities: trip.Activities.filter((item) => item.id !== activity.id),
@@ -123,110 +120,128 @@ function Activities({ trip, setTrip }) {
     }
   }
 
+  // Render one activity card.
+  function renderCard(activity) {
+    // Get the icon and style for this activity category.
+    const style = getCategoryStyle(activity.category);
+
+    return (
+      <article className="activity-card" key={activity.id}>
+        <button
+          type="button"
+          className="delete-activity"
+          aria-label={`Delete ${activity.title}`}
+          onClick={() => handleDelete(activity)}
+        >
+          ×
+        </button>
+
+        {/* Show the category as a small styled label. */}
+        <span className={`activity-chip tint-${style.tint}`}>
+          <Icon name={style.icon} size={14} />
+          {activity.category || "Other"}
+        </span>
+
+        <h4 className="activity-title">{activity.title}</h4>
+
+        {activity.notes && <p className="activity-notes">{activity.notes}</p>}
+
+        <div className="activity-meta">
+          {/* Show only the time because the date is already in the day heading. */}
+          <span className="activity-time">
+            {activity.dateTime
+              ? new Date(activity.dateTime).toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                })
+              : "No time set"}
+          </span>
+
+          <span className="activity-cost">
+            {Number(activity.estimatedCost) > 0
+              ? `$${Number(activity.estimatedCost).toLocaleString()}`
+              : "Free"}
+          </span>
+        </div>
+      </article>
+    );
+  }
+
   return (
     <>
       <div className="activities-head">
-        <div>Activities</div>
+        <div className="activities-head-text">
+          <h2>Activities</h2>
+          <p>
+            {activities.length}{" "}
+            {activities.length === 1 ? "activity" : "activities"} across{" "}
+            {days.filter((day) => !day.outsideTrip).length} days · $
+            {total.toLocaleString()} planned
+          </p>
+        </div>
 
-        {/* We removed the main Add Activity button.
-            Each trip day now has its own Add Activity button.
-
-            <button
-              type="button"
-              className="add-activity-button"
-              onClick={() => setAddingFor("new")}
-            >
-              + Add Activity
-            </button>
-        */}
+        <button
+          type="button"
+          className="add-activity-button"
+          onClick={() => setAddingFor("new")}
+        >
+          + Add Activity
+        </button>
       </div>
 
-      {/* Show this message when the trip has no dates. */}
       {days.length === 0 && (
-        <p className="activities-empty">
-          This trip has no dates set, so there are no days to plan into.
-        </p>
+        <div className="activities-empty">
+          <Icon name="calendar" size={38} />
+          <h3>This trip has no dates set</h3>
+          <p>Without a date range there are no days to plan into.</p>
+        </div>
       )}
 
-      <div className="space-y-4">
-        {days.map((day, dayIndex) => (
-          // details lets the user open and close each day.
+      <div className="day-list">
+        {days.map((day) => (
+          // Each day can open and close.
+          // Days with activities start open; empty days start closed.
           <details
             key={day.key}
-            className={`day-group activities-day${
-              day.outsideTrip ? " day-outside" : ""
-            }`}
-            open={dayIndex === 0}
+            // CSS class for the day section in the Activities tab.
+            className={`day-group activities-day${day.outsideTrip ? " day-outside" : ""}`}
+            open={day.activities.length > 0}
           >
             <summary>
               <span className="day-group-title">
-                {/* Show the correct trip day number. */}
+                {/* The day number comes from the trip date range. */}
                 {day.key === "unscheduled"
                   ? "Unscheduled"
                   : day.outsideTrip
                     ? "Outside trip"
                     : `Day ${day.dayNumber}`}
-
                 <span className="day-group-date">{day.label}</span>
               </span>
 
               <span className="day-group-meta">
                 {day.activities.length}{" "}
                 {day.activities.length === 1 ? "activity" : "activities"}
-                {" · "}${day.total}
+                {day.total > 0 && ` · $${day.total.toLocaleString()}`}
               </span>
             </summary>
 
             <div className="day-group-body">
-              {/* Show all activities for this day. */}
-              <div className="activities-grid">
-                {day.activities.map((activity, index) => (
-                  <div className="activity-card" key={activity.id || index}>
-                    <button
-                      type="button"
-                      className="delete-activity"
-                      aria-label={`Delete ${activity.title}`}
-                      onClick={() => handleDelete(activity)}
-                    >
-                      ×
-                    </button>
-
-                    <ul>
-                      <li>
-                        {index + 1}. {activity.title}{" "}
-                      </li>
-
-                      <li>Category: {activity.category}</li>
-
-                      <li>
-                        When:{" "}
-                        {activity.dateTime
-                          ? new Date(activity.dateTime).toLocaleTimeString([], {
-                              hour: "numeric",
-                              minute: "2-digit",
-                            })
-                          : "—"}
-                      </li>
-
-                      <li>Cost: ${activity.estimatedCost}</li>
-                    </ul>
-                  </div>
-                ))}
-              </div>
-
-              {/* Show a message when the day has no activities. */}
-              {day.activities.length === 0 && (
+              {day.activities.length === 0 ? (
                 <p className="day-empty">Nothing planned for this day yet.</p>
+              ) : (
+                <div className="activities-grid">
+                  {day.activities.map(renderCard)}
+                </div>
               )}
 
-              {/* Add a new activity directly to this trip day. */}
+              {/* Open the Add Activity form with this day already selected. */}
               {day.key !== "unscheduled" && !day.outsideTrip && (
                 <button
                   type="button"
                   className="add-activity-day"
                   onClick={() => setAddingFor(day.key)}
                 >
-                  + Add activity to {day.label}
+                  + Add to Day {day.dayNumber}
                 </button>
               )}
             </div>
@@ -234,17 +249,15 @@ function Activities({ trip, setTrip }) {
         ))}
       </div>
 
-      {/* Open the form for adding a new activity. */}
       {addingFor && (
         <ActivityEdit
           trip={trip}
           setTrip={setTrip}
-          // Automatically use the selected day's date.
+          // If adding from the main button, leave the date blank.
           defaultDate={addingFor === "new" ? "" : addingFor}
-          // Keep the activity date inside the trip dates.
-          minDate={trip.date_Range?.[0]?.value?.slice(0, 10)}
-          maxDate={trip.date_Range?.[1]?.value?.slice(0, 10)}
-          // Close the form.
+          // Keep the activity date inside the trip date range.
+          minDate={startKey}
+          maxDate={endKey}
           onClose={() => setAddingFor(null)}
         />
       )}

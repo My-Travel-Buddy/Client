@@ -1,0 +1,327 @@
+/* ==========================================================================
+   My Trips — the page you land on after saving an itinerary
+   ==========================================================================
+
+   It is an arrival, not a dump. The trip you just saved should be findable in
+   one glance, which is hard when six of the cards say "Kyoto, Japan". Three
+   things do that work: the photo, a readable date line, and grouping by
+   whether the trip is now, soon, or over.
+   ========================================================================== */
+
+.trips-header h1 {
+  margin: 0 0 6px;
+  font-size: clamp(1.9rem, 3.4vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.trips-header > div > p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Groups
+   -------------------------------------------------------------------------- */
+
+.trip-group {
+  margin-bottom: 44px;
+}
+
+.trip-group:last-child {
+  margin-bottom: 0;
+}
+
+.trip-group-head {
+  margin-bottom: 18px;
+}
+
+.trips-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 2px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.trip-group-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 8px;
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--accent-bg);
+  border-radius: 999px;
+}
+
+.trip-group-blurb {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* --------------------------------------------------------------------------
+   Trip tiles
+   -------------------------------------------------------------------------- */
+
+.trip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.trip-tile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.trip-tile:hover {
+  transform: translateY(-4px);
+  border-color: #cfe6e1;
+  box-shadow: var(--shadow-lg);
+}
+
+.trip-tile-photo {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 16 / 10;
+  padding: 14px 16px;
+  background-color: #10203a;
+  background-position: center 55%;
+  background-size: cover;
+  transition: transform 0.4s ease;
+}
+
+/* The photo grows inside its own frame; `overflow: hidden` on the tile keeps
+   it from spilling. A whole card that scales would push its neighbours. */
+.trip-tile:hover .trip-tile-photo {
+  transform: scale(1.04);
+}
+
+.trip-tile-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    rgba(9, 20, 38, 0.9) 0%,
+    rgba(9, 20, 38, 0.55) 40%,
+    rgba(9, 20, 38, 0.12) 75%,
+    rgba(9, 20, 38, 0.25) 100%
+  );
+}
+
+.trip-tile-name {
+  margin: 0;
+  color: #fff;
+  font-size: 1.22rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-shadow: 0 1px 12px rgba(9, 20, 38, 0.55);
+}
+
+.trip-tile-status {
+  align-self: flex-start;
+  margin-bottom: 8px;
+  padding: 4px 11px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.trip-tile-status.status-upcoming {
+  color: #b9f4e6;
+  background: rgba(14, 147, 132, 0.42);
+  border: 1px solid rgba(185, 244, 230, 0.45);
+}
+
+.trip-tile-status.status-active {
+  color: #ffe0ac;
+  background: rgba(221, 148, 24, 0.45);
+  border: 1px solid rgba(255, 224, 172, 0.5);
+}
+
+.trip-tile-status.status-past,
+.trip-tile-status.status-neutral {
+  color: #dbe3ee;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.trip-tile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 15px 17px 17px;
+}
+
+.trip-tile-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-size: 0.93rem;
+  font-weight: 500;
+}
+
+.trip-tile-row .icon {
+  color: var(--text-muted);
+}
+
+/* Pushed to the right so the day counts line up down the column. */
+.trip-tile-days {
+  margin-left: auto;
+  padding: 2px 10px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+
+/* Finished trips step back rather than disappear — still there when wanted,
+   not competing with the trip being packed for. */
+.trip-group:has(.status-past) .trip-tile-photo {
+  filter: saturate(0.55);
+}
+
+.trip-group:has(.status-past) .trip-tile:hover .trip-tile-photo {
+  filter: saturate(1);
+}
+
+/* --------------------------------------------------------------------------
+   Loading and error
+   -------------------------------------------------------------------------- */
+
+.trip-tile-skeleton {
+  height: 270px;
+  border: none;
+  background: linear-gradient(100deg, #e9eef4 30%, #f4f7fa 50%, #e9eef4 70%);
+  background-size: 220% 100%;
+  animation: trip-shimmer 1.3s linear infinite;
+}
+
+.trips-error {
+  padding: 40px 28px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid #fecdca;
+  border-radius: var(--radius);
+}
+
+.trips-error h2 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.trips-error p {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.95rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-tile,
+  .trip-tile-photo {
+    transition: none;
+  }
+
+  .trip-tile:hover {
+    transform: none;
+  }
+
+  .trip-tile:hover .trip-tile-photo {
+    transform: none;
+  }
+
+  .trip-tile-skeleton {
+    animation: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .trip-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .trip-group {
+    margin-bottom: 34px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Footer credits
+   Quiet by design: the team should be named, but a capstone footer that
+   shouts its own credits reads as a school project rather than a product.
+   -------------------------------------------------------------------------- */
+
+.site-footer-credits {
+  display: flex;
+  justify-content: center;
+  gap: 10px 40px;
+  flex-wrap: wrap;
+  width: min(100% - 48px, 1200px);
+  margin: 0 auto;
+  padding: 16px 0 26px;
+  border-top: 1px solid var(--border);
+}
+
+.site-footer-credits p {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+
+.credit-label {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.credit-names {
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .site-footer-credits {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .site-footer-credits p {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

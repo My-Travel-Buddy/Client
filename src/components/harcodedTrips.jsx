@@ -58,6 +58,7 @@ const trips = [
 
 // Shows one trip card.
 function TripCard({ trip, selected, onClick }) {
+
   return (
     <div
       className={`trip-card ${selected ? "selected" : ""}`}

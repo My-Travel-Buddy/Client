@@ -12,10 +12,17 @@ const CATEGORIES = [
   "Entertainment",
   "Other",
 ];
-
-// Form for adding a new activity to a trip.
-// defaultDate fills in the date when the form is opened from a specific day.
-// minDate and maxDate keep the activity inside the trip dates.
+// The “Add New Activity” pop-up.
+// trip        - the trip receiving the new activity
+// setTrip     - updates the trip so the new activity appears immediately
+// onClose     - closes the pop-up when the user cancels, clicks X, or saves successfully
+// defaultDate - "2026-08-21" to open with that date already filled in. The
+//               Activities tab passes the day whose "+ Add" button was clicked,
+//               so adding to Day 3 does not mean re-typing Day 3's date.
+// minDate /
+// maxDate     - the trip's first and last day. The date box refuses anything
+//               outside them, which is how an activity ends up in an "Outside
+//               trip" group in the first place.
 function ActivityEdit({
   trip,
   setTrip,
@@ -24,7 +31,7 @@ function ActivityEdit({
   minDate,
   maxDate,
 }) {
-  // Store all the form values together.
+  // Store all form fields in one object so one handler can update any field.
   const [form, setForm] = useState({
     title: "",
     category: "Culture",
@@ -90,7 +97,7 @@ function ActivityEdit({
     <div className="modal-backdrop">
       <form className="modal" onSubmit={handleSubmit}>
         <div className="modal-head">
-          <h3>Add New Activity</h3>
+          <h3>{defaultDate ? "Add Activity to This Day" : "Add New Activity"}</h3>
 
           {/* Close the form. */}
           <button type="button" className="modal-close" onClick={onClose}>
@@ -153,6 +160,8 @@ function ActivityEdit({
               name="date"
               type="date"
               value={form.date}
+              min={minDate}
+              max={maxDate}
               onChange={handleChange}
               // Keep the activity date inside the trip dates.
               min={minDate}

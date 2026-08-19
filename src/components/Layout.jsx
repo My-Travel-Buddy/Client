@@ -36,6 +36,23 @@ export default function Layout({ user, onLogout, authError }) {
             © {new Date().getFullYear()} My Travel Buddy
           </p>
         </div>
+
+        {/* Credits sit on their own row below the hairline rather than inside
+            the grid above — squeezing six names into that three-column layout
+            would push the tagline out of the centre at every breakpoint. */}
+        <div className="site-footer-credits">
+          <p>
+            <span className="credit-label">Group 7</span>
+            <span className="credit-names">
+              Ariane K. · Dhimy J. · Mathew A. · Yomara M.
+            </span>
+          </p>
+
+          <p>
+            <span className="credit-label">Assigned staff</span>
+            <span className="credit-names">Abdul · Tyler</span>
+          </p>
+        </div>
       </footer>
     </div>
   );
