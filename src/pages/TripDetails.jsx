@@ -5,6 +5,7 @@ import Activities from "../components/Activities";
 import Checklist from "../components/Checklist";
 import Documents from "../components/Documents";
 import TripCalendar from "../components/Calendar";
+import Overview from "../components/overview";
 
 // List of tabs shown on the trip details page.
 const SECTIONS = [
@@ -80,7 +81,7 @@ export default function TripDetails() {
         ))}
       </div>
 
-      {activeSection === "Overview"}
+      {activeSection === "Overview" && <Overview trip={trip}/>}
 
       {/* Show the calendar inside the Itinerary tab. */}
       {activeSection === "Itinerary" && (

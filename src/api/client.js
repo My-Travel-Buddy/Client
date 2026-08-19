@@ -123,6 +123,7 @@ export async function saveItinerary(itinerary) {
     destination: itinerary.destination,
     date_Range: [itinerary.startDate, itinerary.endDate],
     budget: itinerary.budget,
+    summary: itinerary.summary,
   });
 
   const tripId = savedTrip.id;

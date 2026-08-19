@@ -12,6 +12,7 @@ const calendars = [
 ];
 
 export default function TripCalendar({ tripId }) {
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("");
   const [showAddActivity, setShowAddActivity] = useState(false);
@@ -129,13 +130,11 @@ export default function TripCalendar({ tripId }) {
   }, []);
 
   const getActivities = async () => {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     try {
-      const response = await fetch(
-        `http://localhost:8080/trips/${tripId}/activities`,
-        {
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`BASE_URL/trips/${tripId}/activities`, {
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch activities");
@@ -191,18 +190,16 @@ export default function TripCalendar({ tripId }) {
   }, [tripId]);
 
   async function addActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     console.log("Sending activity:", activityForm);
-    const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(activityForm),
+    const response = await fetch(`BASE_URL/trips/${tripId}/activities`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify(activityForm),
+    });
 
     if (!response.ok) {
       alert("Failed to add activity.");
@@ -213,8 +210,9 @@ export default function TripCalendar({ tripId }) {
   }
 
   async function editActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities/${editActivityForm.id}`,
+      `BASE_URL/${tripId}/activities/${editActivityForm.id}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -237,8 +235,9 @@ export default function TripCalendar({ tripId }) {
     setSelectedActivity(updatedActivity);
   }
   async function deleteActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities/${selectedActivity.id}`,
+      `BASE_URL/trips/${tripId}/activities/${selectedActivity.id}`,
       {
         method: "DELETE",
         credentials: "include",
