@@ -29,6 +29,9 @@ export default function Overview({trip}){
                         </p>
                     </div>
                     <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                            Budget
+                        </p>
                         <p className="text-xs font-semibold text-(--text-h)">
                             ${Number(trip.budget).toFixed(2)}
                         </p>

@@ -132,7 +132,7 @@ export default function TripCalendar({ tripId }) {
   const getActivities = async () => {
     const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     try {
-      const response = await fetch(`BASE_URL/trips/${tripId}/activities`, {
+      const response = await fetch(`${BASE_URL}/trips/${tripId}/activities`, {
         credentials: "include",
       });
 
@@ -192,7 +192,7 @@ export default function TripCalendar({ tripId }) {
   async function addActivities() {
     const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     console.log("Sending activity:", activityForm);
-    const response = await fetch(`BASE_URL/trips/${tripId}/activities`, {
+    const response = await fetch(`${BASE_URL}/trips/${tripId}/activities`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -212,7 +212,7 @@ export default function TripCalendar({ tripId }) {
   async function editActivities() {
     const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
-      `BASE_URL/${tripId}/activities/${editActivityForm.id}`,
+      `${BASE_URL}/${tripId}/activities/${editActivityForm.id}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -237,7 +237,7 @@ export default function TripCalendar({ tripId }) {
   async function deleteActivities() {
     const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
-      `BASE_URL/trips/${tripId}/activities/${selectedActivity.id}`,
+      `${BASE_URL}/trips/${tripId}/activities/${selectedActivity.id}`,
       {
         method: "DELETE",
         credentials: "include",
