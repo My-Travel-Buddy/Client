@@ -240,216 +240,229 @@ export default function TripDetails() {
           That line evaluated to a boolean and React renders booleans as
           nothing, so the Overview tab was silently blank. */}
       {activeSection === "Overview" && (
-        <div className="overview-layout">
-          <div className="overview-main">
-            <div className="overview-grid">
-              <div className="overview-stat">
-                <span className="overview-stat-icon">
-                  <Icon name="calendar" size={22} />
-                </span>
-                <span className="overview-stat-label">Trip length</span>
-                <span className="overview-stat-value">
-                  {tripDays} {tripDays === 1 ? "day" : "days"}
-                </span>
-              </div>
-
-              <div className="overview-stat">
-                <span className="overview-stat-icon">
-                  <Icon name="pin" size={22} />
-                </span>
-                <span className="overview-stat-label">Activities</span>
-                <span className="overview-stat-value">{activityCount}</span>
-              </div>
-
-              <div className="overview-stat">
-                <span className="overview-stat-icon">
-                  <Icon name="wallet" size={22} />
-                </span>
-                <span className="overview-stat-label">Estimated spend</span>
-                <span className="overview-stat-value">
-                  ${estimatedSpend.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="overview-stat">
-                <span className="overview-stat-icon">
-                  <Icon name="check" size={22} />
-                </span>
-                <span className="overview-stat-label">Checklist</span>
-                <span className="overview-stat-value">
-                  {checklistDone} of {checklistTotal}
-                </span>
-              </div>
+        <div className="overview">
+          {/* Stats and the budget run the FULL width, above the two columns.
+              The budget is the number that decides whether the plan works, so
+              it gets its own row rather than sharing space with a list. */}
+          <div className="overview-grid">
+            <div className="overview-stat">
+              <span className="overview-stat-icon">
+                <Icon name="calendar" size={22} />
+              </span>
+              <span className="overview-stat-label">Trip length</span>
+              <span className="overview-stat-value">
+                {tripDays} {tripDays === 1 ? "day" : "days"}
+              </span>
             </div>
 
-            {/* Budget is the number the traveller actually cares about, so it
-                gets a bar rather than another figure to compare by eye. */}
-            <div className="overview-card overview-budget">
-              <div className="overview-budget-head">
-                <span>
-                  ${estimatedSpend.toLocaleString()} planned of $
-                  {budgetNumber.toLocaleString()} budget
-                </span>
-                <span
-                  className={
-                    overBudget ? "overview-badge over" : "overview-badge under"
-                  }
-                >
-                  {overBudget
-                    ? `$${(estimatedSpend - budgetNumber).toLocaleString()} over`
-                    : `$${(budgetNumber - estimatedSpend).toLocaleString()} left`}
-                </span>
-              </div>
-
-              <div className="overview-bar">
-                <div
-                  className={
-                    overBudget ? "overview-bar-fill over" : "overview-bar-fill"
-                  }
-                  // Capped at 100% so going over budget cannot overflow the bar.
-                  style={{ width: `${Math.min(budgetPercent, 100)}%` }}
-                ></div>
-              </div>
+            <div className="overview-stat">
+              <span className="overview-stat-icon">
+                <Icon name="pin" size={22} />
+              </span>
+              <span className="overview-stat-label">Activities</span>
+              <span className="overview-stat-value">{activityCount}</span>
             </div>
 
-            <div className="overview-card">
-              <h3 className="overview-card-title">Where the money goes</h3>
+            <div className="overview-stat">
+              <span className="overview-stat-icon">
+                <Icon name="wallet" size={22} />
+              </span>
+              <span className="overview-stat-label">Estimated spend</span>
+              <span className="overview-stat-value">
+                ${estimatedSpend.toLocaleString()}
+              </span>
+            </div>
 
-              {categories.length === 0 ? (
-                <p className="overview-empty">
-                  No activities yet — add a few and the breakdown appears here.
-                </p>
-              ) : (
-                <ul className="spend-list">
-                  {categories.map((category) => {
-                    const style = getCategoryStyle(category.name);
-
-                    return (
-                      <li className="spend-row" key={category.name}>
-                        <span className="spend-name">
-                          <span className={`spend-icon tint-${style.tint}`}>
-                            <Icon name={style.icon} size={15} />
-                          </span>
-                          {category.name}
-                        </span>
-
-                        <span className="spend-track">
-                          {/* Bars are scaled against the BIGGEST category, not
-                              the budget — against the budget every bar would
-                              be a sliver and the comparison would be lost. */}
-                          <span
-                            className={`spend-fill tint-${style.tint}`}
-                            style={{
-                              width: `${biggestCategory ? Math.max((category.total / biggestCategory) * 100, 4) : 4}%`,
-                            }}
-                          />
-                        </span>
-
-                        <span className="spend-value">
-                          ${category.total.toLocaleString()}
-                          <small>
-                            {category.count}{" "}
-                            {category.count === 1 ? "item" : "items"}
-                          </small>
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+            <div className="overview-stat">
+              <span className="overview-stat-icon">
+                <Icon name="check" size={22} />
+              </span>
+              <span className="overview-stat-label">Checklist</span>
+              <span className="overview-stat-value">
+                {checklistDone} of {checklistTotal}
+              </span>
             </div>
           </div>
 
-          <aside className="overview-side">
-            <div className={`overview-card status-card status-${status.tone}`}>
-              <span className="status-card-label">{status.label}</span>
-              <span className="status-card-detail">{status.detail}</span>
-            </div>
-
-            <div className="overview-card">
-              <h3 className="overview-card-title">
-                {isLookingBack ? "How it started" : "Next up"}
-              </h3>
-
-              {nextUp.length === 0 ? (
-                <p className="overview-empty">
-                  Nothing scheduled yet. Add activities from the Activities tab.
-                </p>
-              ) : (
-                <ul className="next-list">
-                  {nextUp.map((activity) => {
-                    const style = getCategoryStyle(activity.category);
-
-                    return (
-                      <li className="next-item" key={activity.id}>
-                        <span className={`next-icon tint-${style.tint}`}>
-                          <Icon name={style.icon} size={18} />
-                        </span>
-
-                        <span className="next-body">
-                          <strong>{activity.title}</strong>
-                          <small>
-                            {formatDay(activity.dateTime, {
-                              day: "numeric",
-                              month: "short",
-                            })}
-                            {" · "}
-                            {new Date(activity.dateTime).toLocaleTimeString(
-                              [],
-                              { hour: "numeric", minute: "2-digit" },
-                            )}
-                          </small>
-                        </span>
-
-                        <span className="next-cost">
-                          ${Number(activity.estimatedCost || 0)}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-
-              <button
-                type="button"
-                className="overview-link"
-                onClick={() => setActiveSection("Activities")}
+          {/* Full width, and marked when it is over — this is the line that
+              says whether the plan is affordable. */}
+          <div
+            className={`overview-card overview-budget${overBudget ? " is-over" : ""}`}
+          >
+            <div className="overview-budget-head">
+              <span>
+                ${estimatedSpend.toLocaleString()} planned of $
+                {budgetNumber.toLocaleString()} budget
+              </span>
+              <span
+                className={
+                  overBudget ? "overview-badge over" : "overview-badge under"
+                }
               >
-                View all activities →
-              </button>
+                {overBudget
+                  ? `$${(estimatedSpend - budgetNumber).toLocaleString()} over`
+                  : `$${(budgetNumber - estimatedSpend).toLocaleString()} left`}
+              </span>
             </div>
 
-            <div className="overview-card">
-              <h3 className="overview-card-title">Checklist</h3>
+            <div className="overview-bar">
+              <div
+                className={
+                  overBudget ? "overview-bar-fill over" : "overview-bar-fill"
+                }
+                // Capped at 100% so going over budget cannot overflow the bar.
+                style={{ width: `${Math.min(budgetPercent, 100)}%` }}
+              ></div>
+            </div>
+          </div>
 
-              <div className="overview-bar">
-                <div
-                  className="overview-bar-fill"
-                  style={{ width: `${checklistPercent}%` }}
-                ></div>
+          <div className="overview-columns">
+            <div className="overview-main">
+              <div className="overview-card">
+                <h3 className="overview-card-title">Where the money goes</h3>
+
+                {categories.length === 0 ? (
+                  <p className="overview-empty">
+                    No activities yet — add a few and the breakdown appears
+                    here.
+                  </p>
+                ) : (
+                  <ul className="spend-list">
+                    {categories.map((category) => {
+                      const style = getCategoryStyle(category.name);
+
+                      return (
+                        <li className="spend-row" key={category.name}>
+                          <span className="spend-name">
+                            <span className={`spend-icon tint-${style.tint}`}>
+                              <Icon name={style.icon} size={15} />
+                            </span>
+                            {category.name}
+                          </span>
+
+                          <span className="spend-track">
+                            {/* Bars are scaled against the BIGGEST category,
+                                not the budget — against the budget every bar
+                                would be a sliver and the comparison lost. */}
+                            <span
+                              className={`spend-fill tint-${style.tint}`}
+                              style={{
+                                width: `${biggestCategory ? Math.max((category.total / biggestCategory) * 100, 4) : 4}%`,
+                              }}
+                            />
+                          </span>
+
+                          <span className="spend-value">
+                            ${category.total.toLocaleString()}
+                            <small>
+                              {category.count}{" "}
+                              {category.count === 1 ? "item" : "items"}
+                            </small>
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            <aside className="overview-side">
+              <div className="overview-card">
+                {/* The trip's position in time was a whole card for one short
+                    line. It is a strip on top of "Next up" now — same
+                    information, a fraction of the space, and next to the
+                    activities it actually qualifies. */}
+                <div className={`status-strip status-${status.tone}`}>
+                  <span className="status-dot" />
+                  {status.summary}
+                </div>
+
+                <h3 className="overview-card-title">
+                  {isLookingBack ? "How it started" : "Next up"}
+                </h3>
+
+                {nextUp.length === 0 ? (
+                  <p className="overview-empty">
+                    Nothing scheduled yet. Add activities from the Activities
+                    tab.
+                  </p>
+                ) : (
+                  <ul className="next-list">
+                    {nextUp.map((activity) => {
+                      const style = getCategoryStyle(activity.category);
+
+                      return (
+                        <li className="next-item" key={activity.id}>
+                          <span className={`next-icon tint-${style.tint}`}>
+                            <Icon name={style.icon} size={18} />
+                          </span>
+
+                          <span className="next-body">
+                            <strong>{activity.title}</strong>
+                            <small>
+                              {formatDay(activity.dateTime, {
+                                day: "numeric",
+                                month: "short",
+                              })}
+                              {" · "}
+                              {new Date(activity.dateTime).toLocaleTimeString(
+                                [],
+                                { hour: "numeric", minute: "2-digit" },
+                              )}
+                            </small>
+                          </span>
+
+                          <span className="next-cost">
+                            ${Number(activity.estimatedCost || 0)}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                <button
+                  type="button"
+                  className="overview-link"
+                  onClick={() => setActiveSection("Activities")}
+                >
+                  View all activities →
+                </button>
               </div>
 
-              <p className="checklist-progress">
-                {checklistDone} of {checklistTotal} done
-              </p>
+              <div className="overview-card">
+                <h3 className="overview-card-title">Checklist</h3>
 
-              {openChecklist.length > 0 && (
-                <ul className="open-list">
-                  {openChecklist.map((item) => (
-                    <li key={item.id}>{item.text}</li>
-                  ))}
-                </ul>
-              )}
+                <div className="overview-bar">
+                  <div
+                    className="overview-bar-fill"
+                    style={{ width: `${checklistPercent}%` }}
+                  ></div>
+                </div>
 
-              <button
-                type="button"
-                className="overview-link"
-                onClick={() => setActiveSection("Checklist")}
-              >
-                Open checklist →
-              </button>
-            </div>
-          </aside>
+                <p className="checklist-progress">
+                  {checklistDone} of {checklistTotal} done
+                </p>
+
+                {openChecklist.length > 0 && (
+                  <ul className="open-list">
+                    {openChecklist.map((item) => (
+                      <li key={item.id}>{item.text}</li>
+                    ))}
+                  </ul>
+                )}
+
+                <button
+                  type="button"
+                  className="overview-link"
+                  onClick={() => setActiveSection("Checklist")}
+                >
+                  Open checklist →
+                </button>
+              </div>
+            </aside>
+          </div>
         </div>
       )}
 

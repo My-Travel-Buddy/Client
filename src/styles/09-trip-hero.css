@@ -295,12 +295,34 @@
    The single-column version was one short card on a tall empty page.
    -------------------------------------------------------------------------- */
 
-.overview-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+/* Stats, then the budget, then two columns. The first two run full width
+   because they answer "how big is this trip?" and "can I afford it?" — the
+   questions asked before any of the detail below matters. */
+.overview {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  align-items: start;
 }
+
+.overview-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 20px;
+  /* No `align-items: start`. Grid items stretch by default, so each column
+     fills the row's full height and the two columns end level. With `start`
+     each column stopped at its own content and the bottoms disagreed. */
+}
+
+/* The left card grows to the height of the whole right column — "Next up"
+   plus "Checklist" plus the gap between them. */
+.overview-main > .overview-card {
+  flex: 1;
+}
+
+/* The right column deliberately does NOT do this. Its cards keep their
+   content height, so Checklist stays compact instead of being padded out to
+   match "Next up". Only the column as a whole is stretched, not the cards
+   inside it — which is what keeps the 20px gap between them constant. */
 
 .overview-main,
 .overview-side {
@@ -311,8 +333,63 @@
 }
 
 @media (max-width: 940px) {
-  .overview-layout {
+  .overview-columns {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Over budget is a warning, so it looks like one — a red rail down the side
+   rather than only a small red pill in the corner. */
+.overview-budget.is-over {
+  border-color: #f5c7c2;
+  border-left: 4px solid #d92d20;
+  background: linear-gradient(180deg, #fef6f5, var(--surface) 70%);
+}
+
+/* The trip's position in time: one line at the top of the "Next up" card,
+   where it used to be a card of its own holding a single short phrase. */
+.status-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -4px 0 14px;
+  padding: 7px 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  border-radius: 9px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-strip.status-upcoming {
+  color: var(--accent-strong);
+  background: var(--accent-bg);
+}
+
+.status-strip.status-active {
+  color: #92400e;
+  background: #fdf0d5;
+}
+
+.status-strip.status-active .status-dot {
+  animation: trip-pulse 1.8s ease-in-out infinite;
+}
+
+.status-strip.status-past,
+.status-strip.status-neutral {
+  color: var(--text-muted);
+  background: #eef2f7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-strip.status-active .status-dot {
+    animation: none;
   }
 }
 
@@ -484,36 +561,6 @@
   .spend-track {
     grid-column: 1 / -1;
   }
-}
-
-/* ---- status card ---- */
-
-.status-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  border-left: 4px solid var(--accent);
-}
-
-.status-card-label {
-  color: var(--text-h);
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.status-card-detail {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-}
-
-.status-active {
-  border-left-color: #dd9418;
-  background: linear-gradient(180deg, #fffaf0, var(--surface) 60%);
-}
-
-.status-past {
-  border-left-color: var(--text-muted);
 }
 
 /* ---- next up ---- */

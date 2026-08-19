@@ -89,7 +89,13 @@ export function getTripStatus(startValue, endValue) {
   const end = toUTC(endValue);
 
   if (start === null || end === null) {
-    return { tone: "neutral", label: "Dates not set", detail: "", daysAway: null };
+    return {
+      tone: "neutral",
+      label: "Dates not set",
+      summary: "Dates not set",
+      detail: "",
+      daysAway: null,
+    };
   }
 
   const today = todayUTC();
@@ -101,6 +107,8 @@ export function getTripStatus(startValue, endValue) {
     return {
       tone: "upcoming",
       label: away === 1 ? "Departs tomorrow" : `${away} days to go`,
+      summary:
+        away === 1 ? "Trip starts tomorrow" : `Trip starts in ${away} days`,
       detail: `Departure ${formatDay(startValue, {
         weekday: "long",
         day: "numeric",
@@ -114,6 +122,7 @@ export function getTripStatus(startValue, endValue) {
     return {
       tone: "past",
       label: "Trip complete",
+      summary: "Trip completed",
       detail: `Ended ${formatDay(endValue, {
         day: "numeric",
         month: "long",
@@ -128,6 +137,7 @@ export function getTripStatus(startValue, endValue) {
   return {
     tone: "active",
     label: "Happening now",
+    summary: `Day ${dayNumber} of ${tripDays}`,
     detail: `Day ${dayNumber} of ${tripDays}`,
     daysAway: 0,
   };
