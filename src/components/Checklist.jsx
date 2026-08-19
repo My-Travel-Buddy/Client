@@ -1,8 +1,11 @@
 function Checklist({ trip, setTrip }) {
   // Update a checklist item when the user checks or unchecks it.
+   const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
   async function checkEdit(e, item) {
+
+   
     const response = await fetch(
-      `http://localhost:8080/trips/${trip.id}/${item.id}/checklist/edit`,
+      `BASE_URL/${trip.id}/${item.id}/checklist/edit`,
       {
         method: "PATCH",
         credentials: "include",

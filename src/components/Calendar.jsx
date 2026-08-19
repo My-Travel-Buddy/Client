@@ -12,6 +12,8 @@ const calendars = [
 ];
 
 export default function TripCalendar({ tripId }) {
+
+   const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("");
   const [showAddActivity, setShowAddActivity] = useState(false);
@@ -131,7 +133,7 @@ export default function TripCalendar({ tripId }) {
   const getActivities = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/trips/${tripId}/activities`,
+        `VITE_API_URL/trips/${tripId}/activities`,
         {
           credentials: "include",
         },
@@ -190,10 +192,12 @@ export default function TripCalendar({ tripId }) {
     }
   }, [tripId]);
 
+
   async function addActivities() {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     console.log("Sending activity:", activityForm);
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities`,
+      `BASE_URL/trips/${tripId}/activities`,
       {
         method: "POST",
         credentials: "include",
@@ -213,8 +217,9 @@ export default function TripCalendar({ tripId }) {
   }
 
   async function editActivities() {
+     const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities/${editActivityForm.id}`,
+      `BASE_URL/${tripId}/activities/${editActivityForm.id}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -237,8 +242,9 @@ export default function TripCalendar({ tripId }) {
     setSelectedActivity(updatedActivity);
   }
   async function deleteActivities() {
+     const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const response = await fetch(
-      `http://localhost:8080/trips/${tripId}/activities/${selectedActivity.id}`,
+      `BASE_URL/trips/${tripId}/activities/${selectedActivity.id}`,
       {
         method: "DELETE",
         credentials: "include",
